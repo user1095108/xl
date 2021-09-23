@@ -344,9 +344,13 @@ public:
   iterator insert(const_iterator const p,
     std::input_iterator auto const i, decltype(i) j)
   {
-    iterator r(p.node(), p.prev());
+    iterator r;
 
-    if (i != j)
+    if (i == j)
+    {
+      return {p.node(), p.prev()};
+    }
+    else
     {
       r = insert(p, std::forward<decltype(*i)>(*i));
 
