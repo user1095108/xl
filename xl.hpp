@@ -284,7 +284,7 @@ public:
     }
     else
     {
-      first_ = {};
+      first_ = nxt;
     }
 
     if (nxt)
@@ -293,7 +293,7 @@ public:
     }
     else
     {
-      last_ = {};
+      last_ = prv;
     }
 
     delete n;
