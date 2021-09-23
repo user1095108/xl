@@ -32,7 +32,6 @@ public:
     using value_type = list::value_type;
 
     std::uintptr_t l_{};
-
     value_type v_;
 
     explicit node (auto&& ...v):
@@ -44,79 +43,6 @@ public:
     static constexpr auto conv(auto const n) noexcept
     {
       return std::uintptr_t(n);
-    }
-
-    static iterator emplace_front(auto& li, auto&& ...v)
-    {
-      node* q;
-
-      if (auto const f(li.first_); !f)
-      {
-        li.first_ = li.last_ = q = new node(std::forward<decltype(v)>(v)...);
-      }
-      else
-      {
-        // q f
-        li.first_ = q = new node(std::forward<decltype(v)>(v)...);
-
-        q->l_ = conv(f);
-        f->l_ = conv(q) ^ conv(f->next(nullptr));
-      }
-
-      ++li.sz_;
-      return {q, {}};
-    }
-
-    static iterator emplace_back(auto& li, auto&& ...v)
-    {
-      node* q;
-
-      auto const l(li.last_);
-
-      if (!l)
-      {
-        li.first_ = li.last_ = q = new node(std::forward<decltype(v)>(v)...);
-      }
-      else
-      {
-        // l q
-        li.last_ = q = new node(std::forward<decltype(v)>(v)...);
-
-        q->l_ = conv(l);
-        l->l_ = conv(l->prev(nullptr)) ^ conv(q);
-      }
-
-      ++li.sz_;
-      return {q, l};
-    }
-
-    static iterator emplace(auto& li, const_iterator const i, auto&& ...v)
-    {
-      node* q;
-
-      auto const prv(i.prev());
-
-      if (auto const n(i.node()); !n)
-      {
-        return emplace_back(li, std::forward<decltype(v)>(v)...);
-      }
-      else
-      {
-        // prv q n
-        q = new node(std::forward<decltype(v)>(v)...);
-
-        // setup links
-        q->l_ = conv(prv) ^ conv(n);
-        n->l_ = conv(q) ^ conv(n->next(prv));
-
-        if (prv)
-        {
-          prv->l_ = conv(prv->prev(n)) ^ conv(q);
-        }
-      }
-
-      ++li.sz_;
-      return {q, prv};
     }
 
     //
@@ -256,29 +182,83 @@ public:
   auto& back() const noexcept { return std::as_const(last_->v_); }
 
   //
-  auto emplace_back(auto&& ...v)
+  iterator emplace(const_iterator const i, auto&& ...v)
   {
-    return iterator(
-      node::emplace_back(
-        *this,
-        std::forward<decltype(v)>(v)...
-      )
-    );
+    if (auto const n(i.node()); !n)
+    {
+      return emplace_back(li, std::forward<decltype(v)>(v)...);
+    }
+    else
+    {
+      node* q;
+
+      auto const prv(i.prev());
+
+      // prv q n
+      q = new node(std::forward<decltype(v)>(v)...);
+
+      // setup links
+      q->l_ = conv(prv) ^ conv(n);
+      n->l_ = conv(q) ^ conv(n->next(prv));
+
+      if (prv)
+      {
+        prv->l_ = conv(prv->prev(n)) ^ conv(q);
+      }
+
+      ++sz_;
+      return {q, prv};
+    }
   }
 
-  auto emplace_front(auto&& ...v)
+  iterator emplace_back(auto&& ...v)
   {
-    return iterator(
-      node::emplace_back(
-        *this,
-        std::forward<decltype(v)>(v)...
-      )
-    );
+    node* q;
+
+    auto const l(last_);
+
+    if (!l)
+    {
+      first_ = last_ = q = new node(std::forward<decltype(v)>(v)...);
+    }
+    else
+    {
+      // l q
+      last_ = q = new node(std::forward<decltype(v)>(v)...);
+
+      q->l_ = conv(l);
+      l->l_ = conv(l->prev(nullptr)) ^ conv(q);
+    }
+
+    ++sz_;
+    return {q, l};
+  }
+
+  iterator emplace_front(auto&& ...v)
+  {
+    node* q;
+
+    if (auto const f(first_); !f)
+    {
+      first_ = last_ = q = new node(std::forward<decltype(v)>(v)...);
+    }
+    else
+    {
+      // q f
+      first_ = q = new node(std::forward<decltype(v)>(v)...);
+
+      q->l_ = conv(f);
+      f->l_ = conv(q) ^ conv(f->next(nullptr));
+    }
+
+    ++sz_;
+    return {q, {}};
   }
 
   //
   auto erase(const_iterator const i)
   {
+    assert(sz_);
     auto const prv(i.prev());
     auto const n(i.node());
     auto const nxt(n->next(prv));
@@ -332,28 +312,42 @@ public:
   //
   void pop_back()
   {
-    auto const b(last_);
+    assert(sz_);
+    auto const l0(last_);
+    auto const l1(l0->prev(nullptr));
 
-    auto const last(b->prev(nullptr));
-    last->l_ = node::conv(last->prev(b));
+    if (l1)
+    {
+      l1->l_ = node::conv(l1->prev(l0));
+    }
 
-    delete b;
+    delete l0;
+    last_ = l1;
 
-    --sz_;
-    last_ = last;
+    if (!--sz_)
+    {
+      first_ = {};
+    }
   }
 
   void pop_front()
   {
-    auto const f(first_);
+    assert(sz_);
+    auto const f0(first_);
+    auto const f1(f0->next(nullptr));
 
-    auto const first(f->next(nullptr));
-    first->l_ = node::conv(first->next(f));
+    if (f1)
+    {
+      f1->l_ = node::conv(f1->next(f0));
+    }
 
-    delete f;
+    delete f0;
+    first_ = f1;
 
-    --sz_;
-    first_ = first;
+    if (!--sz_)
+    {
+      last_ = {};
+    }
   }
 };
 
