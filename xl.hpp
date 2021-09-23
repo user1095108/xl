@@ -411,7 +411,7 @@ inline auto operator<=>(list<V> const& lhs, list<V> const& rhs) noexcept
 }
 
 template <typename V>
-inline auto erase(list<V>& c, auto const& k)
+constexpr auto erase(list<V>& c, auto const& k)
 {
   auto const end(c.end());
 
@@ -422,7 +422,7 @@ inline auto erase(list<V>& c, auto const& k)
 }
 
 template <typename V>
-inline auto erase_if(list<V>& c, auto pred)
+constexpr auto erase_if(list<V>& c, auto pred)
 {
   auto const end(c.end());
 
