@@ -74,7 +74,7 @@ public:
   auto& operator++() noexcept
   {
     auto const n(n_);
-    return n_ = n_->next(prv_), prv_ = n, *this;
+    return n_ = n->next(prv_), prv_ = n, *this;
   }
 
   auto& operator--() noexcept
