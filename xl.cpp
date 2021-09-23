@@ -39,5 +39,7 @@ int main()
 
   std::cout << "==: " << (l == l) << std::endl;
 
+  *l.cbegin() = 11;
+
   return 0;
 }
