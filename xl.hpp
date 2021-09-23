@@ -419,12 +419,16 @@ constexpr auto erase(list<V>& c, auto const& k)
 template <typename V>
 constexpr auto erase_if(list<V>& c, auto pred)
 {
+  typename list<V>::size_type r{};
+
   auto const end(c.end());
 
   for (auto i(c.begin()); end != i;)
   {
-    i = pred(*i) ? c.erase(i) : std::next(i);
+    i = pred(*i) ? (++r, c.erase(i)) : std::next(i);
   }
+
+  return r;
 }
 
 }
