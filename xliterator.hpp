@@ -43,8 +43,8 @@ public:
   {
   }
 
-  xliterator(xliterator const&) noexcept = default;
-  xliterator(xliterator&&) noexcept = default;
+  xliterator(xliterator const&) = default;
+  xliterator(xliterator&&) = default;
 
   xliterator(inverse_const_t const& o) noexcept requires(std::is_const_v<T>):
     n_(o.n_),
@@ -53,8 +53,8 @@ public:
   }
 
   //
-  xliterator& operator=(xliterator const&) noexcept = default;
-  xliterator& operator=(xliterator&&) noexcept = default;
+  xliterator& operator=(xliterator const&) = default;
+  xliterator& operator=(xliterator&&) = default;
 
   bool operator==(auto const& o) const noexcept
     requires(
