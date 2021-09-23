@@ -366,9 +366,9 @@ public:
 
   //
   void push_back(auto const& v) { insert(cend(), v); }
-  void push_back(auto&& v); { insert(cend(), std::move(v)); }
+  void push_back(auto&& v) { insert(cend(), std::move(v)); }
 
-  void push_front(auto const& v); { insert(cbegin(), v); }
+  void push_front(auto const& v) { insert(cbegin(), v); }
   void push_front(auto&& v) { insert(cbegin(), std::move(v)); }
 
   //
