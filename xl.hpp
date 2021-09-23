@@ -170,11 +170,11 @@ public:
   }
 
   //
-  auto& front() noexcept { return first_->v_; }
-  auto& front() const noexcept { return std::as_const(first_->v_); }
-
   auto& back() noexcept { return last_->v_; }
   auto& back() const noexcept { return std::as_const(last_->v_); }
+
+  auto& front() noexcept { return first_->v_; }
+  auto& front() const noexcept { return std::as_const(first_->v_); }
 
   auto size() const noexcept { return sz_; }
 
