@@ -49,7 +49,7 @@ public:
     //
     static constexpr auto conv(auto const n) noexcept
     {
-      return std::uintptr_t(n);
+      return (decltype(l_))(n);
     }
 
     //
@@ -69,11 +69,15 @@ private:
   size_type sz_{};
 
 public:
-  list() noexcept = default;
+  list() = default;
   list(std::initializer_list<value_type> i) { *this = i; }
   list(list const& o) { *this = o; }
   list(list&& o) noexcept { *this = std::move(o); }
-  list(std::input_iterator auto const i, decltype(i) j) { insert(i, j); }
+
+  list(std::input_iterator auto const i, decltype(i) j)
+  {
+    insert(cend(), i, j);
+  }
 
   ~list() noexcept(noexcept(clear())) { clear(); }
 
