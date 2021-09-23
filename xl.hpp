@@ -40,7 +40,8 @@ public:
 
     value_type v_;
 
-    explicit node(auto&& ...v):
+    explicit node(auto&& ...v) noexcept(noexcept(
+      Value(std::forward<decltype(v)>(v)...))):
       v_(std::forward<decltype(v)>(v)...)
     {
     }
