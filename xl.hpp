@@ -167,13 +167,13 @@ public:
   }
 
   //
-  auto size() const noexcept { return sz_; }
-
   auto& front() noexcept { return first_->v_; }
   auto& front() const noexcept { return std::as_const(first_->v_); }
 
   auto& back() noexcept { return last_->v_; }
   auto& back() const noexcept { return std::as_const(last_->v_); }
+
+  auto size() const noexcept { return sz_; }
 
   //
   void assign(size_type count, auto const& v)
@@ -192,15 +192,15 @@ public:
   }
 
   //
-  iterator emplace(const_iterator const i, auto&& ...v)
+  iterator emplace(const_iterator const i, auto&& ...a)
   {
     if (auto const n(i.node()); !n)
     {
-      return emplace_back(std::forward<decltype(v)>(v)...);
+      return emplace_back(std::forward<decltype(a)>(a)...);
     }
     else
     {
-      auto q(new node(std::forward<decltype(v)>(v)...));
+      auto q(new node(std::forward<decltype(a)>(a)...));
 
       auto const prv(i.prev());
 
@@ -222,7 +222,7 @@ public:
     }
   }
 
-  iterator emplace_back(auto&& ...v)
+  iterator emplace_back(auto&& ...a)
   {
     node* q;
 
@@ -230,12 +230,12 @@ public:
 
     if (!l)
     {
-      first_ = last_ = q = new node(std::forward<decltype(v)>(v)...);
+      first_ = last_ = q = new node(std::forward<decltype(a)>(a)...);
     }
     else
     {
       // l q
-      last_ = q = new node(std::forward<decltype(v)>(v)...);
+      last_ = q = new node(std::forward<decltype(a)>(a)...);
 
       q->l_ = node::conv(l);
       l->l_ = node::conv(l->prev(nullptr)) ^ node::conv(q);
@@ -245,18 +245,18 @@ public:
     return {q, l};
   }
 
-  iterator emplace_front(auto&& ...v)
+  iterator emplace_front(auto&& ...a)
   {
     node* q;
 
     if (auto const f(first_); !f)
     {
-      first_ = last_ = q = new node(std::forward<decltype(v)>(v)...);
+      first_ = last_ = q = new node(std::forward<decltype(a)>(a)...);
     }
     else
     {
       // q f
-      first_ = q = new node(std::forward<decltype(v)>(v)...);
+      first_ = q = new node(std::forward<decltype(a)>(a)...);
 
       q->l_ = node::conv(f);
       f->l_ = node::conv(q) ^ node::conv(f->next(nullptr));
@@ -368,11 +368,11 @@ public:
   }
 
   //
-  void push_back(auto const& v) { insert(cend(), v); }
-  void push_back(auto&& v) { insert(cend(), std::move(v)); }
+  void push_back(value_type const& v) { insert(cend(), v); }
+  void push_back(value_type&& v) { insert(cend(), std::move(v)); }
 
-  void push_front(auto const& v) { insert(cbegin(), v); }
-  void push_front(auto&& v) { insert(cbegin(), std::move(v)); }
+  void push_front(value_type const& v) { insert(cbegin(), v); }
+  void push_front(value_type&& v) { insert(cbegin(), std::move(v)); }
 
   //
   void swap(list& o) noexcept
