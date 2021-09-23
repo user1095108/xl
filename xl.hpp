@@ -329,16 +329,18 @@ public:
 
   iterator insert(const_iterator p, size_type count, auto const& v)
   {
-    iterator r(p.node(), p.prev());
-
     if (count)
     {
-      r = insert(p, v);
+      iterator r(insert(p, v));
 
       for (--count; count; --count) insert(p, v);
-    }
 
-    return r;
+      return r;
+    }
+    else
+    {
+      return {p.node(), p.prev()};
+    }
   }
 
   iterator insert(const_iterator const p,
