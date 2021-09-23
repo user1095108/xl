@@ -329,11 +329,11 @@ public:
 
   iterator insert(const_iterator p, size_type count, auto const& v)
   {
-    if (count)
+    if (count--)
     {
       iterator r(insert(p, v));
 
-      for (--count; count; --count) insert(p, v);
+      for (; count; --count) insert(p, v);
 
       return r;
     }
