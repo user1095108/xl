@@ -26,10 +26,10 @@ public:
   using iterator_category = std::bidirectional_iterator_tag;
   using difference_type = std::ptrdiff_t;
   using value_type = std::conditional_t<
-      std::is_const_v<T>,
-      typename T::value_type const,
-      typename T::value_type
-    >;
+    std::is_const_v<T>,
+    typename T::value_type const,
+    typename T::value_type
+  >;
 
   using pointer = value_type*;
   using reference = value_type&;
