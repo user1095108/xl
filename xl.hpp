@@ -228,7 +228,6 @@ public:
   iterator emplace_back(auto&& ...a)
   {
     node* q;
-
     auto const l(last_);
 
     if (!l)
