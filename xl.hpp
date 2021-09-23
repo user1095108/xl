@@ -96,6 +96,7 @@ public:
       n = nxt;
     }
 
+    //
     first_ = last_ = {}; sz_ = {};
   }
 
