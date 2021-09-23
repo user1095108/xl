@@ -191,7 +191,7 @@ public:
 
   void assign(std::initializer_list<value_type> il)
   {
-    *this = il;
+    assign(il.begin(), il.end());
   }
 
   //
