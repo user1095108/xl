@@ -37,5 +37,7 @@ int main()
     }
   );
 
+  std::cout << "==: " << (l == l) << std::endl;
+
   return 0;
 }
