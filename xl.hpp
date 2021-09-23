@@ -94,8 +94,8 @@ public:
     first_ = last_ = {}; sz_ = {};
   }
 
-  auto empty() const noexcept { return !size(); }
-  auto max_size() const noexcept { return ~size_type{}; }
+  bool empty() const noexcept { return !size(); }
+  size_type max_size() const noexcept { return ~size_type{}; }
 
   // iterators
   iterator begin() noexcept
@@ -151,7 +151,7 @@ public:
   }
 
   //
-  auto& operator=(list const& o)
+  list& operator=(list const& o)
   {
     return assign(o.begin(), o.end()), *this;
   }
@@ -176,7 +176,7 @@ public:
   auto& front() noexcept { return first_->v_; }
   auto& front() const noexcept { return std::as_const(first_->v_); }
 
-  auto size() const noexcept { return sz_; }
+  size_type size() const noexcept { return sz_; }
 
   //
   void assign(size_type count, auto const& v)
