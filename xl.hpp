@@ -7,6 +7,8 @@
 
 #include <algorithm>
 
+#include <compare>
+
 #include "xliterator.hpp"
 
 namespace xl
@@ -32,12 +34,10 @@ public:
     using value_type = list::value_type;
 
     std::uintptr_t l_{};
+
     value_type v_;
 
-    explicit node (auto&& ...v):
-      v_(std::forward<decltype(v)>(v)...)
-    {
-    }
+    explicit node (auto&& ...v): v_(std::forward<decltype(v)>(v)...) { }
 
     //
     static constexpr auto conv(auto const n) noexcept
@@ -68,10 +68,7 @@ public:
   list(list&& o) noexcept { *this = std::move(o); }
   list(std::input_iterator auto const i, decltype(i) j) { insert(i, j); }
 
-  ~list() noexcept(noexcept(first_->~node()))
-  {
-    clear();
-  }
+  ~list() noexcept(noexcept(clear())) { clear(); }
 
   //
   void clear() noexcept(noexcept(first_->~node()))
@@ -150,10 +147,7 @@ public:
   //
   auto& operator=(list const& o)
   {
-    clear();
-    insert(cend(), o.begin(), o.end());
-
-    return *this;
+    return assign(o.cbegin(), o.cend()), *this;
   }
 
   list& operator=(list&& o) noexcept
@@ -166,10 +160,7 @@ public:
 
   auto& operator=(std::initializer_list<value_type> const o)
   {
-    clear();
-    insert(cend(), o.begin(), o.end());
-
-    return *this;
+    return assign(o.begin(), o.end()), *this;
   }
 
   //
@@ -180,6 +171,22 @@ public:
 
   auto& back() noexcept { return last_->v_; }
   auto& back() const noexcept { return std::as_const(last_->v_); }
+
+  //
+  void assign(size_type count, auto const& v)
+  {
+    clear(); insert(cend(), count, v);
+  }
+
+  void assign(std::input_iterator auto const i, decltype(i) j)
+  {
+    clear(); insert(cend(), i, j);
+  }
+
+  void assign(std::initializer_list<value_type> il)
+  {
+    *this = il;
+  }
 
   //
   iterator emplace(const_iterator const i, auto&& ...v)
@@ -325,13 +332,12 @@ public:
     auto const l0(last_);
     auto const l1(l0->prev(nullptr));
 
-    if (l1)
+    if ((last_ = l1))
     {
       l1->l_ = node::conv(l1->prev(l0));
     }
 
     delete l0;
-    last_ = l1;
 
     if (!--sz_)
     {
@@ -345,20 +351,80 @@ public:
     auto const f0(first_);
     auto const f1(f0->next(nullptr));
 
-    if (f1)
+    if ((first_ = f1))
     {
       f1->l_ = node::conv(f1->next(f0));
     }
 
     delete f0;
-    first_ = f1;
 
     if (!--sz_)
     {
       last_ = {};
     }
   }
+
+  //
+  void push_back(auto const& v) { insert(cend(), v); }
+  void push_back(auto&& v); { insert(cend(), std::move(v)); }
+
+  void push_front(auto const& v); { insert(cbegin(), v); }
+  void push_front(auto&& v) { insert(cbegin(), std::move(v)); }
+
+  //
+  void swap(list& o) noexcept
+  {
+    std::swap(first_, o.first_); std::swap(last_, o.last_);
+    std::swap(sz_, o.sz_);
+  }
+
+  //
+  friend bool operator!=(list const&, list const&) noexcept = default;
+  friend bool operator<(list const&, list const&) noexcept = default;
+  friend bool operator<=(list const&, list const&) noexcept = default;
+  friend bool operator>(list const&, list const&) noexcept = default;
+  friend bool operator>=(list const&, list const&) noexcept = default;
 };
+
+template <typename V>
+inline bool operator==(list<V> const& lhs, list<V> const& rhs) noexcept 
+{
+  return std::equal(
+    lhs.begin(), lhs.end(),
+    rhs.begin(), rhs.end()
+  );
+}
+
+template <typename V>
+inline auto operator<=>(list<V> const& lhs, list<V> const& rhs) noexcept
+{
+  return std::lexicographical_compare_three_way(
+    lhs.begin(), lhs.end(),
+    rhs.begin(), rhs.end()
+  );
+}
+
+template <typename V>
+inline auto erase(list<V>& c, auto const& k)
+{
+  auto const end(c.end());
+
+  for (auto i(c.begin()); end != i;)
+  {
+    i = std::equal_to()(*i, k) ? c.erase(i) : std::next(i);
+  }
+}
+
+template <typename V>
+inline auto erase_if(list<V>& c, auto pred)
+{
+  auto const end(c.end());
+
+  for (auto i(c.begin()); end != i;)
+  {
+    i = pred(*i) ? c.erase(i) : std::next(i);
+  }
+}
 
 }
 
