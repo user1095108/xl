@@ -344,15 +344,13 @@ public:
   iterator insert(const_iterator const p,
     std::input_iterator auto const i, decltype(i) j)
   {
-    iterator r;
-
     if (i == j)
     {
       return {p.node(), p.prev()};
     }
     else
     {
-      r = insert(p, std::forward<decltype(*i)>(*i));
+      iterator r(insert(p, std::forward<decltype(*i)>(*i)));
 
       std::for_each(
         std::next(i),
@@ -362,9 +360,9 @@ public:
           insert(p, std::forward<decltype(v)>(v));
         }
       );
-    }
 
-    return r;
+      return r;
+    }
   }
 
   iterator insert(const_iterator p, std::initializer_list<value_type> il)
