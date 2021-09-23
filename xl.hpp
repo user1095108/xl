@@ -186,7 +186,7 @@ public:
   {
     if (auto const n(i.node()); !n)
     {
-      return emplace_back(li, std::forward<decltype(v)>(v)...);
+      return emplace_back(std::forward<decltype(v)>(v)...);
     }
     else
     {
@@ -198,12 +198,12 @@ public:
       q = new node(std::forward<decltype(v)>(v)...);
 
       // setup links
-      q->l_ = conv(prv) ^ conv(n);
-      n->l_ = conv(q) ^ conv(n->next(prv));
+      q->l_ = node::conv(prv) ^ node::conv(n);
+      n->l_ = node::conv(q) ^ node::conv(n->next(prv));
 
       if (prv)
       {
-        prv->l_ = conv(prv->prev(n)) ^ conv(q);
+        prv->l_ = node::conv(prv->prev(n)) ^ node::conv(q);
       }
 
       ++sz_;
@@ -226,8 +226,8 @@ public:
       // l q
       last_ = q = new node(std::forward<decltype(v)>(v)...);
 
-      q->l_ = conv(l);
-      l->l_ = conv(l->prev(nullptr)) ^ conv(q);
+      q->l_ = node::conv(l);
+      l->l_ = node::conv(l->prev(nullptr)) ^ node::conv(q);
     }
 
     ++sz_;
@@ -247,8 +247,8 @@ public:
       // q f
       first_ = q = new node(std::forward<decltype(v)>(v)...);
 
-      q->l_ = conv(f);
-      f->l_ = conv(q) ^ conv(f->next(nullptr));
+      q->l_ = node::conv(f);
+      f->l_ = node::conv(q) ^ node::conv(f->next(nullptr));
     }
 
     ++sz_;
@@ -276,19 +276,23 @@ public:
 
     delete n;
 
-    --sz_;
+    if (!--sz_)
+    {
+      first_ = last_ = {};
+    }
+
     return iterator{nxt, prv};
   }
 
   //
   iterator insert(const_iterator i, auto const& v)
   {
-    return iterator(node::emplace(*this, i, v));
+    return iterator(emplace(i, v));
   }
 
   iterator insert(const_iterator i, auto&& v)
   {
-    return iterator(node::emplace(*this, i, std::move(v)));
+    return iterator(emplace(i, std::move(v)));
   }
 
   iterator insert(const_iterator p, size_type count, auto const& v)
