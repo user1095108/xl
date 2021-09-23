@@ -190,14 +190,11 @@ public:
     }
     else
     {
-      node* q;
+      auto q(new node(std::forward<decltype(v)>(v)...));
 
       auto const prv(i.prev());
 
       // prv q n
-      q = new node(std::forward<decltype(v)>(v)...);
-
-      // setup links
       q->l_ = node::conv(prv) ^ node::conv(n);
       n->l_ = node::conv(q) ^ node::conv(n->next(prv));
 
@@ -272,19 +269,23 @@ public:
     {
       prv->l_ = node::conv(prv->prev(n)) ^ node::conv(nxt);
     }
+    else
+    {
+      first_ = {};
+    }
 
     if (nxt)
     {
       nxt->l_ = node::conv(prv) ^ node::conv(nxt->next(n));
     }
+    else
+    {
+      last_ = {};
+    }
 
     delete n;
 
-    if (!--sz_)
-    {
-      first_ = last_ = {};
-    }
-
+    --sz_;
     return iterator{nxt, prv};
   }
 
