@@ -328,20 +328,38 @@ public:
 
   iterator insert(const_iterator p, size_type count, auto const& v)
   {
-    for (; count; --count) insert(p, v);
+    iterator r(p.node(), p.prev());
+
+    if (count)
+    {
+      r = insert(p, v);
+
+      for (--count; count; --count) insert(p, v);
+    }
+
+    return r;
   }
 
-  void insert(const_iterator p,
+  iterator insert(const_iterator const p,
     std::input_iterator auto const i, decltype(i) j)
   {
-    std::for_each(
-      i,
-      j,
-      [&](auto&& v)
-      {
-        insert(p, std::forward<decltype(v)>(v));
-      }
-    );
+    iterator r(p.node(), p.prev());
+
+    if (i != j)
+    {
+      r = insert(p, std::forward<decltype(*i)>(*i));
+
+      std::for_each(
+        std::next(i),
+        j,
+        [&](auto&& v)
+        {
+          insert(p, std::forward<decltype(v)>(v));
+        }
+      );
+    }
+
+    return r;
   }
 
   iterator insert(const_iterator p, std::initializer_list<value_type> il)

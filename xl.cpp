@@ -40,6 +40,7 @@ int main()
   std::cout << "==: " << (l == l) << std::endl;
 
   erase(l, 4);
+  l.insert(l.cend(), {1, 2, 3});
 
   return 0;
 }

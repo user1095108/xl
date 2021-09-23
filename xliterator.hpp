@@ -35,7 +35,7 @@ public:
   using reference = value_type&;
 
 public:
-  xliterator() noexcept = default;
+  xliterator() = default;
 
   xliterator(node_t* const n, node_t* const prv) noexcept:
     n_(n),
