@@ -317,19 +317,19 @@ public:
   //
   iterator insert(const_iterator i, auto const& v)
   {
-    return iterator(emplace(i, v));
+    return emplace(i, v);
   }
 
   iterator insert(const_iterator i, auto&& v)
   {
-    return iterator(emplace(i, std::move(v)));
+    return emplace(i, std::move(v));
   }
 
   iterator insert(const_iterator p, size_type count, auto const& v)
   {
     if (count--)
     {
-      iterator r(insert(p, v));
+      auto const r(insert(p, v));
 
       for (; count; --count) insert(p, v);
 
