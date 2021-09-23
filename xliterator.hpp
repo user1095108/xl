@@ -87,8 +87,8 @@ public:
   auto operator--(int) noexcept { auto r(*this); return --*this, r; }
 
   // member access
-  auto operator->() const noexcept { return &n_->v_; }
-  auto& operator*() const noexcept { return n_->v_; }
+  auto operator->() const noexcept { return &std::add_pointer_t<T>(n_)->v_; }
+  auto& operator*() const noexcept { return std::add_pointer_t<T>(n_)->v_; }
 
   //
   auto node() const noexcept { return n_; }
