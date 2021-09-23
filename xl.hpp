@@ -270,7 +270,7 @@ public:
   }
 
   //
-  auto erase(const_iterator const i)
+  iterator erase(const_iterator const i)
   {
     assert(sz_);
     auto const prv(i.prev());
@@ -300,6 +300,15 @@ public:
 
     --sz_;
     return iterator{nxt, prv};
+  }
+
+  iterator erase(const_iterator a, const_iterator const b)
+  {
+    iterator i;
+
+    for (; a != b; i = erase(a), a = i);
+
+    return i;
   }
 
   //
