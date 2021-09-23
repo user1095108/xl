@@ -37,7 +37,10 @@ public:
 
     value_type v_;
 
-    explicit node (auto&& ...v): v_(std::forward<decltype(v)>(v)...) { }
+    explicit node(auto&& ...v):
+      v_(std::forward<decltype(v)>(v)...)
+    {
+    }
 
     //
     static constexpr auto conv(auto const n) noexcept
