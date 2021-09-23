@@ -350,7 +350,7 @@ public:
     }
     else
     {
-      iterator r(insert(p, std::forward<decltype(*i)>(*i)));
+      auto r(insert(p, std::forward<decltype(*i)>(*i)));
 
       std::for_each(
         std::next(i),
