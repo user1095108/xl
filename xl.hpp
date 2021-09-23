@@ -205,6 +205,10 @@ public:
       {
         prv->l_ = node::conv(prv->prev(n)) ^ node::conv(q);
       }
+      else
+      {
+        first_ = q;
+      }
 
       ++sz_;
       return {q, prv};
