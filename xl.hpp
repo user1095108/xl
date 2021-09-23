@@ -88,12 +88,10 @@ public:
 
     for (auto n(first_); n;)
     {
-      auto const nxt(n->next(prv));
+      auto const nn(n);
+      n = n->next(prv);
 
-      delete n;
-
-      prv = n;
-      n = nxt;
+      delete (prv = nn);
     }
 
     //
