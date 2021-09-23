@@ -307,7 +307,7 @@ public:
 
   iterator erase(const_iterator a, const_iterator const b)
   {
-    iterator i;
+    iterator i(b);
 
     for (; a != b; i = erase(a), a = i);
 
