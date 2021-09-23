@@ -9,6 +9,10 @@ int main()
   l.emplace_back(0);
   l.emplace_back(1);
 
+  l.insert(l.cend(), {1, 2, 3});
+
+  erase(l, 1);
+
   //
   std::cout << "size: " << l.size() << std::endl;
 
@@ -38,9 +42,6 @@ int main()
   );
 
   std::cout << "==: " << (l == l) << std::endl;
-
-  erase(l, 4);
-  l.insert(l.cend(), {1, 2, 3});
 
   return 0;
 }
