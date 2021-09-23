@@ -153,7 +153,7 @@ public:
   //
   auto& operator=(list const& o)
   {
-    return assign(o.cbegin(), o.cend()), *this;
+    return assign(o.begin(), o.end()), *this;
   }
 
   list& operator=(list&& o) noexcept
@@ -164,7 +164,7 @@ public:
     return *this;
   }
 
-  auto& operator=(std::initializer_list<value_type> const o)
+  list& operator=(std::initializer_list<value_type> const o)
   {
     return assign(o.begin(), o.end()), *this;
   }
@@ -413,12 +413,7 @@ inline auto operator<=>(list<V> const& lhs, list<V> const& rhs) noexcept
 template <typename V>
 constexpr auto erase(list<V>& c, auto const& k)
 {
-  auto const end(c.end());
-
-  for (auto i(c.begin()); end != i;)
-  {
-    i = std::equal_to()(*i, k) ? c.erase(i) : std::next(i);
-  }
+  return erase_if(c, [&](auto&& v) noexcept {return std::equal_to()(v, k);});
 }
 
 template <typename V>
