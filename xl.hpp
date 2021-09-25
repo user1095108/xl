@@ -424,11 +424,11 @@ public:
   }
 
   //
-  friend bool operator!=(list const&, list const&) noexcept = default;
-  friend bool operator<(list const&, list const&) noexcept = default;
-  friend bool operator<=(list const&, list const&) noexcept = default;
-  friend bool operator>(list const&, list const&) noexcept = default;
-  friend bool operator>=(list const&, list const&) noexcept = default;
+  friend bool operator!=(list const&, list const&) = default;
+  friend bool operator<(list const&, list const&) = default;
+  friend bool operator<=(list const&, list const&) = default;
+  friend bool operator>(list const&, list const&) = default;
+  friend bool operator>=(list const&, list const&) = default;
 };
 
 template <typename V>
