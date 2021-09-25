@@ -441,8 +441,7 @@ template <typename V>
 inline auto operator<=>(list<V> const& lhs, list<V> const& rhs) noexcept
 {
   return std::lexicographical_compare_three_way(
-    lhs.begin(), lhs.end(),
-    rhs.begin(), rhs.end()
+    lhs.begin(), lhs.end(), rhs.begin(), rhs.end()
   );
 }
 
