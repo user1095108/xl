@@ -49,7 +49,7 @@ public:
     //
     static constexpr auto conv(auto const n) noexcept
     {
-      return (decltype(l_))(n);
+      return decltype(l_)(n);
     }
 
     //
@@ -434,10 +434,7 @@ public:
 template <typename V>
 inline bool operator==(list<V> const& lhs, list<V> const& rhs) noexcept 
 {
-  return std::equal(
-    lhs.begin(), lhs.end(),
-    rhs.begin(), rhs.end()
-  );
+  return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 template <typename V>
