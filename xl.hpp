@@ -365,7 +365,8 @@ public:
     }
   }
 
-  iterator insert(const_iterator p, std::initializer_list<value_type> il)
+  iterator insert(const_iterator const p,
+    std::initializer_list<value_type> il)
   {
     return insert(p, il.begin(), il.end());
   }
