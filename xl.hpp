@@ -155,10 +155,7 @@ public:
   }
 
   //
-  list& operator=(list const& o)
-  {
-    return assign(o.begin(), o.end()), *this;
-  }
+  list& operator=(list const& o) { return assign(o.begin(), o.end()), *this; }
 
   list& operator=(list&& o) noexcept
   {
@@ -315,10 +312,7 @@ public:
   }
 
   //
-  iterator insert(const_iterator i, auto const& v)
-  {
-    return emplace(i, v);
-  }
+  iterator insert(const_iterator i, auto const& v) { return emplace(i, v); }
 
   iterator insert(const_iterator i, auto&& v)
   {
