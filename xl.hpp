@@ -276,9 +276,10 @@ public:
       last_ = prv;
     }
 
+    --sz_;
+
     delete n;
 
-    --sz_;
     return iterator{nxt, prv};
   }
 
@@ -356,13 +357,14 @@ public:
     {
       l1->l_ = node::conv(l1->prev(l0));
     }
-
-    delete l0;
-
-    if (!--sz_)
+    else
     {
       first_ = {};
     }
+
+    --sz_;
+
+    delete l0;
   }
 
   void pop_front()
@@ -375,13 +377,14 @@ public:
     {
       f1->l_ = node::conv(f1->next(f0));
     }
-
-    delete f0;
-
-    if (!--sz_)
+    else
     {
       last_ = {};
     }
+
+    --sz_;
+
+    delete f0;
   }
 
   //
