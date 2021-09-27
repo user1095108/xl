@@ -102,56 +102,36 @@ public:
   size_type max_size() const noexcept { return ~size_type{}; }
 
   // iterators
-  iterator begin() noexcept
-  {
-    return first_ ? iterator(first_, {}) : iterator();
-  }
-
+  iterator begin() noexcept { return {first_, {}}; }
   iterator end() noexcept { return {{}, last_}; }
 
   // const iterators
-  const_iterator begin() const noexcept
-  {
-    return first_ ? const_iterator(first_, {}) : const_iterator();
-  }
-
+  const_iterator begin() const noexcept { return {first_, {}}; }
   const_iterator end() const noexcept { return {{}, last_}; }
 
-  const_iterator cbegin() const noexcept
-  {
-    return first_ ? const_iterator(first_, {}) : const_iterator();
-  }
-
+  const_iterator cbegin() const noexcept { return {first_, {}}; }
   const_iterator cend() const noexcept { return {{}, last_}; }
 
   // reverse iterators
   reverse_iterator rbegin() noexcept
   {
-    return first_ ?
-      reverse_iterator(iterator({}, last_)) :
-      reverse_iterator();
+    return reverse_iterator(iterator({}, last_));
   }
 
   reverse_iterator rend() noexcept
   {
-    return first_ ?
-      reverse_iterator(iterator(first_, {})):
-      reverse_iterator();
+    return reverse_iterator(iterator(first_, {}));
   }
 
   // const reverse iterators
   const_reverse_iterator crbegin() const noexcept
   {
-    return first_ ?
-      const_reverse_iterator(const_iterator({}, last_)):
-      const_reverse_iterator();
+    return const_reverse_iterator(const_iterator({}, last_));
   }
 
   const_reverse_iterator crend() const noexcept
   {
-    return first_ ?
-      const_reverse_iterator(const_iterator(first_, {})) :
-      const_reverse_iterator();
+    return const_reverse_iterator(const_iterator(first_, {}));
   }
 
   //
