@@ -277,7 +277,6 @@ public:
     }
 
     --sz_;
-
     delete n;
 
     return iterator{nxt, prv};
@@ -363,7 +362,6 @@ public:
     }
 
     --sz_;
-
     delete l0;
   }
 
@@ -383,7 +381,6 @@ public:
     }
 
     --sz_;
-
     delete f0;
   }
 
