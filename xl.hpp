@@ -151,6 +151,17 @@ public:
   }
 
   //
+  auto& operator[](size_type const i) noexcept
+  {
+    return *std::next(begin(), i);
+  }
+
+  auto& operator[](size_type const i) const noexcept
+  {
+    return *std::next(cbegin(), i);
+  }
+
+  //
   auto& back() noexcept { return last_->v_; }
   auto& back() const noexcept { return std::as_const(last_->v_); }
 
