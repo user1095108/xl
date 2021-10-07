@@ -158,7 +158,7 @@ public:
 
   auto& operator[](size_type const i) const noexcept
   {
-    return *std::next(cbegin(), i);
+    return *std::next(begin(), i);
   }
 
   //
