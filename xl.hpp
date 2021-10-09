@@ -82,6 +82,22 @@ public:
   ~list() noexcept(noexcept(clear())) { clear(); }
 
   //
+  list& operator=(list const& o) { return assign(o.begin(), o.end()), *this; }
+
+  list& operator=(list&& o) noexcept
+  {
+    first_ = o.first_; last_ = o.last_; sz_ = o.sz_;
+    o.first = o.last = {}; o.sz = {};
+
+    return *this;
+  }
+
+  list& operator=(std::initializer_list<value_type> const o)
+  {
+    return assign(o.begin(), o.end()), *this;
+  }
+
+  //
   void clear() noexcept(noexcept(first_->~node()))
   {
     decltype(first_) prv{};
@@ -132,22 +148,6 @@ public:
   const_reverse_iterator crend() const noexcept
   {
     return const_reverse_iterator(const_iterator(first_, {}));
-  }
-
-  //
-  list& operator=(list const& o) { return assign(o.begin(), o.end()), *this; }
-
-  list& operator=(list&& o) noexcept
-  {
-    first_ = o.first_; last_ = o.last_; sz_ = o.sz_;
-    o.first = o.last = {}; o.sz = {};
-
-    return *this;
-  }
-
-  list& operator=(std::initializer_list<value_type> const o)
-  {
-    return assign(o.begin(), o.end()), *this;
   }
 
   //
