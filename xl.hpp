@@ -195,7 +195,7 @@ public:
     }
     else
     {
-      auto q(new node(std::forward<decltype(a)>(a)...));
+      auto const q(new node(std::forward<decltype(a)>(a)...));
 
       auto const prv(i.prev());
 
