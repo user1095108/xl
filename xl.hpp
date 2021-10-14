@@ -87,7 +87,7 @@ public:
   list& operator=(list&& o) noexcept
   {
     first_ = o.first_; last_ = o.last_; sz_ = o.sz_;
-    o.first = o.last = {}; o.sz = {};
+    o.first_ = o.last_ = {}; o.sz_ = {};
 
     return *this;
   }
