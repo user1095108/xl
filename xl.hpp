@@ -426,7 +426,7 @@ public:
           auto const m(std::next(begin, hsz));
 
           s(s, begin, m, hsz);
-          s(s, m, end, hsz + (sz % 2));
+          s(s, m, end, sz - hsz);
 
           std::inplace_merge(begin, m, end, cmp);
         }
