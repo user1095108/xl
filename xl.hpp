@@ -97,6 +97,13 @@ public:
   }
 
   //
+  friend bool operator!=(list const&, list const&) = default;
+  friend bool operator<(list const&, list const&) = default;
+  friend bool operator<=(list const&, list const&) = default;
+  friend bool operator>(list const&, list const&) = default;
+  friend bool operator>=(list const&, list const&) = default;
+
+  //
   void clear() noexcept(noexcept(first_->~node()))
   {
     decltype(first_) prv{};
@@ -435,13 +442,6 @@ public:
 
     s(s, begin(), end(), size());
   }
-
-  //
-  friend bool operator!=(list const&, list const&) = default;
-  friend bool operator<(list const&, list const&) = default;
-  friend bool operator<=(list const&, list const&) = default;
-  friend bool operator>(list const&, list const&) = default;
-  friend bool operator>=(list const&, list const&) = default;
 };
 
 template <typename V>
@@ -477,6 +477,12 @@ constexpr auto erase_if(list<V>& c, auto pred)
   }
 
   return r;
+}
+
+template <typename V>
+void swap(list<V>& lhs, list<V>& rhs) noexcept
+{
+  lhs.swap(rhs);
 }
 
 }
