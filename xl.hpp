@@ -55,12 +55,12 @@ public:
     //
     auto next(auto const p) const noexcept
     {
-      return reinterpret_cast<node*>(l_ ^ conv(p));
+      return reinterpret_cast<node*>(conv(p) ^ l_);
     }
 
     auto prev(auto const p) const noexcept
     {
-      return reinterpret_cast<node*>(l_ ^ conv(p));
+      return reinterpret_cast<node*>(conv(p) ^ l_);
     }
   };
 
