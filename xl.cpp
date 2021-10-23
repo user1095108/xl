@@ -16,6 +16,7 @@ int main()
   //
   std::cout << "size: " << l.size() << std::endl;
 
+  l.sort();
   l.reverse();
 
   std::for_each(
