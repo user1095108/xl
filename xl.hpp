@@ -53,14 +53,14 @@ public:
     }
 
     //
-    auto next(auto const prev) const noexcept
+    auto next(auto const p) const noexcept
     {
-      return reinterpret_cast<node*>(conv(prev) ^ l_);
+      return reinterpret_cast<node*>(l_ ^ conv(p));
     }
 
-    auto prev(auto const next) const noexcept
+    auto prev(auto const p) const noexcept
     {
-      return reinterpret_cast<node*>(l_ ^ conv(next));
+      return reinterpret_cast<node*>(l_ ^ conv(p));
     }
   };
 
@@ -116,6 +116,10 @@ public:
 
   bool empty() const noexcept { return !size(); }
   size_type max_size() const noexcept { return ~size_type{}; }
+
+  //
+  auto& reverse() noexcept { return std::swap(first_, last_), *this; }
+  auto& reverse() const noexcept { return std::swap(first_, last_), *this; }
 
   // iterators
   iterator begin() noexcept { return {first_, {}}; }
