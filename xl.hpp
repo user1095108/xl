@@ -403,8 +403,7 @@ public:
   void push_front(value_type&& v) { insert(cbegin(), std::move(v)); }
 
   //
-  auto& reverse() noexcept { return std::swap(first_, last_), *this; }
-  auto& reverse() const noexcept { return std::swap(first_, last_), *this; }
+  void reverse() noexcept { std::swap(first_, last_); }
 
   //
   void swap(list& o) noexcept
