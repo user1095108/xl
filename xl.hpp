@@ -6,7 +6,6 @@
 #include <cstdint>
 
 #include <algorithm>
-
 #include <compare>
 
 #include "xliterator.hpp"
