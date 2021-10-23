@@ -117,10 +117,6 @@ public:
   bool empty() const noexcept { return !size(); }
   size_type max_size() const noexcept { return ~size_type{}; }
 
-  //
-  auto& reverse() noexcept { return std::swap(first_, last_), *this; }
-  auto& reverse() const noexcept { return std::swap(first_, last_), *this; }
-
   // iterators
   iterator begin() noexcept { return {first_, {}}; }
   iterator end() noexcept { return {{}, last_}; }
@@ -164,6 +160,10 @@ public:
   {
     return *std::next(begin(), i);
   }
+
+  //
+  auto& reverse() noexcept { return std::swap(first_, last_), *this; }
+  auto& reverse() const noexcept { return std::swap(first_, last_), *this; }
 
   //
   auto& back() noexcept { return last_->v_; }
