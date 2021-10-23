@@ -428,25 +428,7 @@ public:
           s(s, begin, m, hsz);
           s(s, m, end, hsz + (sz % 2));
 
-          //
-          list l;
-          std::merge(
-            std::make_move_iterator(begin),
-            std::make_move_iterator(m),
-            std::make_move_iterator(m),
-            std::make_move_iterator(end),
-            std::back_inserter(l),
-            cmp
-          );
-
-          if (size() == sz)
-          {
-            *this = std::move(l);
-          }
-          else
-          {
-            std::move(l.begin(), l.end(), begin);
-          }
+          std::inplace_merge(begin, m, end, cmp);
         }
       }
     );
