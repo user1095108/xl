@@ -16,6 +16,8 @@ int main()
   //
   std::cout << "size: " << l.size() << std::endl;
 
+  l.reverse();
+
   std::for_each(
     l.crbegin(),
     l.crend(),

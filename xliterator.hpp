@@ -73,14 +73,14 @@ public:
   // increment, decrement
   auto& operator++() noexcept
   {
-    auto const n(n_);
-    return n_ = n->next(prv_), prv_ = n, *this;
+    auto const n(n_->next(prv_));
+    return prv_ = n_, n_ = n, *this;
   }
 
   auto& operator--() noexcept
   {
-    auto const n(n_);
-    return n_ = prv_, prv_ = prv_->prev(n), *this;
+    auto const prv(prv_->prev(n_));
+    return n_ = prv_, prv_ = prv, *this;
   }
 
   auto operator++(int) noexcept { auto r(*this); return ++*this, r; }
