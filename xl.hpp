@@ -404,13 +404,39 @@ public:
   void push_front(value_type&& v) { insert(cbegin(), std::move(v)); }
 
   //
-  void reverse() noexcept { std::swap(first_, last_); }
-
-  //
   void swap(list& o) noexcept
   {
     std::swap(first_, o.first_); std::swap(last_, o.last_);
     std::swap(sz_, o.sz_);
+  }
+
+  //
+  void reverse() noexcept { std::swap(first_, last_); }
+
+  void sort() { sort(std::less<value_type>()); }
+
+  void sort(auto cmp)
+  {
+    auto const s([&](auto&& s, auto const begin,
+      auto const end, auto const sz) noexcept -> void
+      {
+        if (sz > 1)
+        {
+          auto const hsz(sz / 2);
+          auto const m(std::next(begin, hsz));
+
+          s(s, begin, m, hsz);
+          s(s, m, end, hsz + (sz % 2));
+
+          //
+          list l;
+          std::merge(begin, m, m, end, std::back_inserter(l), cmp);
+          std::move(l.begin(), l.end(), begin);
+        }
+      }
+    );
+
+    s(s, begin(), end(), size());
   }
 
   //
