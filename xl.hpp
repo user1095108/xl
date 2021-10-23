@@ -417,8 +417,8 @@ public:
 
   void sort(auto cmp)
   {
-    auto const s([&](auto&& s, auto const begin,
-      auto const end, auto const sz) noexcept -> void
+    auto const s([&](auto&& s,
+      auto const begin, auto const end, auto const sz) -> void
       {
         if (sz > 1)
         {
