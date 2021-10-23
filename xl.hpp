@@ -36,7 +36,7 @@ public:
   {
     using value_type = list::value_type;
 
-    std::uintptr_t l_{};
+    std::uintptr_t l_;
 
     value_type v_;
 
@@ -225,6 +225,7 @@ public:
     if (!l)
     {
       first_ = last_ = q = new node(std::forward<decltype(a)>(a)...);
+      q->l_ = {};
     }
     else
     {
@@ -246,6 +247,7 @@ public:
     if (auto const f(first_); !f)
     {
       first_ = last_ = q = new node(std::forward<decltype(a)>(a)...);
+      q->l_ = {};
     }
     else
     {
