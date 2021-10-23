@@ -430,7 +430,14 @@ public:
 
           //
           list l;
-          std::merge(begin, m, m, end, std::back_inserter(l), cmp);
+          std::merge(
+            std::make_move_iterator(begin),
+            std::make_move_iterator(m),
+            std::make_move_iterator(m),
+            std::make_move_iterator(end),
+            std::back_inserter(l),
+            cmp
+          );
 
           if (size() == sz)
           {
