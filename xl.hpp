@@ -431,7 +431,15 @@ public:
           //
           list l;
           std::merge(begin, m, m, end, std::back_inserter(l), cmp);
-          std::move(l.begin(), l.end(), begin);
+
+          if (size() == sz)
+          {
+            *this = std::move(l);
+          }
+          else
+          {
+            std::move(l.begin(), l.end(), begin);
+          }
         }
       }
     );
