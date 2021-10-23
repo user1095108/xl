@@ -205,7 +205,7 @@ public:
 
       if (prv)
       {
-        prv->l_ = node::conv(prv->prev(n)) ^ node::conv(q);
+        prv->l_ = node::conv(q) ^ node::conv(prv->prev(n));
       }
       else
       {
@@ -233,7 +233,7 @@ public:
       last_ = q = new node(std::forward<decltype(a)>(a)...);
 
       q->l_ = node::conv(l);
-      l->l_ = node::conv(l->prev(nullptr)) ^ node::conv(q);
+      l->l_ = node::conv(q) ^ node::conv(l->prev(nullptr));
     }
 
     ++sz_;
@@ -273,7 +273,7 @@ public:
     // prv n nxt
     if (prv)
     {
-      prv->l_ = node::conv(prv->prev(n)) ^ node::conv(nxt);
+      prv->l_ = node::conv(nxt) ^ node::conv(prv->prev(n));
     }
     else
     {
