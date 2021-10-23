@@ -162,10 +162,6 @@ public:
   }
 
   //
-  auto& reverse() noexcept { return std::swap(first_, last_), *this; }
-  auto& reverse() const noexcept { return std::swap(first_, last_), *this; }
-
-  //
   auto& back() noexcept { return last_->v_; }
   auto& back() const noexcept { return std::as_const(last_->v_); }
 
@@ -405,6 +401,10 @@ public:
 
   void push_front(value_type const& v) { insert(cbegin(), v); }
   void push_front(value_type&& v) { insert(cbegin(), std::move(v)); }
+
+  //
+  auto& reverse() noexcept { return std::swap(first_, last_), *this; }
+  auto& reverse() const noexcept { return std::swap(first_, last_), *this; }
 
   //
   void swap(list& o) noexcept
