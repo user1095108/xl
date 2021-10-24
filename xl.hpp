@@ -91,7 +91,7 @@ public:
     return *this;
   }
 
-  list& operator=(std::initializer_list<value_type> const o)
+  list& operator=(std::initializer_list<value_type> o)
   {
     return assign(o.begin(), o.end()), *this;
   }
@@ -309,14 +309,17 @@ public:
   }
 
   //
-  iterator insert(const_iterator i, auto const& v) { return emplace(i, v); }
+  iterator insert(const_iterator const i, auto const& v)
+  {
+    return emplace(i, v);
+  }
 
-  iterator insert(const_iterator i, auto&& v)
+  iterator insert(const_iterator const i, auto&& v)
   {
     return emplace(i, std::move(v));
   }
 
-  iterator insert(const_iterator p, size_type count, auto const& v)
+  iterator insert(const_iterator const p, size_type count, auto const& v)
   {
     if (count)
     {
