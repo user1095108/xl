@@ -225,21 +225,19 @@ public:
 
   iterator emplace_back(auto&& ...a)
   {
-    auto const q(new node(std::forward<decltype(a)>(a)...));
     auto const l(last_);
+
+    auto const q(last_ = new node(std::forward<decltype(a)>(a)...));
+    q->l_ = node::conv(l);
 
     if (l)
     {
       // l q
-      last_ = q;
-
-      q->l_ = node::conv(l);
       l->l_ = node::conv(q) ^ node::conv(l->prev(nullptr));
     }
     else
     {
-      first_ = last_ = q;
-      q->l_ = {};
+      first_ = q;
     }
 
     ++sz_;
@@ -248,20 +246,19 @@ public:
 
   iterator emplace_front(auto&& ...a)
   {
-    auto const q(new node(std::forward<decltype(a)>(a)...));
+    auto const f(first_);
 
-    if (auto const f(first_); f)
+    auto const q(first_ = new node(std::forward<decltype(a)>(a)...));
+    q->l_ = node::conv(f);
+
+    if (f)
     {
       // q f
-      first_ = q;
-
-      q->l_ = node::conv(f);
       f->l_ = node::conv(q) ^ node::conv(f->next(nullptr));
     }
     else
     {
-      first_ = last_ = q;
-      q->l_ = {};
+      last_ = q;
     }
 
     ++sz_;
