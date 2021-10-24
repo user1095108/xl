@@ -404,11 +404,11 @@ public:
   }
 
   //
-  void push_back(value_type const& v) { insert(cend(), v); }
-  void push_back(value_type&& v) { insert(cend(), std::move(v)); }
+  void push_back(value_type const& v) { emplace_back(v); }
+  void push_back(value_type&& v) { emplace_back(std::move(v)); }
 
-  void push_front(value_type const& v) { insert(cbegin(), v); }
-  void push_front(value_type&& v) { insert(cbegin(), std::move(v)); }
+  void push_front(value_type const& v) { emplace_front(v); }
+  void push_front(value_type&& v) { emplace_front(std::move(v)); }
 
   //
   void swap(list& o) noexcept
