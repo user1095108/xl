@@ -479,7 +479,7 @@ constexpr auto erase_if(list<V>& c, auto pred)
 }
 
 template <typename V>
-void swap(list<V>& lhs, list<V>& rhs) noexcept
+inline void swap(list<V>& lhs, list<V>& rhs) noexcept
 {
   lhs.swap(rhs);
 }
