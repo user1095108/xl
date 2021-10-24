@@ -309,49 +309,50 @@ public:
   }
 
   //
-  iterator insert(const_iterator const i, auto const& v)
+  iterator insert(const_iterator const i, value_type const& v)
   {
     return emplace(i, v);
   }
 
-  iterator insert(const_iterator const i, auto&& v)
+  iterator insert(const_iterator const i, value_type&& v)
   {
     return emplace(i, std::move(v));
   }
 
-  iterator insert(const_iterator const p, size_type count, auto const& v)
+  iterator insert(const_iterator const i, size_type count,
+    value_type const& v)
   {
     if (count)
     {
-      auto const r(insert(p, v));
+      auto const r(insert(i, v));
 
-      for (--count; count; --count) insert(p, v);
+      for (--count; count; --count) insert(i, v);
 
       return r;
     }
     else
     {
-      return {p.node(), p.prev()};
+      return {i.node(), i.prev()};
     }
   }
 
-  iterator insert(const_iterator const p,
-    std::input_iterator auto const i, decltype(i) j)
+  iterator insert(const_iterator const i,
+    std::input_iterator auto const j, decltype(j) k)
   {
-    if (i == j)
+    if (j == k)
     {
-      return {p.node(), p.prev()};
+      return {i.node(), i.prev()};
     }
     else
     {
-      auto const r(insert(p, *i));
+      auto const r(emplace(i, *j));
 
       std::for_each(
-        std::next(i),
-        j,
+        std::next(j),
+        k,
         [&](auto&& v)
         {
-          insert(p, std::forward<decltype(v)>(v));
+          emplace(i, std::forward<decltype(v)>(v));
         }
       );
 
@@ -359,10 +360,10 @@ public:
     }
   }
 
-  iterator insert(const_iterator const p,
+  iterator insert(const_iterator const i,
     std::initializer_list<value_type> il)
   {
-    return insert(p, il.begin(), il.end());
+    return insert(i, il.begin(), il.end());
   }
 
   //
