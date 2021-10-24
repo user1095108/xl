@@ -73,15 +73,27 @@ public:
   list(list const& o) { *this = o; }
   list(list&& o) noexcept { *this = std::move(o); }
 
-  list(std::input_iterator auto const i, decltype(i) j)
+  list(std::input_iterator auto const i, decltype(i) const j)
   {
-    insert(cend(), i, j);
+    std::for_each(
+      i,
+      j,
+      [&](auto&& v)
+      {
+        emplace_back(std::forward<decltype(v)>(v));
+      }
+    );
   }
 
   ~list() noexcept(noexcept(clear())) { clear(); }
 
   //
-  list& operator=(list const& o) { return assign(o.begin(), o.end()), *this; }
+  list& operator=(list const& o)
+  {
+    assign(o.begin(), o.end());
+
+    return *this;
+  }
 
   list& operator=(list&& o) noexcept
   {
@@ -93,7 +105,9 @@ public:
 
   list& operator=(std::initializer_list<value_type> o)
   {
-    return assign(o.begin(), o.end()), *this;
+    assign(o.begin(), o.end());
+
+    return *this;
   }
 
   //
@@ -179,12 +193,23 @@ public:
   //
   void assign(size_type count, value_type const& v)
   {
-    clear(); insert(cend(), count, v);
+    clear();
+
+    for (; count; --count) emplace_back(v);
   }
 
-  void assign(std::input_iterator auto const i, decltype(i) j)
+  void assign(std::input_iterator auto const i, decltype(i) const j)
   {
-    clear(); insert(cend(), i, j);
+    clear();
+
+    std::for_each(
+      i,
+      j,
+      [&](auto&& v)
+      {
+        emplace_back(std::forward<decltype(v)>(v));
+      }
+    );
   }
 
   void assign(std::initializer_list<value_type> il)
