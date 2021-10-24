@@ -177,7 +177,7 @@ public:
   size_type size() const noexcept { return sz_; }
 
   //
-  void assign(size_type count, auto const& v)
+  void assign(size_type count, value_type const& v)
   {
     clear(); insert(cend(), count, v);
   }
