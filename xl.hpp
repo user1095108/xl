@@ -362,7 +362,7 @@ public:
   }
 
   iterator insert(const_iterator const i,
-    std::input_iterator auto const j, decltype(j) k)
+    std::input_iterator auto const j, decltype(j) const k)
   {
     if (j == k)
     {
