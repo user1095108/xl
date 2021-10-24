@@ -366,9 +366,8 @@ public:
   {
     assert(sz_);
     auto const l0(last_);
-    auto const l1(l0->prev(nullptr));
 
-    if ((last_ = l1))
+    if (auto const l1(last_ = l0->prev(nullptr)); l1)
     {
       l1->l_ = node::conv(l1->prev(l0));
     }
@@ -385,9 +384,8 @@ public:
   {
     assert(sz_);
     auto const f0(first_);
-    auto const f1(f0->next(nullptr));
 
-    if ((first_ = f1))
+    if (auto const f1(first_ = f0->next(nullptr)); f1)
     {
       f1->l_ = node::conv(f1->next(f0));
     }
