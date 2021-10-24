@@ -83,8 +83,8 @@ public:
     return prv_ = prv->prev(n_), n_ = prv, *this;
   }
 
-  auto operator++(int) noexcept { auto const r(*this); return ++*this, r; }
-  auto operator--(int) noexcept { auto const r(*this); return --*this, r; }
+  auto operator++(int) noexcept { auto const r(*this); ++*this; return r; }
+  auto operator--(int) noexcept { auto const r(*this); --*this; return r; }
 
   // member access
   auto operator->() const noexcept { return &std::add_pointer_t<T>(n_)->v_; }
