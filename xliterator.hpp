@@ -56,7 +56,7 @@ public:
   xliterator& operator=(xliterator const&) = default;
   xliterator& operator=(xliterator&&) = default;
 
-  bool operator==(xliterator const& o) const noexcept { return n_ == o.n_; }
+  bool operator==(xliterator const& o) const noexcept { return o.n_ == n_; }
   bool operator!=(xliterator const&) const = default;
 
   // increment, decrement
