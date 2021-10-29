@@ -88,7 +88,8 @@ public:
   ~list() noexcept(noexcept(clear())) { clear(); }
 
   //
-  auto& operator=(list const& o)
+  auto& operator=(list const& o) requires(
+    std::is_copy_assignable_v<value_type>)
   {
     if (this != &o)
     {
