@@ -70,7 +70,12 @@ private:
 public:
   list() = default;
   list(std::initializer_list<value_type> i) { *this = i; }
-  list(list const& o) { *this = o; }
+
+  list(list const& o) requires(std::is_copy_assignable_v<value_type>)
+  {
+    *this = o;
+  }
+
   list(list&& o) noexcept { *this = std::move(o); }
 
   list(std::input_iterator auto const i, decltype(i) const j)
@@ -88,8 +93,9 @@ public:
   ~list() noexcept(noexcept(clear())) { clear(); }
 
   //
-  auto& operator=(list const& o) requires(
-    std::is_copy_assignable_v<value_type>)
+  auto& operator=(list const& o)
+    noexcept(noexcept(assign(o.begin(), o.end())))
+    requires(std::is_copy_assignable_v<value_type>)
   {
     if (this != &o)
     {
@@ -99,7 +105,8 @@ public:
     return *this;
   }
 
-  auto& operator=(list&& o) noexcept(noexcept(delete first_))
+  auto& operator=(list&& o)
+    noexcept(noexcept(delete first_))
   {
     if (this != &o)
     {
