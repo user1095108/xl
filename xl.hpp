@@ -85,6 +85,9 @@ public:
   }
 
   list(std::input_iterator auto const i, decltype(i) const j)
+    noexcept(
+      std::is_nothrow_constructible_v<value_type, decltype(*i)>
+    )
   {
     std::for_each(
       i,
