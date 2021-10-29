@@ -39,9 +39,9 @@ public:
 
     value_type v_;
 
-    explicit node(auto&& ...v) noexcept(noexcept(
-      Value(std::forward<decltype(v)>(v)...))):
-      v_(std::forward<decltype(v)>(v)...)
+    explicit node(auto&& ...a) noexcept(noexcept(
+      Value(std::forward<decltype(a)>(a)...))):
+      v_(std::forward<decltype(a)>(a)...)
     {
     }
 
@@ -88,22 +88,30 @@ public:
   ~list() noexcept(noexcept(clear())) { clear(); }
 
   //
-  list& operator=(list const& o)
+  auto& operator=(list const& o)
   {
-    assign(o.begin(), o.end());
+    if (this != &o)
+    {
+      assign(o.begin(), o.end());
+    }
 
     return *this;
   }
 
-  list& operator=(list&& o) noexcept
+  auto& operator=(list&& o) noexcept(noexcept(delete first_))
   {
-    first_ = o.first_; last_ = o.last_; sz_ = o.sz_;
-    o.first_ = o.last_ = {}; o.sz_ = {};
+    if (this != &o)
+    {
+      clear();
+
+      first_ = o.first_; last_ = o.last_; sz_ = o.sz_;
+      o.first_ = o.last_ = {}; o.sz_ = {};
+    }
 
     return *this;
   }
 
-  list& operator=(std::initializer_list<value_type> o)
+  auto& operator=(std::initializer_list<value_type> o)
   {
     assign(o.begin(), o.end());
 
@@ -118,7 +126,7 @@ public:
   friend bool operator>=(list const&, list const&) = default;
 
   //
-  void clear() noexcept(noexcept(first_->~node()))
+  void clear() noexcept(noexcept(delete first_))
   {
     decltype(first_) prv{};
 
