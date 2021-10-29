@@ -470,13 +470,13 @@ public:
 };
 
 template <typename V>
-inline bool operator==(list<V> const& lhs, list<V> const& rhs) noexcept 
+constexpr bool operator==(list<V> const& lhs, list<V> const& rhs) noexcept
 {
   return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
 template <typename V>
-inline auto operator<=>(list<V> const& lhs, list<V> const& rhs) noexcept
+constexpr auto operator<=>(list<V> const& lhs, list<V> const& rhs) noexcept
 {
   return std::lexicographical_compare_three_way(
     lhs.begin(), lhs.end(), rhs.begin(), rhs.end()
@@ -503,7 +503,7 @@ constexpr auto erase_if(list<V>& c, auto pred)
 }
 
 template <typename V>
-inline void swap(list<V>& lhs, list<V>& rhs) noexcept
+constexpr void swap(list<V>& lhs, list<V>& rhs) noexcept
 {
   lhs.swap(rhs);
 }
