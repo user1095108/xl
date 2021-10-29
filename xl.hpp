@@ -126,6 +126,8 @@ public:
   }
 
   auto& operator=(std::initializer_list<value_type> o)
+    noexcept(noexcept(assign(o.begin(), o.end())))
+    requires(std::is_copy_assignable_v<value_type>)
   {
     assign(o.begin(), o.end());
 
