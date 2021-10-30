@@ -39,8 +39,8 @@ public:
 
     value_type v_;
 
-    explicit node(auto&& ...a) noexcept(noexcept(
-      T(std::forward<decltype(a)>(a)...))):
+    explicit node(auto&& ...a)
+      noexcept(noexcept(T(std::forward<decltype(a)>(a)...))):
       v_(std::forward<decltype(a)>(a)...)
     {
     }
@@ -84,8 +84,7 @@ public:
     *this = o;
   }
 
-  list(list&& o)
-    noexcept(noexcept(*this = std::move(o)))
+  list(list&& o) noexcept(noexcept(*this = std::move(o)))
   {
     *this = std::move(o);
   }
