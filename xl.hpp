@@ -55,6 +55,11 @@ private:
     }
 
     //
+    auto link(auto const p) const noexcept
+    {
+      return reinterpret_cast<node*>(l_);
+    }
+
     auto next(auto const p) const noexcept
     {
       return reinterpret_cast<node*>(conv(p) ^ l_);
@@ -292,7 +297,7 @@ public:
     if (l)
     {
       // l q
-      l->l_ = node::conv(q) ^ node::conv(l->prev(nullptr));
+      l->l_ ^= node::conv(q);
     }
     else
     {
@@ -314,7 +319,7 @@ public:
     if (f)
     {
       // q f
-      f->l_ = node::conv(q) ^ node::conv(f->next(nullptr));
+      f->l_ ^= node::conv(q);
     }
     else
     {
@@ -439,7 +444,7 @@ public:
     assert(sz_);
     auto const l0(last_);
 
-    if (auto const l1(last_ = l0->prev(nullptr)); l1)
+    if (auto const l1(last_ = l0->link()); l1)
     {
       l1->l_ = node::conv(l1->prev(l0));
     }
@@ -458,7 +463,7 @@ public:
     assert(sz_);
     auto const f0(first_);
 
-    if (auto const f1(first_ = f0->next(nullptr)); f1)
+    if (auto const f1(first_ = f0->link()); f1)
     {
       f1->l_ = node::conv(f1->next(f0));
     }
