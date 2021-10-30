@@ -13,13 +13,13 @@
 namespace xl
 {
 
-template <typename Value>
+template <typename T>
 class list
 {
 public:
   struct node;
 
-  using value_type = Value;
+  using value_type = T;
 
   using difference_type = std::ptrdiff_t;
   using size_type = std::size_t;
@@ -40,7 +40,7 @@ public:
     value_type v_;
 
     explicit node(auto&& ...a) noexcept(noexcept(
-      Value(std::forward<decltype(a)>(a)...))):
+      T(std::forward<decltype(a)>(a)...))):
       v_(std::forward<decltype(a)>(a)...)
     {
     }
@@ -71,13 +71,13 @@ public:
   list() = default;
 
   list(std::initializer_list<value_type> il)
-    requires(std::is_copy_constructible_v<Value>)
+    requires(std::is_copy_constructible_v<T>)
   {
     *this = il;
   }
 
   list(list const& o)
-    requires(std::is_copy_constructible_v<Value>)
+    requires(std::is_copy_constructible_v<T>)
   {
     *this = o;
   }
