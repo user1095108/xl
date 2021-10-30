@@ -330,7 +330,7 @@ public:
 
   //
   iterator erase(const_iterator const i)
-    noexcept(noexcept(delete i.node()))
+    noexcept(noexcept(delete first_))
   {
     assert(sz_);
     auto const prv(i.prev());
