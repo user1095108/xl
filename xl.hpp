@@ -55,7 +55,7 @@ private:
     }
 
     //
-    auto link(auto const p) const noexcept
+    auto link() const noexcept
     {
       return reinterpret_cast<node*>(l_);
     }
