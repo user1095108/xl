@@ -105,15 +105,12 @@ public:
 
   ~list() noexcept(noexcept(clear())) { clear(); }
 
-  //
+  // self-assign neglected
   auto& operator=(list const& o)
     noexcept(noexcept(assign(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
-    if (this != &o)
-    {
-      assign(o.begin(), o.end());
-    }
+    assign(o.begin(), o.end());
 
     return *this;
   }
@@ -121,13 +118,10 @@ public:
   auto& operator=(list&& o)
     noexcept(noexcept(delete first_))
   {
-    if (this != &o)
-    {
-      clear();
+    clear();
 
-      first_ = o.first_; last_ = o.last_; sz_ = o.sz_;
-      o.first_ = o.last_ = {}; o.sz_ = {};
-    }
+    first_ = o.first_; last_ = o.last_; sz_ = o.sz_;
+    o.first_ = o.last_ = {}; o.sz_ = {};
 
     return *this;
   }
