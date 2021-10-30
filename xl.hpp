@@ -213,7 +213,7 @@ public:
     for (; count; --count) emplace_back(v);
   }
 
-  void assign(std::input_iterator auto const i, decltype(i) const j)
+  void assign(std::input_iterator auto const i, decltype(i) j)
     requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
     clear();
@@ -374,17 +374,20 @@ public:
 
   //
   iterator insert(const_iterator const i, value_type const& v)
+    requires(std::is_copy_constructible_v<value_type>)
   {
     return emplace(i, v);
   }
 
   iterator insert(const_iterator const i, value_type&& v)
+    requires(std::is_move_constructible_v<value_type>)
   {
     return emplace(i, std::move(v));
   }
 
   iterator insert(const_iterator const i, size_type count,
     value_type const& v)
+    requires(std::is_copy_constructible_v<value_type>)
   {
     if (count)
     {
@@ -401,7 +404,8 @@ public:
   }
 
   iterator insert(const_iterator const i,
-    std::input_iterator auto const j, decltype(j) const k)
+    std::input_iterator auto const j, decltype(j) k)
+    requires(std::is_constructible_v<value_type, decltype(*j)>)
   {
     if (j == k)
     {
@@ -426,12 +430,14 @@ public:
 
   iterator insert(const_iterator const i,
     std::initializer_list<value_type> il)
+    requires(std::is_copy_constructible_v<value_type>)
   {
     return insert(i, il.begin(), il.end());
   }
 
   //
   void pop_back()
+    noexcept(noexcept(delete first_))
   {
     assert(sz_);
     auto const l0(last_);
@@ -450,6 +456,7 @@ public:
   }
 
   void pop_front()
+    noexcept(noexcept(delete first_))
   {
     assert(sz_);
     auto const f0(first_);
@@ -468,11 +475,29 @@ public:
   }
 
   //
-  void push_back(value_type const& v) { emplace_back(v); }
-  void push_back(value_type&& v) { emplace_back(std::move(v)); }
+  void push_back(value_type const& v)
+    requires(std::is_copy_constructible_v<value_type>)
+  {
+    emplace_back(v);
+  }
 
-  void push_front(value_type const& v) { emplace_front(v); }
-  void push_front(value_type&& v) { emplace_front(std::move(v)); }
+  void push_back(value_type&& v)
+    requires(std::is_move_constructible_v<value_type>)
+  {
+    emplace_back(std::move(v));
+  }
+
+  void push_front(value_type const& v)
+    requires(std::is_copy_constructible_v<value_type>)
+  {
+    emplace_front(v);
+  }
+
+  void push_front(value_type&& v)
+    requires(std::is_move_constructible_v<value_type>)
+  {
+    emplace_front(std::move(v));
+  }
 
   //
   void swap(list& o) noexcept
