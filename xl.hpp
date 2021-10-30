@@ -533,30 +533,30 @@ public:
   }
 };
 
-template <typename V>
-constexpr bool operator==(list<V> const& lhs, list<V> const& rhs) noexcept
+template <typename T>
+constexpr bool operator==(list<T> const& lhs, list<T> const& rhs) noexcept
 {
   return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
-template <typename V>
-constexpr auto operator<=>(list<V> const& lhs, list<V> const& rhs) noexcept
+template <typename T>
+constexpr auto operator<=>(list<T> const& lhs, list<T> const& rhs) noexcept
 {
   return std::lexicographical_compare_three_way(
     lhs.begin(), lhs.end(), rhs.begin(), rhs.end()
   );
 }
 
-template <typename V>
-constexpr auto erase(list<V>& c, auto const& k)
+template <typename T>
+constexpr auto erase(list<T>& c, auto const& k)
 {
   return erase_if(c, [&](auto&& v) noexcept {return std::equal_to()(v, k);});
 }
 
-template <typename V>
-constexpr auto erase_if(list<V>& c, auto pred)
+template <typename T>
+constexpr auto erase_if(list<T>& c, auto pred)
 {
-  typename list<V>::size_type r{};
+  typename list<T>::size_type r{};
 
   for (auto i(c.begin()); i.node();)
   {
@@ -566,8 +566,8 @@ constexpr auto erase_if(list<V>& c, auto pred)
   return r;
 }
 
-template <typename V>
-constexpr void swap(list<V>& lhs, list<V>& rhs) noexcept
+template <typename T>
+constexpr void swap(list<T>& lhs, list<T>& rhs) noexcept
 {
   lhs.swap(rhs);
 }
