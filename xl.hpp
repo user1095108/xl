@@ -84,7 +84,8 @@ public:
     *this = o;
   }
 
-  list(list&& o) noexcept(noexcept(*this = std::move(o)))
+  list(list&& o)
+    noexcept(noexcept(*this = std::move(o)))
   {
     *this = std::move(o);
   }
@@ -102,10 +103,7 @@ public:
     );
   }
 
-  ~list() noexcept(noexcept(clear()))
-  {
-    clear();
-  }
+  ~list() noexcept(noexcept(clear())) { clear(); }
 
   //
   auto& operator=(list const& o)
