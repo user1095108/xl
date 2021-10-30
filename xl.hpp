@@ -90,7 +90,7 @@ public:
     *this = std::move(o);
   }
 
-  list(std::input_iterator auto const i, decltype(i) const j)
+  list(std::input_iterator auto const i, decltype(i) j)
     requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
     std::for_each(
@@ -103,10 +103,14 @@ public:
     );
   }
 
-  ~list() noexcept(noexcept(clear())) { clear(); }
+  ~list() noexcept(noexcept(clear()))
+  {
+    clear();
+  }
 
   //
   auto& operator=(list const& o)
+    noexcept(noexcept(assign(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
     if (this != &o)
@@ -132,6 +136,7 @@ public:
   }
 
   auto& operator=(std::initializer_list<value_type> o)
+    noexcept(noexcept(assign(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(o.begin(), o.end());
@@ -147,22 +152,6 @@ public:
   friend bool operator>=(list const&, list const&) = default;
 
   //
-  void clear() noexcept(noexcept(delete first_))
-  {
-    decltype(first_) prv{};
-
-    for (auto n(first_); n;)
-    {
-      auto const nn(n);
-      n = n->next(prv);
-
-      delete (prv = nn);
-    }
-
-    //
-    first_ = last_ = {}; sz_ = {};
-  }
-
   bool empty() const noexcept { return !size(); }
   size_type max_size() const noexcept { return ~size_type{}; }
 
@@ -247,6 +236,23 @@ public:
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(il.begin(), il.end());
+  }
+
+  //
+  void clear() noexcept(noexcept(delete first_))
+  {
+    decltype(first_) prv{};
+
+    for (auto n(first_); n;)
+    {
+      auto const nn(n);
+      n = n->next(prv);
+
+      delete (prv = nn);
+    }
+
+    //
+    first_ = last_ = {}; sz_ = {};
   }
 
   //
