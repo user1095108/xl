@@ -69,11 +69,15 @@ private:
 
 public:
   list() = default;
-  list(std::initializer_list<value_type> i) { *this = i; }
+
+  list(std::initializer_list<value_type> il)
+    requires(std::is_copy_constructible_v<Value>)
+  {
+    *this = il;
+  }
 
   list(list const& o)
-    noexcept(noexcept(*this = o))
-    requires(std::is_copy_assignable_v<value_type>)
+    requires(std::is_copy_constructible_v<Value>)
   {
     *this = o;
   }
@@ -85,9 +89,7 @@ public:
   }
 
   list(std::input_iterator auto const i, decltype(i) const j)
-    noexcept(
-      std::is_nothrow_constructible_v<value_type, decltype(*i)>
-    )
+    requires(std::is_constructible_v<value_type, decltype(*i.begin())>)
   {
     std::for_each(
       i,
@@ -103,8 +105,7 @@ public:
 
   //
   auto& operator=(list const& o)
-    noexcept(noexcept(assign(o.begin(), o.end())))
-    requires(std::is_copy_assignable_v<value_type>)
+    requires(std::is_copy_constructible_v<value_type>)
   {
     if (this != &o)
     {
@@ -129,8 +130,7 @@ public:
   }
 
   auto& operator=(std::initializer_list<value_type> o)
-    noexcept(noexcept(assign(o.begin(), o.end())))
-    requires(std::is_copy_assignable_v<value_type>)
+    requires(std::is_copy_constructible_v<value_type>)
   {
     assign(o.begin(), o.end());
 
@@ -219,6 +219,7 @@ public:
 
   //
   void assign(size_type count, value_type const& v)
+    requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     clear();
 
@@ -226,6 +227,7 @@ public:
   }
 
   void assign(std::input_iterator auto const i, decltype(i) const j)
+    requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
     clear();
 
@@ -240,12 +242,14 @@ public:
   }
 
   void assign(std::initializer_list<value_type> il)
+    requires(std::is_constructible_v<value_type, decltype(*il.begin())>)
   {
     assign(il.begin(), il.end());
   }
 
   //
   iterator emplace(const_iterator const i, auto&& ...a)
+    requires(std::is_constructible_v<value_type, decltype(a)&&...>)
   {
     auto const n(i.node());
     auto const prv(n ? i.prev() : last_);
