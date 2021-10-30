@@ -71,17 +71,17 @@ public:
   list() = default;
 
   list(std::initializer_list<value_type> il)
-    noexcept(noexcept(*this = il))
+    noexcept(noexcept(assign(il.begin(), il.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
-    *this = il;
+    assign(il.begin(), il.end());
   }
 
   list(list const& o)
-    noexcept(noexcept(*this = o))
+    noexcept(noexcept(assign(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
-    *this = o;
+    assign(o.begin(), o.end());
   }
 
   list(list&& o)
