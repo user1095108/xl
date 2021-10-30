@@ -71,13 +71,14 @@ public:
   list() = default;
 
   list(std::initializer_list<value_type> il)
-    requires(std::is_copy_constructible_v<T>)
+    requires(std::is_copy_constructible_v<value_type>)
   {
     *this = il;
   }
 
   list(list const& o)
-    requires(std::is_copy_constructible_v<T>)
+    requires(std::is_copy_constructible_v<value_type>)
+    noexcept(noexcept(*this = o))
   {
     *this = o;
   }
@@ -219,7 +220,7 @@ public:
 
   //
   void assign(size_type count, value_type const& v)
-    requires(std::is_constructible_v<value_type, decltype(v)>)
+    requires(std::is_copy_constructible_v<value_type>)
   {
     clear();
 
@@ -242,7 +243,7 @@ public:
   }
 
   void assign(std::initializer_list<value_type> il)
-    requires(std::is_constructible_v<value_type, decltype(*il.begin())>)
+    requires(std::is_copy_constructible_v<value_type>)
   {
     assign(il.begin(), il.end());
   }
@@ -281,6 +282,7 @@ public:
   }
 
   iterator emplace_back(auto&& ...a)
+    requires(std::is_constructible_v<value_type, decltype(a)&&...>)
   {
     auto const l(last_);
 
@@ -302,6 +304,7 @@ public:
   }
 
   iterator emplace_front(auto&& ...a)
+    requires(std::is_constructible_v<value_type, decltype(a)&&...>)
   {
     auto const f(first_);
 
