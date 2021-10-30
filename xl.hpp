@@ -16,9 +16,11 @@ namespace xl
 template <typename T>
 class list
 {
-public:
   struct node;
+  friend class xliterator<node>;
+  friend class xliterator<node const>;
 
+public:
   using value_type = T;
 
   using difference_type = std::ptrdiff_t;
@@ -31,6 +33,7 @@ public:
   using iterator = xliterator<node>;
   using reverse_iterator = std::reverse_iterator<iterator>;
 
+private:
   struct node
   {
     using value_type = list::value_type;
