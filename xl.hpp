@@ -533,21 +533,19 @@ public:
 
     s(s, begin(), end(), size());
   }
+
+  friend bool operator==(list const& lhs, list const& rhs) noexcept
+  {
+    return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+  }
+
+  friend auto operator<=>(list const& lhs, list const& rhs) noexcept
+  {
+    return std::lexicographical_compare_three_way(
+      lhs.begin(), lhs.end(), rhs.begin(), rhs.end()
+    );
+  }
 };
-
-template <typename T>
-constexpr bool operator==(list<T> const& lhs, list<T> const& rhs) noexcept
-{
-  return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
-}
-
-template <typename T>
-constexpr auto operator<=>(list<T> const& lhs, list<T> const& rhs) noexcept
-{
-  return std::lexicographical_compare_three_way(
-    lhs.begin(), lhs.end(), rhs.begin(), rhs.end()
-  );
-}
 
 template <typename T>
 constexpr auto erase(list<T>& c, auto const& k)
