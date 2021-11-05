@@ -54,7 +54,6 @@ private:
       return (std::uintptr_t(n) ^ ...);
     }
 
-
     //
     auto link() const noexcept
     {
