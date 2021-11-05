@@ -49,10 +49,11 @@ private:
     }
 
     //
-    static constexpr auto conv(auto const n) noexcept
+    static constexpr auto conv(auto const ...n) noexcept
     {
-      return decltype(l_)(n);
+      return (std::uintptr_t(n) ^ ...);
     }
+
 
     //
     auto link() const noexcept
@@ -262,11 +263,11 @@ public:
 
     // prv q n
     auto const q(new node(std::forward<decltype(a)>(a)...));
-    q->l_ = node::conv(prv) ^ node::conv(n);
+    q->l_ = node::conv(prv, n);
 
     if (n)
     {
-      n->l_ = node::conv(q) ^ node::conv(n->next(prv));
+      n->l_ = node::conv(q, n->next(prv));
     }
     else
     {
@@ -275,7 +276,7 @@ public:
 
     if (prv)
     {
-      prv->l_ = node::conv(q) ^ node::conv(prv->prev(n));
+      prv->l_ = node::conv(q, prv->prev(n));
     }
     else
     {
@@ -342,7 +343,7 @@ public:
     // prv n nxt
     if (prv)
     {
-      prv->l_ = node::conv(nxt) ^ node::conv(prv->prev(n));
+      prv->l_ = node::conv(nxt, prv->prev(n));
     }
     else
     {
@@ -351,7 +352,7 @@ public:
 
     if (nxt)
     {
-      nxt->l_ = node::conv(prv) ^ node::conv(nxt->next(n));
+      nxt->l_ = node::conv(prv, nxt->next(n));
     }
     else
     {
