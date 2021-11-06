@@ -2,7 +2,6 @@
 # define XL_XL_HPP
 # pragma once
 
-#include <cassert>
 #include <cstdint>
 
 #include <algorithm>
@@ -334,7 +333,6 @@ public:
   iterator erase(const_iterator const i)
     noexcept(noexcept(delete first_))
   {
-    assert(sz_);
     auto const prv(i.prev());
     auto const n(i.node());
     auto const nxt(n->next(prv));
@@ -441,7 +439,6 @@ public:
   void pop_back()
     noexcept(noexcept(delete first_))
   {
-    assert(sz_);
     auto const l0(last_);
 
     if (auto const l1(last_ = l0->link()); l1)
@@ -460,7 +457,6 @@ public:
   void pop_front()
     noexcept(noexcept(delete first_))
   {
-    assert(sz_);
     auto const f0(first_);
 
     if (auto const f1(first_ = f0->link()); f1)
