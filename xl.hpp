@@ -48,6 +48,14 @@ private:
     }
 
     //
+    static constexpr auto assign(auto& ...a) noexcept
+    {
+      return [&](auto const ...v) noexcept
+        {
+          ((a = std::forward<decltype(v)>(v)), ...);
+        };
+    }
+
     static constexpr auto conv(auto const ...n) noexcept
     {
       return (std::uintptr_t(n) ^ ...);
@@ -238,14 +246,13 @@ public:
   //
   void clear() noexcept(noexcept(delete first_))
   {
-    decltype(first_) prv{};
+    decltype(first_) p{};
 
     for (auto n(first_); n;)
     {
-      auto const nn(n);
-      n = n->next(prv);
+      node::assign(n, p)(n->next(p), n);
 
-      delete (prv = nn);
+      delete p;
     }
 
     //
@@ -257,24 +264,24 @@ public:
     requires(std::is_constructible_v<value_type, decltype(a)&&...>)
   {
     auto const n(i.node());
-    auto const prv(n ? i.prev() : last_);
+    auto const p(n ? i.prev() : last_);
 
-    // prv q n
+    // p q n
     auto const q(new node(std::forward<decltype(a)>(a)...));
-    q->l_ = node::conv(prv, n);
+    q->l_ = node::conv(p, n);
 
     if (n)
     {
-      n->l_ = node::conv(q, n->next(prv));
+      n->l_ = node::conv(q, n->next(p));
     }
     else
     {
       last_ = q;
     }
 
-    if (prv)
+    if (p)
     {
-      prv->l_ = node::conv(q, prv->prev(n));
+      p->l_ = node::conv(q, p->prev(n));
     }
     else
     {
@@ -282,7 +289,7 @@ public:
     }
 
     ++sz_;
-    return {q, prv};
+    return {q, p};
   }
 
   iterator emplace_back(auto&& ...a)
@@ -333,14 +340,14 @@ public:
   iterator erase(const_iterator const i)
     noexcept(noexcept(delete first_))
   {
-    auto const prv(i.prev());
+    auto const p(i.prev());
     auto const n(i.node());
-    auto const nxt(n->next(prv));
+    auto const nxt(n->next(p));
 
-    // prv n nxt
-    if (prv)
+    // p n nxt
+    if (p)
     {
-      prv->l_ = node::conv(nxt, prv->prev(n));
+      p->l_ = node::conv(nxt, p->prev(n));
     }
     else
     {
@@ -349,17 +356,17 @@ public:
 
     if (nxt)
     {
-      nxt->l_ = node::conv(prv, nxt->next(n));
+      nxt->l_ = node::conv(p, nxt->next(n));
     }
     else
     {
-      last_ = prv;
+      last_ = p;
     }
 
     --sz_;
     delete n;
 
-    return iterator{nxt, prv};
+    return iterator{nxt, p};
   }
 
   iterator erase(const_iterator a, const_iterator const b)
