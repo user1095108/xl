@@ -50,10 +50,7 @@ private:
     //
     static constexpr auto assign(auto& ...a) noexcept
     {
-      return [&](auto const ...v) noexcept
-        {
-          ((a = std::forward<decltype(v)>(v)), ...);
-        };
+      return [&](auto const ...v) noexcept { ((a = v), ...); };
     }
 
     static constexpr auto conv(auto const ...n) noexcept
