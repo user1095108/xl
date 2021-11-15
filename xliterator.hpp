@@ -6,6 +6,9 @@
 
 #include <type_traits>
 
+namespace xl
+{
+
 template <typename T>
 class xliterator
 {
@@ -20,7 +23,7 @@ class xliterator
   using node_t = std::remove_const_t<T>;
 
   node_t* n_{};
-  node_t* prv_;
+  node_t* p_;
 
 public:
   using iterator_category = std::bidirectional_iterator_tag;
@@ -37,9 +40,9 @@ public:
 public:
   xliterator() = default;
 
-  xliterator(node_t* const n, node_t* const prv) noexcept:
+  xliterator(node_t* const n, node_t* const p) noexcept:
     n_(n),
-    prv_(prv)
+    p_(p)
   {
   }
 
@@ -48,7 +51,7 @@ public:
 
   xliterator(inverse_const_t const& o) noexcept requires(std::is_const_v<T>):
     n_(o.n_),
-    prv_(o.prv_)
+    p_(o.p_)
   {
   }
 
@@ -62,12 +65,14 @@ public:
   // increment, decrement
   auto& operator++() noexcept
   {
-    auto const n(n_); n_ = n->next(prv_); prv_ = n; return *this;
+    node_t::assign(n_, p_)(n_->next(p_), n_);
+    return *this;
   }
 
   auto& operator--() noexcept
   {
-    auto const prv(prv_); prv_ = prv->prev(n_); n_ = prv; return *this;
+    node_t::assign(n_, p_)(p_, p_->prev(n_));
+    return *this;
   }
 
   auto operator++(int) noexcept { auto const r(*this); ++*this; return r; }
@@ -79,7 +84,9 @@ public:
 
   //
   auto node() const noexcept { return n_; }
-  auto prev() const noexcept { return prv_; }
+  auto prev() const noexcept { return p_; }
 };
+
+}
 
 #endif // XL_ITERATOR_HPP
