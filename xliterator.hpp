@@ -22,7 +22,7 @@ class xliterator
 
   using node_t = std::remove_const_t<T>;
 
-  node_t* n_{};
+  node_t* n_;
   node_t* p_;
 
 public:
