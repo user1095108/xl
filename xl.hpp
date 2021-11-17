@@ -243,9 +243,7 @@ public:
   //
   void clear() noexcept(noexcept(delete first_))
   {
-    decltype(first_) p{};
-
-    for (auto n(first_); n;)
+    for (decltype(first_) n(first_), p{}; n;)
     {
       node::assign(n, p)(n->next(p), n);
 
