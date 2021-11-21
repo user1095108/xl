@@ -83,8 +83,8 @@ public:
   auto& operator*() const noexcept { return std::add_pointer_t<T>(n_)->v_; }
 
   //
-  auto node() const noexcept { return n_; }
-  auto prev() const noexcept { return p_; }
+  auto n() const noexcept { return n_; }
+  auto p() const noexcept { return p_; }
 };
 
 }

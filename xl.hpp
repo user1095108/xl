@@ -258,8 +258,8 @@ public:
   iterator emplace(const_iterator const i, auto&& ...a)
     requires(std::is_constructible_v<value_type, decltype(a)&&...>)
   {
-    auto const n(i.node());
-    auto const p(n ? i.prev() : last_);
+    auto const n(i.n());
+    auto const p(n ? i.p() : last_);
 
     // p q n
     auto const q(new node(std::forward<decltype(a)>(a)...));
@@ -335,8 +335,8 @@ public:
   iterator erase(const_iterator const i)
     noexcept(noexcept(delete first_))
   {
-    auto const p(i.prev());
-    auto const n(i.node());
+    auto const p(i.p());
+    auto const n(i.n());
     auto const nxt(n->next(p));
 
     // p n nxt
@@ -401,7 +401,7 @@ public:
     }
     else
     {
-      return {i.node(), i.prev()};
+      return {i.n(), i.p()};
     }
   }
 
@@ -411,7 +411,7 @@ public:
   {
     if (j == k)
     {
-      return {i.node(), i.prev()};
+      return {i.n(), i.p()};
     }
     else
     {
