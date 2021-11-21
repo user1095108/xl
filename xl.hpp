@@ -502,7 +502,8 @@ public:
   //
   void swap(list& o) noexcept
   {
-    std::swap(first_, o.first_); std::swap(last_, o.last_);
+    std::swap(first_, o.first_);
+    std::swap(last_, o.last_);
     std::swap(sz_, o.sz_);
   }
 
