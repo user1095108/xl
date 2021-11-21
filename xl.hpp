@@ -556,7 +556,7 @@ constexpr auto erase_if(list<T>& c, auto pred)
 {
   typename list<T>::size_type r{};
 
-  for (auto i(c.begin()); i.node();)
+  for (auto i(c.begin()); i.n();)
   {
     i = pred(*i) ? (++r, c.erase(i)) : std::next(i);
   }
