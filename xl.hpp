@@ -83,14 +83,12 @@ public:
   list() = default;
 
   list(std::initializer_list<value_type> il)
-    noexcept(noexcept(assign(il.begin(), il.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(il.begin(), il.end());
   }
 
   list(list const& o)
-    noexcept(noexcept(assign(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(o.begin(), o.end());
@@ -119,7 +117,6 @@ public:
 
   // self-assign neglected
   auto& operator=(list const& o)
-    noexcept(noexcept(assign(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(o.begin(), o.end());
