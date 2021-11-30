@@ -536,11 +536,7 @@ public:
   void reverse() noexcept { std::swap(first_, last_); }
 
   void sort() { sort(std::less<value_type>()); }
-
-  void sort(auto cmp)
-  {
-    node::sort(begin(), end(), size(), cmp);
-  }
+  void sort(auto cmp) { node::sort(begin(), end(), size(), cmp); }
 
   //
   friend auto erase(list& c, auto const& k)
