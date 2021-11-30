@@ -558,10 +558,12 @@ public:
     return r;
   }
 
+  /*
   friend void sort(auto const b, decltype(b) e)
   {
     node::sort(b, e, std::distance(b, e), std::less<value_type>());
   }
+  */
 
   friend void sort(auto const b, decltype(b) e, auto cmp)
   {
