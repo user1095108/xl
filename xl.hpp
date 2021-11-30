@@ -545,7 +545,7 @@ public:
   //
   friend auto erase(list& c, auto const& k)
   {
-    return erase_if(c, [&](auto&& v) noexcept {return std::equal_to()(v, k);});
+    return erase_if(c, [&](auto&& v) noexcept{return std::equal_to()(v, k);});
   }
 
   friend auto erase_if(list& c, auto pred)
