@@ -558,6 +558,11 @@ public:
     return r;
   }
 
+  friend void sort(iterator const b, decltype(b) e)
+  {
+    sort(b, e, std::distance(b, e), std::less<value_type>());
+  }
+
   friend void sort(iterator const b, decltype(b) e, auto cmp)
   {
     node::sort(b, e, std::distance(b, e), cmp);
