@@ -455,11 +455,10 @@ public:
     }
   }
 
-  iterator insert(const_iterator const i,
-    std::initializer_list<value_type> il)
+  iterator insert(const_iterator const i, std::initializer_list<value_type> l)
     requires(std::is_copy_constructible_v<value_type>)
   {
-    return insert(i, il.begin(), il.end());
+    return insert(i, l.begin(), l.end());
   }
 
   //
