@@ -144,6 +144,18 @@ public:
   }
 
   //
+  friend bool operator==(list const& lhs, list const& rhs) noexcept
+  {
+    return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+  }
+
+  friend auto operator<=>(list const& lhs, list const& rhs) noexcept
+  {
+    return std::lexicographical_compare_three_way(
+      lhs.begin(), lhs.end(), rhs.begin(), rhs.end()
+    );
+  }
+
   friend bool operator!=(list const&, list const&) = default;
   friend bool operator<(list const&, list const&) = default;
   friend bool operator<=(list const&, list const&) = default;
@@ -528,18 +540,6 @@ public:
     );
 
     s(s, begin(), end(), size());
-  }
-
-  friend bool operator==(list const& lhs, list const& rhs) noexcept
-  {
-    return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
-  }
-
-  friend auto operator<=>(list const& lhs, list const& rhs) noexcept
-  {
-    return std::lexicographical_compare_three_way(
-      lhs.begin(), lhs.end(), rhs.begin(), rhs.end()
-    );
   }
 
   //
