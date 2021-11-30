@@ -541,32 +541,30 @@ public:
       lhs.begin(), lhs.end(), rhs.begin(), rhs.end()
     );
   }
-};
 
-template <typename T>
-constexpr auto erase(list<T>& c, auto const& k)
-{
-  return erase_if(c, [&](auto&& v) noexcept {return std::equal_to()(v, k);});
-}
-
-template <typename T>
-constexpr auto erase_if(list<T>& c, auto pred)
-{
-  typename list<T>::size_type r{};
-
-  for (auto i(c.begin()); i.n();)
+  //
+  friend auto erase(list& c, auto const& k)
   {
-    i = pred(*i) ? (++r, c.erase(i)) : std::next(i);
+    return erase_if(c, [&](auto&& v) noexcept {return std::equal_to()(v, k);});
   }
 
-  return r;
-}
+  friend auto erase_if(list& c, auto pred)
+  {
+    typename list<T>::size_type r{};
 
-template <typename T>
-constexpr void swap(list<T>& lhs, list<T>& rhs) noexcept
-{
-  lhs.swap(rhs);
-}
+    for (auto i(c.begin()); i.n();)
+    {
+      i = pred(*i) ? (++r, c.erase(i)) : std::next(i);
+    }
+
+    return r;
+  }
+
+  friend void swap(list& lhs, list& rhs) noexcept
+  {
+    lhs.swap(rhs);
+  }
+};
 
 }
 
