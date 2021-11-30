@@ -560,10 +560,7 @@ public:
     return r;
   }
 
-  friend void swap(list& lhs, list& rhs) noexcept
-  {
-    lhs.swap(rhs);
-  }
+  friend void swap(list& lhs, decltype(lhs) rhs) noexcept { lhs.swap(rhs); }
 };
 
 }
