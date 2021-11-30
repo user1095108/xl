@@ -550,7 +550,7 @@ public:
 
   friend auto erase_if(list& c, auto pred)
   {
-    typename list<T>::size_type r{};
+    size_type r{};
 
     for (auto i(c.begin()); i.n();)
     {
