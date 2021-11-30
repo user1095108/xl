@@ -73,6 +73,22 @@ private:
     {
       return reinterpret_cast<node*>(conv(p) ^ l_);
     }
+
+    //
+    static void sort(auto const b, decltype(b) e, size_type const sz,
+      auto&& cmp)
+    {
+      if (sz > 1)
+      {
+        auto const hsz(sz / 2);
+        auto const m(std::next(b, hsz));
+
+        sort(b, m, hsz, std::forward<decltype(cmp)>(cmp));
+        sort(m, e, sz - hsz, std::forward<decltype(cmp)>(cmp));
+
+        std::inplace_merge(b, m, e, cmp);
+      }
+    }
   };
 
 private:
@@ -523,32 +539,18 @@ public:
 
   void sort(auto cmp)
   {
-    auto const s([&](auto&& s,
-      auto const begin, auto const end, auto const sz) -> void
-      {
-        if (sz > 1)
-        {
-          auto const hsz(sz / 2);
-          auto const m(std::next(begin, hsz));
-
-          s(s, begin, m, hsz);
-          s(s, m, end, sz - hsz);
-
-          std::inplace_merge(begin, m, end, cmp);
-        }
-      }
-    );
-
-    s(s, begin(), end(), size());
+    node::sort(begin(), end(), size(), cmp);
   }
 
   //
   friend auto erase(list& c, auto const& k)
+    noexcept(noexcept(delete first_))
   {
     return erase_if(c, [&](auto&& v) noexcept{return std::equal_to()(v, k);});
   }
 
   friend auto erase_if(list& c, auto pred)
+    noexcept(noexcept(delete first_))
   {
     size_type r{};
 
@@ -558,6 +560,11 @@ public:
     }
 
     return r;
+  }
+
+  friend void sort(iterator const b, decltype(b) e, auto cmp)
+  {
+    node::sort(b, e, std::distance(b, e), cmp);
   }
 
   friend void swap(list& lhs, decltype(lhs) rhs) noexcept { lhs.swap(rhs); }
