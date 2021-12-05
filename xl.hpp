@@ -534,8 +534,10 @@ public:
   //
   void reverse() noexcept { std::swap(first_, last_); }
 
-  void sort() { sort(std::less<value_type>()); }
-  void sort(auto cmp) { node::sort(begin(), end(), size(), cmp); }
+  void sort(auto cmp = std::less<value_type>())
+  {
+    node::sort(begin(), end(), size(), cmp);
+  }
 
   //
   friend auto erase(list& c, auto const& k)
@@ -557,14 +559,8 @@ public:
     return r;
   }
 
-  friend void sort(auto const b, decltype(b) e)
-    requires(std::is_same_v<iterator, std::remove_const_t<decltype(b)>> ||
-      std::is_same_v<reverse_iterator, std::remove_const_t<decltype(b)>>)
-  {
-    node::sort(b, e, std::distance(b, e), std::less<value_type>());
-  }
-
-  friend void sort(auto const b, decltype(b) e, auto cmp)
+  friend void sort(auto const b, decltype(b) e,
+    auto cmp = std::less<value_type>())
     requires(std::is_same_v<iterator, std::remove_const_t<decltype(b)>> ||
       std::is_same_v<reverse_iterator, std::remove_const_t<decltype(b)>>)
   {
