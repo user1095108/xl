@@ -64,13 +64,13 @@ public:
   // increment, decrement
   auto& operator++() noexcept
   {
-    node_t::assign(n_, p_)(n_->next(p_), n_);
+    node_t::assign(n_, p_)(n_->xlink(p_), n_);
     return *this;
   }
 
   auto& operator--() noexcept
   {
-    node_t::assign(n_, p_)(p_, p_->prev(n_));
+    node_t::assign(n_, p_)(p_, p_->xlink(n_));
     return *this;
   }
 
