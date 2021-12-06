@@ -22,8 +22,7 @@ class xliterator
 
   using node_t = std::remove_const_t<T>;
 
-  node_t* n_;
-  node_t* p_;
+  node_t* n_, *p_;
 
 public:
   using iterator_category = std::bidirectional_iterator_tag;
