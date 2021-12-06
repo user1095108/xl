@@ -21,7 +21,6 @@ class xliterator
   friend inverse_const_t;
 
   using node_t = std::remove_const_t<T>;
-
   node_t* n_, *p_;
 
 public:
