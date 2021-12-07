@@ -564,7 +564,7 @@ public:
     requires(std::is_same_v<iterator, std::remove_const_t<decltype(b)>> ||
       std::is_same_v<reverse_iterator, std::remove_const_t<decltype(b)>>)
   {
-    node::sort(b, e, std::less<value_type>());
+    sort(b, e, std::less<value_type>());
   }
 
   friend void swap(list& lhs, decltype(lhs) rhs) noexcept { lhs.swap(rhs); }
