@@ -97,6 +97,7 @@ public:
   }
 
   list(list const& o)
+    noexcept(noexcept(*this = o))
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(o.begin(), o.end());
@@ -558,7 +559,7 @@ public:
     requires(std::is_same_v<iterator, std::remove_const_t<decltype(b)>> ||
       std::is_same_v<reverse_iterator, std::remove_const_t<decltype(b)>>)
   {
-    sort(b, e, std::less<value_type>());
+    node::sort(b, e, std::distance(b, e), std::less<value_type>());
   }
 
   friend void sort(auto const b, decltype(b) e, auto&& cmp)
