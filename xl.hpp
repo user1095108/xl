@@ -58,6 +58,16 @@ private:
       return (std::uintptr_t(n) ^ ...);
     }
 
+    static void destroy(auto n) noexcept(noexcept(delete n))
+    {
+      for (decltype(n) p{}; n;)
+      {
+        assign(n, p)(n->xlink(p), n);
+
+        delete p;
+      }
+    }
+
     //
     auto link() const noexcept { return reinterpret_cast<node*>(l_); }
 
@@ -121,7 +131,7 @@ public:
     );
   }
 
-  ~list() noexcept(noexcept(clear())) { clear(); }
+  ~list() noexcept(noexcept(node::destroy(first_))) { node::destroy(first_); }
 
   // self-assign neglected
   auto& operator=(list const& o)
@@ -260,12 +270,7 @@ public:
   //
   void clear() noexcept(noexcept(delete first_))
   {
-    for (decltype(first_) n(first_), p{}; n;)
-    {
-      node::assign(n, p)(n->xlink(p), n);
-
-      delete p;
-    }
+    node::destroy(first_);
 
     //
     first_ = last_ = {}; sz_ = {};
