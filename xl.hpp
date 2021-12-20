@@ -63,7 +63,7 @@ private:
 
     auto xlink(auto const n) const noexcept
     {
-      return reinterpret_cast<node*>(conv(n) ^ l_);
+      return reinterpret_cast<node*>(std::uintptr_t(n) ^ l_);
     }
 
     //
@@ -104,6 +104,7 @@ public:
 
   list(list&& o)
     noexcept(noexcept(*this = std::move(o)))
+    requires(std::is_move_constructible_v<value_type>)
   {
     *this = std::move(o);
   }
