@@ -97,14 +97,12 @@ public:
   }
 
   list(list const& o)
-    noexcept(noexcept(*this = o))
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(o.begin(), o.end());
   }
 
   list(list&& o)
-    noexcept(noexcept(*this = std::move(o)))
     requires(std::is_move_constructible_v<value_type>)
   {
     *this = std::move(o);
@@ -145,10 +143,10 @@ public:
     return *this;
   }
 
-  auto& operator=(std::initializer_list<value_type> o)
+  auto& operator=(std::initializer_list<value_type> il)
     requires(std::is_copy_constructible_v<value_type>)
   {
-    assign(o.begin(), o.end());
+    assign(il.begin(), il.end());
 
     return *this;
   }
