@@ -357,8 +357,8 @@ public:
   iterator erase(const_iterator const i)
     noexcept(noexcept(delete first_))
   {
-    auto const p(i.p());
     auto const n(i.n());
+    auto const p(i.p());
     auto const nxt(n->xlink(p));
 
     // p n nxt
