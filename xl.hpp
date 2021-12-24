@@ -285,7 +285,7 @@ public:
 
     // p q n
     auto const q(new node(std::forward<decltype(a)>(a)...));
-    q->l_ = node::conv(p, n);
+    q->l_ = node::conv(n, p);
 
     if (n)
     {
