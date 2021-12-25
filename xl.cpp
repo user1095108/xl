@@ -44,12 +44,9 @@ int main()
     }
   );
 
-  std::cout << "==: " << (l == l) << std::endl;
+  decltype(l) a(l), b(std::move(l));
 
-  decltype(l) a(l);
-  decltype(l) b(std::move(l));
-
-  std::cout << a.size() << " " << b.size() << std::endl;
+  std::cout << a.size() << " " << b.size() << " " << (a == b) << std::endl;
 
   return 0;
 }
