@@ -218,12 +218,12 @@ public:
   }
 
   //
-  auto& operator[](size_type const i) noexcept
+  constexpr auto& operator[](size_type const i) noexcept
   {
     return *std::next(begin(), i);
   }
 
-  auto& operator[](size_type const i) const noexcept
+  constexpr auto& operator[](size_type const i) const noexcept
   {
     return *std::next(begin(), i);
   }
@@ -239,13 +239,13 @@ public:
     return *std::next(cbegin(), i);
   }
 
-  auto& back() noexcept { return last_->v_; }
-  auto& back() const noexcept { return std::as_const(last_->v_); }
+  constexpr auto& back() noexcept { return last_->v_; }
+  constexpr auto& back() const noexcept { return std::as_const(last_->v_); }
 
-  auto& front() noexcept { return first_->v_; }
-  auto& front() const noexcept { return std::as_const(first_->v_); }
+  constexpr auto& front() noexcept { return first_->v_; }
+  constexpr auto& front() const noexcept { return std::as_const(first_->v_); }
 
-  size_type size() const noexcept { return sz_; }
+  constexpr size_type size() const noexcept { return sz_; }
 
   //
   void assign(size_type count, value_type const& v)
