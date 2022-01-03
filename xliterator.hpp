@@ -53,12 +53,9 @@ public:
   {
   }
 
-  //
+  // assignment
   xliterator& operator=(xliterator const&) = default;
   xliterator& operator=(xliterator&&) = default;
-
-  bool operator==(xliterator const& o) const noexcept { return o.n_ == n_; }
-  bool operator!=(xliterator const&) const = default;
 
   // increment, decrement
   auto& operator++() noexcept
@@ -75,6 +72,10 @@ public:
 
   auto operator++(int) noexcept { auto const r(*this); ++*this; return r; }
   auto operator--(int) noexcept { auto const r(*this); --*this; return r; }
+
+  // comparison
+  bool operator==(xliterator const& o) const noexcept { return o.n_ == n_; }
+  bool operator!=(xliterator const&) const = default;
 
   // member access
   auto operator->() const noexcept { return &std::add_pointer_t<T>(n_)->v_; }
