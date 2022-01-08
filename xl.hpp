@@ -38,7 +38,6 @@ private:
     using value_type = list::value_type;
 
     std::uintptr_t l_;
-
     value_type v_;
 
     explicit node(auto&& ...a)
