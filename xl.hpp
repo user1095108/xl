@@ -94,7 +94,6 @@ private:
 
 private:
   node* first_{}, *last_{};
-  size_type sz_{};
 
 public:
   list() = default;
@@ -146,8 +145,8 @@ public:
   {
     clear();
 
-    first_ = o.first_; last_ = o.last_; sz_ = o.sz_;
-    o.first_ = o.last_ = {}; o.sz_ = {};
+    first_ = o.first_; last_ = o.last_;
+    o.first_ = o.last_ = {};
 
     return *this;
   }
@@ -180,7 +179,7 @@ public:
   friend bool operator>=(list const&, list const&) = default;
 
   //
-  bool empty() const noexcept { return !size(); }
+  bool empty() const noexcept { return !first_; }
   size_type max_size() const noexcept { return ~size_type{}; }
 
   // iterators
@@ -244,7 +243,19 @@ public:
   constexpr auto& front() noexcept { return first_->v_; }
   constexpr auto const& front() const noexcept { return first_->v_; }
 
-  constexpr size_type size() const noexcept { return sz_; }
+  constexpr size_type size() const noexcept
+  {
+    size_type sz{};
+
+    for (decltype(first_) n(first_), p{}; n;)
+    {
+      node::assign(n, p)(n->xlink(p), n);
+
+      ++sz;
+    }
+
+    return sz;
+  }
 
   //
   void assign(size_type count, value_type const& v)
@@ -282,7 +293,7 @@ public:
     node::destroy(first_);
 
     //
-    first_ = last_ = {}; sz_ = {};
+    first_ = last_ = {};
   }
 
   //
@@ -314,7 +325,6 @@ public:
       first_ = q;
     }
 
-    ++sz_;
     return {q, p};
   }
 
@@ -336,7 +346,6 @@ public:
       first_ = q;
     }
 
-    ++sz_;
     return {q, l};
   }
 
@@ -358,7 +367,6 @@ public:
       last_ = q;
     }
 
-    ++sz_;
     return {q, {}};
   }
 
@@ -389,7 +397,6 @@ public:
       last_ = p;
     }
 
-    --sz_;
     delete n;
 
     return iterator{nxt, p};
@@ -483,7 +490,6 @@ public:
       first_ = {};
     }
 
-    --sz_;
     delete l0;
   }
 
@@ -501,7 +507,6 @@ public:
       last_ = {};
     }
 
-    --sz_;
     delete f0;
   }
 
@@ -535,7 +540,6 @@ public:
   {
     std::swap(first_, o.first_);
     std::swap(last_, o.last_);
-    std::swap(sz_, o.sz_);
   }
 
   //
