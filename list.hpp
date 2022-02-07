@@ -1,5 +1,5 @@
-#ifndef XL_XL_HPP
-# define XL_XL_HPP
+#ifndef XL_LIST_HPP
+# define XL_LIST_HPP
 # pragma once
 
 #include <cstdint>
@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <compare>
 
-#include "xliterator.hpp"
+#include "listiterator.hpp"
 
 namespace xl
 {
@@ -16,8 +16,9 @@ template <typename T>
 class list
 {
   struct node;
-  friend class xliterator<node>;
-  friend class xliterator<node const>;
+
+  friend class listiterator<node>;
+  friend class listiterator<node const>;
 
 public:
   using value_type = T;
@@ -27,9 +28,9 @@ public:
   using reference = value_type&;
   using const_reference = value_type const&;
 
-  using const_iterator = xliterator<node const>;
+  using const_iterator = listiterator<node const>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
-  using iterator = xliterator<node>;
+  using iterator = listiterator<node>;
   using reverse_iterator = std::reverse_iterator<iterator>;
 
 private:
@@ -584,4 +585,4 @@ public:
 
 }
 
-#endif // XL_XL_HPP
+#endif // XL_LIST_HPP
