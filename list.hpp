@@ -62,16 +62,14 @@ private:
     {
       for (decltype(n) p{}; n;)
       {
-        assign(n, p)(n->xlink(p), n);
+        assign(n, p)(n->link(p), n);
 
         delete p;
       }
     }
 
     //
-    auto link() const noexcept { return reinterpret_cast<node*>(l_); }
-
-    auto xlink(auto const n) const noexcept
+    auto link(auto const n = nullptr) const noexcept
     {
       return reinterpret_cast<node*>(std::uintptr_t(n) ^ l_);
     }
@@ -250,7 +248,7 @@ public:
 
     for (decltype(first_) n(first_), p{}; n; ++sz)
     {
-      node::assign(n, p)(n->xlink(p), n);
+      node::assign(n, p)(n->link(p), n);
     }
 
     return sz;
@@ -308,7 +306,7 @@ public:
 
     if (n)
     {
-      n->l_ = node::conv(q, n->xlink(p));
+      n->l_ = node::conv(q, n->link(p));
     }
     else
     {
@@ -317,7 +315,7 @@ public:
 
     if (p)
     {
-      p->l_ = node::conv(q, p->xlink(n));
+      p->l_ = node::conv(q, p->link(n));
     }
     else
     {
@@ -375,12 +373,12 @@ public:
   {
     auto const n(i.n());
     auto const p(i.p());
-    auto const nxt(n->xlink(p));
+    auto const nxt(n->link(p));
 
     // p n nxt
     if (p)
     {
-      p->l_ = node::conv(nxt, p->xlink(n));
+      p->l_ = node::conv(nxt, p->link(n));
     }
     else
     {
@@ -389,7 +387,7 @@ public:
 
     if (nxt)
     {
-      nxt->l_ = node::conv(p, nxt->xlink(n));
+      nxt->l_ = node::conv(p, nxt->link(n));
     }
     else
     {
@@ -482,7 +480,7 @@ public:
 
     if (auto const l1(last_ = l0->link()); l1)
     {
-      l1->l_ = node::conv(l1->xlink(l0));
+      l1->l_ = node::conv(l1->link(l0));
     }
     else
     {
@@ -499,7 +497,7 @@ public:
 
     if (auto const f1(first_ = f0->link()); f1)
     {
-      f1->l_ = node::conv(f1->xlink(f0));
+      f1->l_ = node::conv(f1->link(f0));
     }
     else
     {
