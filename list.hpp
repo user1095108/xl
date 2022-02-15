@@ -69,7 +69,9 @@ private:
     }
 
     //
-    auto link(auto const n = nullptr) const noexcept
+    auto link() const noexcept { return reinterpret_cast<node*>(l_); }
+
+    auto link(auto const n) const noexcept
     {
       return reinterpret_cast<node*>(std::uintptr_t(n) ^ l_);
     }
