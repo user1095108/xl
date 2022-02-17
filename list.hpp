@@ -112,7 +112,6 @@ public:
   }
 
   list(list&& o)
-    requires(std::is_move_constructible_v<value_type>)
   {
     *this = std::move(o);
   }
