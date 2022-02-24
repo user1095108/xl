@@ -172,12 +172,6 @@ public:
     );
   }
 
-  friend bool operator!=(list const&, list const&) = default;
-  friend bool operator<(list const&, list const&) = default;
-  friend bool operator<=(list const&, list const&) = default;
-  friend bool operator>(list const&, list const&) = default;
-  friend bool operator>=(list const&, list const&) = default;
-
   //
   bool empty() const noexcept { return !first_; }
   size_type max_size() const noexcept { return ~size_type{}; }
