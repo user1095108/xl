@@ -111,10 +111,7 @@ public:
     assign(o.begin(), o.end());
   }
 
-  list(list&& o)
-  {
-    *this = std::move(o);
-  }
+  list(list&& o) noexcept(noexcept(delete first_)) { *this = std::move(o); }
 
   list(std::input_iterator auto const i, decltype(i) j)
     requires(std::is_constructible_v<value_type, decltype(*i)>)
