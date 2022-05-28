@@ -99,7 +99,7 @@ private:
 public:
   list() = default;
 
-  list(std::initializer_list<value_type> const l)
+  list(std::initializer_list<value_type> l)
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(l.begin(), l.end());
@@ -148,7 +148,7 @@ public:
     return *this;
   }
 
-  auto& operator=(std::initializer_list<value_type> const l)
+  auto& operator=(std::initializer_list<value_type> l)
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(l.begin(), l.end());
@@ -270,7 +270,7 @@ public:
     );
   }
 
-  void assign(std::initializer_list<value_type> const l)
+  void assign(std::initializer_list<value_type> l)
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(l.begin(), l.end());
@@ -458,7 +458,7 @@ public:
   }
 
   iterator insert(const_iterator const i,
-    std::initializer_list<value_type> const l)
+    std::initializer_list<value_type> l)
     requires(std::is_copy_constructible_v<value_type>)
   {
     return insert(i, l.begin(), l.end());
