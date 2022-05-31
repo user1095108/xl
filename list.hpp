@@ -170,8 +170,9 @@ public:
   }
 
   //
+  static constexpr size_type max_size() noexcept { return ~size_type{}; }
+
   bool empty() const noexcept { return !first_; }
-  size_type max_size() const noexcept { return ~size_type{}; }
 
   // iterators
   iterator begin() noexcept { return {first_, {}}; }
