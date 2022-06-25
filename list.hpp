@@ -595,6 +595,7 @@ public:
   }
 
   friend void sort(auto const b, decltype(b) e)
+    noexcept(noexcept(node::sort(b, e, {}, std::less<value_type>())))
     requires(std::is_same_v<iterator, std::remove_const_t<decltype(b)>> ||
       std::is_same_v<reverse_iterator, std::remove_const_t<decltype(b)>>)
   {
@@ -602,6 +603,7 @@ public:
   }
 
   friend void sort(auto const b, decltype(b) e, auto cmp)
+    noexcept(noexcept(node::sort(b, e, {}, cmp)))
     requires(std::is_same_v<iterator, std::remove_const_t<decltype(b)>> ||
       std::is_same_v<reverse_iterator, std::remove_const_t<decltype(b)>>)
   {
