@@ -114,7 +114,7 @@ public:
     assign(o.begin(), o.end());
   }
 
-  list(list&& o) noexcept(noexcept(delete first_)) { *this = std::move(o); }
+  list(list&& o) noexcept(noexcept(clear())) { *this = std::move(o); }
 
   list(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(emplace_back(*i)))
