@@ -546,13 +546,6 @@ public:
   }
 
   //
-  void swap(list& o) noexcept
-  {
-    std::swap(first_, o.first_);
-    std::swap(last_, o.last_);
-  }
-
-  //
   void reverse() noexcept { std::swap(first_, last_); }
 
   //
@@ -566,6 +559,13 @@ public:
     noexcept(noexcept(sort(std::less<value_type>())))
   {
     sort(std::less<value_type>());
+  }
+
+  //
+  void swap(list& o) noexcept
+  {
+    std::swap(first_, o.first_);
+    std::swap(last_, o.last_);
   }
 
   //
