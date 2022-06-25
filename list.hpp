@@ -79,6 +79,7 @@ private:
     //
     static void sort(auto const b, decltype(b) e, size_type const sz,
       auto&& cmp)
+      noexcept(noexcept(std::inplace_merge(b, b, e, cmp)))
     {
       if (sz > 1)
       {
