@@ -134,6 +134,7 @@ public:
 
   // self-assign neglected
   auto& operator=(list const& o)
+    noexcept(noexcept(assign(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(o.begin(), o.end());
