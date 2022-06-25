@@ -286,7 +286,7 @@ public:
   }
 
   //
-  void clear() noexcept(noexcept(delete first_))
+  void clear() noexcept(noexcept(node::destroy(first_)))
   {
     node::destroy(first_);
 
