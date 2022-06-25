@@ -100,12 +100,14 @@ public:
   list() = default;
 
   list(std::initializer_list<value_type> l)
+    noexcept(noexcept(assign(l.begin(), l.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(l.begin(), l.end());
   }
 
   list(list const& o)
+    noexcept(noexcept(assign(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(o.begin(), o.end());
@@ -114,6 +116,7 @@ public:
   list(list&& o) noexcept(noexcept(delete first_)) { *this = std::move(o); }
 
   list(std::input_iterator auto const i, decltype(i) j)
+    noexcept(noexcept(emplace_back(*i)))
     requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
     std::for_each(
@@ -137,8 +140,7 @@ public:
     return *this;
   }
 
-  auto& operator=(list&& o)
-    noexcept(noexcept(delete first_))
+  auto& operator=(list&& o) noexcept(noexcept(clear()))
   {
     clear();
 
@@ -149,6 +151,7 @@ public:
   }
 
   auto& operator=(std::initializer_list<value_type> l)
+    noexcept(noexcept(assign(l.begin(), l.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(l.begin(), l.end());
@@ -249,6 +252,7 @@ public:
 
   //
   void assign(size_type count, value_type const& v)
+    noexcept(noexcept(clear()) && noexcept(emplace_back(v)))
     requires(std::is_copy_constructible_v<value_type>)
   {
     clear();
@@ -257,6 +261,7 @@ public:
   }
 
   void assign(std::input_iterator auto const i, decltype(i) j)
+    noexcept(noexcept(clear()) && noexcept(emplace_back(*i)))
     requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
     clear();
@@ -272,6 +277,7 @@ public:
   }
 
   void assign(std::initializer_list<value_type> l)
+    noexcept(noexcept(assign(l.begin(), l.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
     assign(l.begin(), l.end());
@@ -288,6 +294,7 @@ public:
 
   //
   iterator emplace(const_iterator const i, auto&& ...a)
+    noexcept(noexcept(new node(std::forward<decltype(a)>(a)...)))
     requires(std::is_constructible_v<value_type, decltype(a)&&...>)
   {
     auto const n(i.n());
@@ -319,6 +326,7 @@ public:
   }
 
   iterator emplace_back(auto&& ...a)
+    noexcept(noexcept(new node(std::forward<decltype(a)>(a)...)))
     requires(std::is_constructible_v<value_type, decltype(a)&&...>)
   {
     auto const l(last_);
@@ -340,6 +348,7 @@ public:
   }
 
   iterator emplace_front(auto&& ...a)
+    noexcept(noexcept(new node(std::forward<decltype(a)>(a)...)))
     requires(std::is_constructible_v<value_type, decltype(a)&&...>)
   {
     auto const f(first_);
@@ -404,12 +413,14 @@ public:
 
   //
   iterator insert(const_iterator const i, value_type const& v)
+    noexcept(noexcept(emplace(i, v)))
     requires(std::is_copy_constructible_v<value_type>)
   {
     return emplace(i, v);
   }
 
   iterator insert(const_iterator const i, value_type&& v)
+    noexcept(noexcept(emplace(i, std::move(v))))
     requires(std::is_move_constructible_v<value_type>)
   {
     return emplace(i, std::move(v));
@@ -417,6 +428,7 @@ public:
 
   iterator insert(const_iterator const i, size_type count,
     value_type const& v)
+    noexcept(noexcept(insert(i, v)))
     requires(std::is_copy_constructible_v<value_type>)
   {
     if (count)
@@ -435,6 +447,7 @@ public:
 
   iterator insert(const_iterator const i,
     std::input_iterator auto const j, decltype(j) k)
+    noexcept(noexcept(emplace(i, *j)))
     requires(std::is_constructible_v<value_type, decltype(*j)>)
   {
     if (j == k)
@@ -460,6 +473,7 @@ public:
 
   iterator insert(const_iterator const i,
     std::initializer_list<value_type> l)
+    noexcept(noexcept(insert(i, l.begin(), l.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
     return insert(i, l.begin(), l.end());
@@ -502,24 +516,28 @@ public:
 
   //
   void push_back(value_type const& v)
+    noexcept(noexcept(emplace_back(v)))
     requires(std::is_copy_constructible_v<value_type>)
   {
     emplace_back(v);
   }
 
   void push_back(value_type&& v)
+    noexcept(noexcept(emplace_back(std::move(v))))
     requires(std::is_move_constructible_v<value_type>)
   {
     emplace_back(std::move(v));
   }
 
   void push_front(value_type const& v)
+    noexcept(noexcept(emplace_front(v)))
     requires(std::is_copy_constructible_v<value_type>)
   {
     emplace_front(v);
   }
 
   void push_front(value_type&& v)
+    noexcept(noexcept(emplace_front(std::move(v))))
     requires(std::is_move_constructible_v<value_type>)
   {
     emplace_front(std::move(v));
