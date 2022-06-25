@@ -4,6 +4,8 @@
 
 int main()
 {
+  std::cout << "size: " << xl::list<int>().size() << std::endl;
+
   xl::list<int> l{3, 4, 5};
 
   l.emplace_back(0);
