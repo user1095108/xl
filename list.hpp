@@ -605,6 +605,7 @@ public:
     node::sort(b, e, std::distance(b, e), cmp);
   }
 
+  //
   friend void swap(list& lhs, decltype(lhs) rhs) noexcept { lhs.swap(rhs); }
 };
 
