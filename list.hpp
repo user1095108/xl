@@ -569,12 +569,6 @@ public:
   }
 
   //
-  friend auto erase(list& c, value_type const& k)
-    noexcept(noexcept(delete first_))
-  {
-    return erase_if(c, [&](auto&& v) noexcept{return std::equal_to()(v, k);});
-  }
-
   friend auto erase(list& c, auto const& k)
     noexcept(noexcept(delete first_))
   {
