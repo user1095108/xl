@@ -74,7 +74,6 @@ public:
 
   // comparison
   bool operator==(listiterator const& o) const noexcept { return o.n_ == n_; }
-  bool operator!=(listiterator const&) const = default;
 
   // member access
   auto operator->() const noexcept { return &std::add_pointer_t<T>(n_)->v_; }
