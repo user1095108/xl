@@ -73,7 +73,7 @@ public:
   auto operator--(int) noexcept { auto const r(*this); --*this; return r; }
 
   // comparison
-  bool operator==(listiterator const& o) const noexcept { return o.n_ == n_; }
+  bool operator==(listiterator const& o) const noexcept { return n_ == o.n_; }
 
   // member access
   auto operator->() const noexcept { return &std::add_pointer_t<T>(n_)->v_; }
