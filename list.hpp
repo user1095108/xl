@@ -555,11 +555,7 @@ public:
     node::sort(begin(), end(), size(), cmp);
   }
 
-  void sort()
-    noexcept(noexcept(sort(std::less<value_type>())))
-  {
-    sort(std::less<value_type>());
-  }
+  void sort() { sort(std::less<value_type>()); }
 
   //
   void swap(list& o) noexcept
