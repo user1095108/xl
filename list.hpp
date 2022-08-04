@@ -78,18 +78,20 @@ private:
 
     //
     static void sort(auto const b, decltype(b) e, size_type const sz,
-      auto&& cmp)
-      noexcept(noexcept(std::inplace_merge(b, b, e, cmp)))
+      auto&& c)
+      noexcept(
+        noexcept(std::inplace_merge(b, b, e, std::forward<decltype(c)>(c)))
+      )
     {
       if (sz > 1)
       {
         auto const hsz(sz / 2);
         auto const m(std::next(b, hsz));
 
-        sort(b, m, hsz, std::forward<decltype(cmp)>(cmp));
-        sort(m, e, sz - hsz, std::forward<decltype(cmp)>(cmp));
+        sort(b, m, hsz, std::forward<decltype(c)>(c));
+        sort(m, e, sz - hsz, std::forward<decltype(c)>(c));
 
-        std::inplace_merge(b, m, e, std::forward<decltype(cmp)>(cmp));
+        std::inplace_merge(b, m, e, std::forward<decltype(c)>(c));
       }
     }
   };
