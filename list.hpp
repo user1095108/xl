@@ -89,7 +89,7 @@ private:
         sort(b, m, hsz, std::forward<decltype(cmp)>(cmp));
         sort(m, e, sz - hsz, std::forward<decltype(cmp)>(cmp));
 
-        std::inplace_merge(b, m, e, cmp);
+        std::inplace_merge(b, m, e, std::forward<decltype(cmp)>(cmp));
       }
     }
   };
