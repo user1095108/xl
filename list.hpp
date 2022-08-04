@@ -550,15 +550,15 @@ public:
 
   //
   void sort(auto cmp)
-    noexcept(
-      noexcept(cmp(std::declval<value_type>(), std::declval<value_type>())) &&
-      noexcept(node::sort(begin(), end(), size(), cmp))
-    )
+    noexcept(noexcept(node::sort(begin(), end(), size(), cmp)))
   {
     node::sort(begin(), end(), size(), cmp);
   }
 
-  void sort() { sort(std::less<value_type>()); }
+  void sort() noexcept(noexcept(sort(std::less<value_type>())))
+  {
+    sort(std::less<value_type>());
+  }
 
   //
   void swap(list& o) noexcept
@@ -569,14 +569,33 @@ public:
 
   //
   friend auto erase(list& c, auto const& k)
+    noexcept(
+      noexcept(
+        erase_if(
+          c,
+          [](T const&) noexcept(
+            noexcept(std::equal_to()(std::declval<T>(), std::declval<T>()))
+          )
+          {
+            return true;
+          }
+        )
+      )
+    )
   {
-    return erase_if(c, [&](auto&& v) { return std::equal_to()(v, k); });
+    return erase_if(
+      c,
+      [&](auto&& v) noexcept(noexcept(std::equal_to()(v, k)))
+      {
+        return std::equal_to()(v, k);
+      }
+    );
   }
 
   friend auto erase_if(list& c, auto pred)
     noexcept(
       noexcept(pred(std::declval<T>())) &&
-      noexcept(delete first_)
+      noexcept(c.erase(c.begin()))
     )
   {
     size_type r{};
