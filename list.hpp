@@ -550,7 +550,10 @@ public:
 
   //
   void sort(auto cmp)
-    noexcept(noexcept(node::sort(begin(), end(), size(), cmp)))
+    noexcept(
+      noexcept(cmp(std::declval<value_type>(), std::declval<value_type>())) &&
+      noexcept(node::sort(begin(), end(), size(), cmp))
+    )
   {
     node::sort(begin(), end(), size(), cmp);
   }
@@ -571,7 +574,10 @@ public:
   }
 
   friend auto erase_if(list& c, auto pred)
-    noexcept(noexcept(delete first_))
+    noexcept(
+      noexcept(pred(std::declval<T>())) &&
+      noexcept(delete first_)
+    )
   {
     size_type r{};
 
