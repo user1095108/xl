@@ -273,7 +273,7 @@ public:
     std::for_each(
       i,
       j,
-      [&](auto&& v)
+      [&](auto&& v) noexcept(noexcept(emplace_back(*i)))
       {
         emplace_back(std::forward<decltype(v)>(v));
       }
@@ -465,7 +465,7 @@ public:
       std::for_each(
         std::next(j),
         k,
-        [&](auto&& v)
+        [&](auto&& v) noexcept(noexcept(emplace(i, *j)))
         {
           emplace(i, std::forward<decltype(v)>(v));
         }
