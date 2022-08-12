@@ -232,10 +232,10 @@ public:
   }
 
   constexpr auto& back() noexcept { return last_->v_; }
-  constexpr auto const& back() const noexcept { return last_->v_; }
+  constexpr auto& back() const noexcept { return last_->v_; }
 
   constexpr auto& front() noexcept { return first_->v_; }
-  constexpr auto const& front() const noexcept { return first_->v_; }
+  constexpr auto& front() const noexcept { return first_->v_; }
 
   constexpr size_type size() const noexcept
   {
