@@ -226,6 +226,11 @@ public:
   }
 
   //
+  constexpr auto& at(size_type const i) noexcept
+  {
+    return *std::next(begin(), i);
+  }
+
   constexpr auto& at(size_type const i) const noexcept
   {
     return *std::next(begin(), i);
