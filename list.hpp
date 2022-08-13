@@ -227,25 +227,26 @@ public:
   }
 
   //
-  constexpr auto& operator[](size_type const i) noexcept
+  constexpr auto& operator[](size_type i) noexcept
   {
-    return *std::next(begin(), i);
+    auto n(first_);
+
+    for (decltype(n) p{}; i; --i) node::assign(n, p)(n->link(p), n);
+
+    return n->v_;
   }
 
-  constexpr auto& operator[](size_type const i) const noexcept
+  constexpr auto const& operator[](size_type i) const noexcept
   {
-    return *std::next(begin(), i);
+    auto n(first_);
+
+    for (decltype(n) p{}; i; --i) node::assign(n, p)(n->link(p), n);
+
+    return n->v_;
   }
 
-  constexpr auto& at(size_type const i) noexcept
-  {
-    return *std::next(begin(), i);
-  }
-
-  constexpr auto& at(size_type const i) const noexcept
-  {
-    return *std::next(begin(), i);
-  }
+  constexpr auto& at(size_type const i) noexcept { return (*this)[i]; }
+  constexpr auto& at(size_type const i) const noexcept { return (*this)[i]; }
 
   constexpr auto& back() noexcept { return last_->v_; }
   constexpr auto& back() const noexcept { return last_->v_; }
