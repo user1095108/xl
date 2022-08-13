@@ -181,6 +181,18 @@ public:
 
   bool empty() const noexcept { return !first_; }
 
+  constexpr size_type size() const noexcept
+  {
+    size_type sz{};
+
+    for (decltype(first_) n(first_), p{}; n; ++sz)
+    {
+      node::assign(n, p)(n->link(p), n);
+    }
+
+    return sz;
+  }
+
   // iterators
   iterator begin() noexcept { return {first_, {}}; }
   iterator end() noexcept { return {{}, last_}; }
@@ -225,7 +237,6 @@ public:
     return *std::next(begin(), i);
   }
 
-  //
   constexpr auto& at(size_type const i) noexcept
   {
     return *std::next(begin(), i);
@@ -241,18 +252,6 @@ public:
 
   constexpr auto& front() noexcept { return first_->v_; }
   constexpr auto& front() const noexcept { return first_->v_; }
-
-  constexpr size_type size() const noexcept
-  {
-    size_type sz{};
-
-    for (decltype(first_) n(first_), p{}; n; ++sz)
-    {
-      node::assign(n, p)(n->link(p), n);
-    }
-
-    return sz;
-  }
 
   //
   void assign(size_type count, value_type const& v)
