@@ -249,10 +249,10 @@ public:
   constexpr auto& at(size_type const i) const noexcept { return (*this)[i]; }
 
   constexpr auto& back() noexcept { return last_->v_; }
-  constexpr auto& back() const noexcept { return last_->v_; }
+  constexpr auto const& back() const noexcept { return last_->v_; }
 
   constexpr auto& front() noexcept { return first_->v_; }
-  constexpr auto& front() const noexcept { return first_->v_; }
+  constexpr auto const& front() const noexcept { return first_->v_; }
 
   //
   void assign(size_type count, value_type const& v)
