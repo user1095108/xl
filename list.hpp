@@ -430,8 +430,7 @@ public:
     return emplace(i, std::move(v));
   }
 
-  iterator insert(const_iterator const i, size_type count,
-    value_type const& v)
+  iterator insert(const_iterator i, size_type count, value_type const& v)
     noexcept(noexcept(insert(i, v)))
     requires(std::is_copy_constructible_v<value_type>)
   {

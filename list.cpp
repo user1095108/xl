@@ -9,7 +9,7 @@ int main()
   l.emplace_back(0);
   l.emplace_back(1);
 
-  l.insert(l.cend(), {1, 2, 3});
+  l.insert(l.cbegin(), {1, 2, 3});
 
   erase(l, 1ull);
 
