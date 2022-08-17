@@ -58,7 +58,7 @@ private:
       return (std::uintptr_t(n) ^ ...);
     }
 
-    static void destroy(auto n) noexcept(noexcept(delete n))
+    static constexpr void destroy(auto n) noexcept(noexcept(delete n))
     {
       for (decltype(n) p{}; n;)
       {
@@ -69,9 +69,12 @@ private:
     }
 
     //
-    auto link() const noexcept { return reinterpret_cast<node*>(l_); }
+    constexpr auto link() const noexcept
+    {
+      return reinterpret_cast<node*>(l_);
+    }
 
-    auto link(auto const n) const noexcept
+    constexpr auto link(auto const n) const noexcept
     {
       return reinterpret_cast<node*>(std::uintptr_t(n) ^ l_);
     }
@@ -132,7 +135,10 @@ public:
     );
   }
 
-  ~list() noexcept(noexcept(node::destroy(first_))) { node::destroy(first_); }
+  constexpr ~list() noexcept(noexcept(node::destroy(first_)))
+  {
+    node::destroy(first_);
+  }
 
   // self-assign neglected
   auto& operator=(list const& o)
@@ -179,7 +185,7 @@ public:
   //
   static constexpr size_type max_size() noexcept { return ~size_type{}; }
 
-  bool empty() const noexcept { return !first_; }
+  constexpr bool empty() const noexcept { return !first_; }
 
   constexpr size_type size() const noexcept
   {
@@ -194,34 +200,34 @@ public:
   }
 
   // iterators
-  iterator begin() noexcept { return {first_, {}}; }
-  iterator end() noexcept { return {{}, last_}; }
+  constexpr iterator begin() noexcept { return {first_, {}}; }
+  constexpr iterator end() noexcept { return {{}, last_}; }
 
   // const iterators
-  const_iterator begin() const noexcept { return {first_, {}}; }
-  const_iterator end() const noexcept { return {{}, last_}; }
+  constexpr const_iterator begin() const noexcept { return {first_, {}}; }
+  constexpr const_iterator end() const noexcept { return {{}, last_}; }
 
-  const_iterator cbegin() const noexcept { return {first_, {}}; }
-  const_iterator cend() const noexcept { return {{}, last_}; }
+  constexpr const_iterator cbegin() const noexcept { return {first_, {}}; }
+  constexpr const_iterator cend() const noexcept { return {{}, last_}; }
 
   // reverse iterators
-  reverse_iterator rbegin() noexcept
+  constexpr reverse_iterator rbegin() noexcept
   {
     return reverse_iterator(iterator({}, last_));
   }
 
-  reverse_iterator rend() noexcept
+  constexpr reverse_iterator rend() noexcept
   {
     return reverse_iterator(iterator(first_, {}));
   }
 
   // const reverse iterators
-  const_reverse_iterator crbegin() const noexcept
+  constexpr const_reverse_iterator crbegin() const noexcept
   {
     return const_reverse_iterator(const_iterator({}, last_));
   }
 
-  const_reverse_iterator crend() const noexcept
+  constexpr const_reverse_iterator crend() const noexcept
   {
     return const_reverse_iterator(const_iterator(first_, {}));
   }
@@ -288,7 +294,7 @@ public:
   }
 
   //
-  void clear() noexcept(noexcept(node::destroy(first_)))
+  constexpr void clear() noexcept(noexcept(node::destroy(first_)))
   {
     node::destroy(first_);
 

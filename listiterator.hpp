@@ -38,7 +38,7 @@ public:
 public:
   listiterator() = default;
 
-  listiterator(node_t* const n, node_t* const p) noexcept:
+  constexpr listiterator(node_t* const n, node_t* const p) noexcept:
     n_(n),
     p_(p)
   {
@@ -47,7 +47,7 @@ public:
   listiterator(listiterator const&) = default;
   listiterator(listiterator&&) = default;
 
-  listiterator(inverse_const_t const& o) noexcept
+  constexpr listiterator(inverse_const_t const& o) noexcept
     requires(std::is_const_v<T>):
     n_(o.n_),
     p_(o.p_)
@@ -59,29 +59,46 @@ public:
   listiterator& operator=(listiterator&&) = default;
 
   // increment, decrement
-  auto& operator++() noexcept
+  constexpr auto& operator++() noexcept
   {
     node_t::assign(n_, p_)(n_->link(p_), n_); return *this;
   }
 
-  auto& operator--() noexcept
+  constexpr auto& operator--() noexcept
   {
     node_t::assign(n_, p_)(p_, p_->link(n_)); return *this;
   }
 
-  auto operator++(int) noexcept { auto const r(*this); ++*this; return r; }
-  auto operator--(int) noexcept { auto const r(*this); --*this; return r; }
+  constexpr auto operator++(int) noexcept
+  {
+    auto const r(*this); ++*this; return r;
+  }
+
+  constexpr auto operator--(int) noexcept
+  {
+    auto const r(*this); --*this; return r;
+  }
 
   // comparison
-  bool operator==(listiterator const& o) const noexcept { return n_ == o.n_; }
+  constexpr bool operator==(listiterator const& o) const noexcept
+  {
+    return n_ == o.n_;
+  }
 
   // member access
-  auto operator->() const noexcept { return &std::add_pointer_t<T>(n_)->v_; }
-  auto& operator*() const noexcept { return std::add_pointer_t<T>(n_)->v_; }
+  constexpr auto operator->() const noexcept
+  {
+    return &std::add_pointer_t<T>(n_)->v_;
+  }
+
+  constexpr auto& operator*() const noexcept
+  {
+    return std::add_pointer_t<T>(n_)->v_;
+  }
 
   //
-  auto n() const noexcept { return n_; }
-  auto p() const noexcept { return p_; }
+  constexpr auto n() const noexcept { return n_; }
+  constexpr auto p() const noexcept { return p_; }
 };
 
 }
