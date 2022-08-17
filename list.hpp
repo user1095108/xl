@@ -571,7 +571,7 @@ public:
   }
 
   //
-  friend auto erase(list& c, auto const& k)
+  friend auto erase(list& c, auto&& k, char = {})
     noexcept(
       noexcept(
         erase_if(
@@ -586,6 +586,7 @@ public:
         )
       )
     )
+    requires(requires{std::equal_to()(std::declval<T>(), k);})
   {
     return erase_if(
       c,
@@ -594,6 +595,12 @@ public:
         return std::equal_to()(v, k);
       }
     );
+  }
+
+  friend auto erase(list& c, value_type const& k)
+    noexcept(noexcept(erase(c, k, {})))
+  {
+    return erase(c, k, {});
   }
 
   friend auto erase_if(list& c, auto pred)
