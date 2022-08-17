@@ -438,6 +438,7 @@ public:
     if (count)
     {
       auto const r(insert(i, v));
+      i = {i.n(), r.n()};
 
       for (--count; count; --count) i = {i.n(), insert(i, v).n()};
 
@@ -461,6 +462,7 @@ public:
     else
     {
       auto const r(emplace(i, *j));
+      i = {i.n(), r.n()};
 
       std::for_each(
         std::next(j),
