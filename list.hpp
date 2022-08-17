@@ -41,7 +41,7 @@ private:
     std::uintptr_t l_;
     value_type v_;
 
-    explicit node(auto&& ...a)
+    constexpr explicit node(auto&& ...a)
       noexcept(noexcept(T(std::forward<decltype(a)>(a)...))):
       v_(std::forward<decltype(a)>(a)...)
     {
@@ -170,12 +170,12 @@ public:
   }
 
   //
-  friend bool operator==(list const& lhs, list const& rhs) noexcept
+  friend constexpr bool operator==(list const& lhs, list const& rhs) noexcept
   {
     return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
   }
 
-  friend auto operator<=>(list const& lhs, list const& rhs) noexcept
+  friend constexpr auto operator<=>(list const& lhs, list const& rhs) noexcept
   {
     return std::lexicographical_compare_three_way(
       lhs.begin(), lhs.end(), rhs.begin(), rhs.end()
@@ -554,7 +554,7 @@ public:
   }
 
   //
-  void reverse() noexcept { std::swap(first_, last_); }
+  constexpr void reverse() noexcept { std::swap(first_, last_); }
 
   //
   void sort(auto cmp)
@@ -569,7 +569,7 @@ public:
   }
 
   //
-  void swap(list& o) noexcept
+  constexpr void swap(list& o) noexcept
   {
     std::swap(first_, o.first_);
     std::swap(last_, o.last_);
@@ -634,7 +634,10 @@ public:
   }
 
   //
-  friend void swap(list& lhs, decltype(lhs) rhs) noexcept { lhs.swap(rhs); }
+  friend constexpr void swap(list& lhs, decltype(lhs) rhs) noexcept
+  {
+    lhs.swap(rhs);
+  }
 };
 
 }
