@@ -439,7 +439,7 @@ public:
     {
       auto const r(insert(i, v));
 
-      for (--count; count; --count) insert(i, v);
+      for (--count; count; --count) i = {i.n(), insert(i, v).n()};
 
       return r;
     }
