@@ -449,7 +449,7 @@ public:
     }
   }
 
-  iterator insert(const_iterator const i,
+  iterator insert(const_iterator i,
     std::input_iterator auto const j, decltype(j) k)
     noexcept(noexcept(emplace(i, *j)))
     requires(std::is_constructible_v<value_type, decltype(*j)>)
@@ -466,8 +466,8 @@ public:
         std::next(j),
         k,
         [&](auto&& v) noexcept(noexcept(emplace(i, *j)))
-        {
-          emplace(i, std::forward<decltype(v)>(v));
+        { // the parent changes
+          i = {i.n(), emplace(i, std::forward<decltype(v)>(v)).n()};
         }
       );
 
