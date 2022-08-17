@@ -576,8 +576,9 @@ public:
       noexcept(
         erase_if(
           c,
-          [](T const&) noexcept(
-            noexcept(std::equal_to()(std::declval<T>(), std::declval<T>()))
+          [](T const&) noexcept(noexcept(
+              std::equal_to()(std::declval<T>(), std::declval<decltype(k)>())
+            )
           )
           {
             return true;
