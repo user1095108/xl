@@ -436,7 +436,7 @@ public:
   {
     if (count)
     {
-      auto const r(insert(i, v));
+      auto const r(emplace(i, v));
       i = {i.n(), r.n()};
 
       for (--count; count; --count) i = {i.n(), emplace(i, v).n()};
