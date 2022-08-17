@@ -569,76 +569,63 @@ public:
     std::swap(first_, o.first_);
     std::swap(last_, o.last_);
   }
+};
 
-  //
-  friend auto erase(list& c, auto&& k, char = {})
+//////////////////////////////////////////////////////////////////////////////
+template <typename T>
+inline auto erase(list<T>& c, auto&& k, char = {})
+  noexcept(
     noexcept(
-      noexcept(
-        erase_if(
-          c,
-          [](T const&) noexcept(noexcept(
-              std::equal_to()(std::declval<T>(), std::declval<decltype(k)>())
-            )
+      erase_if(
+        c,
+        [](T const&) noexcept(noexcept(
+            std::equal_to()(std::declval<T>(), std::declval<decltype(k)>())
           )
-          {
-            return true;
-          }
         )
+        {
+          return true;
+        }
       )
     )
-    requires(requires{std::equal_to()(std::declval<T>(), k);})
-  {
-    return erase_if(
-      c,
-      [&](auto&& v) noexcept(noexcept(std::equal_to()(v, k)))
-      {
-        return std::equal_to()(v, k);
-      }
-    );
-  }
-
-  friend auto erase(list& c, value_type const& k)
-    noexcept(noexcept(erase(c, k, {})))
-  {
-    return erase(c, k, {});
-  }
-
-  friend auto erase_if(list& c, auto pred)
-    noexcept(
-      noexcept(pred(std::declval<T>())) &&
-      noexcept(c.erase(c.begin()))
-    )
-  {
-    size_type r{};
-
-    for (auto i(c.begin()); i.n();)
+  )
+  requires(requires{std::equal_to()(std::declval<T>(), k);})
+{
+  return erase_if(
+    c,
+    [&](auto&& v) noexcept(noexcept(std::equal_to()(v, k)))
     {
-      i = pred(*i) ? (++r, c.erase(i)) : std::next(i);
+      return std::equal_to()(v, k);
     }
+  );
+}
 
-    return r;
-  }
+template <typename T>
+inline auto erase(list<T>& c, T const& k)
+  noexcept(noexcept(erase(c, k, {})))
+{
+  return erase(c, k, {});
+}
 
-  //
-  friend void sort(auto const b, decltype(b) e)
-    noexcept(noexcept(node::sort(b, e, {}, std::less<value_type>())))
-    requires(std::is_same_v<iterator, std::remove_const_t<decltype(b)>> ||
-      std::is_same_v<reverse_iterator, std::remove_const_t<decltype(b)>>)
+template <typename T>
+inline auto erase_if(list<T>& c, auto pred)
+  noexcept(
+    noexcept(pred(std::declval<T>())) &&
+    noexcept(c.erase(c.begin()))
+  )
+{
+  typename list<T>::size_type r{};
+
+  for (auto i(c.begin()); i.n();)
   {
-    node::sort(b, e, std::distance(b, e), std::less<value_type>());
+    i = pred(*i) ? (++r, c.erase(i)) : std::next(i);
   }
 
-  friend void sort(auto const b, decltype(b) e, auto cmp)
-    noexcept(noexcept(node::sort(b, e, {}, cmp)))
-    requires(std::is_same_v<iterator, std::remove_const_t<decltype(b)>> ||
-      std::is_same_v<reverse_iterator, std::remove_const_t<decltype(b)>>)
-  {
-    node::sort(b, e, std::distance(b, e), cmp);
-  }
+  return r;
+}
 
-  //
-  friend void swap(list& lhs, decltype(lhs) rhs) noexcept { lhs.swap(rhs); }
-};
+//////////////////////////////////////////////////////////////////////////////
+template <typename T>
+inline void swap(list<T>& lhs, decltype(lhs) rhs) noexcept { lhs.swap(rhs); }
 
 }
 
