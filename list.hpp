@@ -41,7 +41,7 @@ private:
     std::uintptr_t l_;
     value_type v_;
 
-    constexpr explicit node(auto&& ...a)
+    explicit node(auto&& ...a)
       noexcept(noexcept(T(std::forward<decltype(a)>(a)...))):
       v_(std::forward<decltype(a)>(a)...)
     {
@@ -58,7 +58,7 @@ private:
       return (std::uintptr_t(n) ^ ...);
     }
 
-    static constexpr void destroy(auto n) noexcept(noexcept(delete n))
+    static void destroy(auto n) noexcept(noexcept(delete n))
     {
       for (decltype(n) p{}; n;)
       {
@@ -69,12 +69,9 @@ private:
     }
 
     //
-    constexpr auto link() const noexcept
-    {
-      return reinterpret_cast<node*>(l_);
-    }
+    auto link() const noexcept { return reinterpret_cast<node*>(l_); }
 
-    constexpr auto link(auto const n) const noexcept
+    auto link(auto const n) const noexcept
     {
       return reinterpret_cast<node*>(std::uintptr_t(n) ^ l_);
     }
@@ -135,10 +132,7 @@ public:
     );
   }
 
-  constexpr ~list() noexcept(noexcept(node::destroy(first_)))
-  {
-    node::destroy(first_);
-  }
+  ~list() noexcept(noexcept(node::destroy(first_))) { node::destroy(first_); }
 
   // self-assign neglected
   auto& operator=(list const& o)
@@ -170,12 +164,12 @@ public:
   }
 
   //
-  friend constexpr bool operator==(list const& lhs, list const& rhs) noexcept
+  friend bool operator==(list const& lhs, list const& rhs) noexcept
   {
     return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
   }
 
-  friend constexpr auto operator<=>(list const& lhs, list const& rhs) noexcept
+  friend auto operator<=>(list const& lhs, list const& rhs) noexcept
   {
     return std::lexicographical_compare_three_way(
       lhs.begin(), lhs.end(), rhs.begin(), rhs.end()
@@ -185,9 +179,9 @@ public:
   //
   static constexpr size_type max_size() noexcept { return ~size_type{}; }
 
-  constexpr bool empty() const noexcept { return !first_; }
+  bool empty() const noexcept { return !first_; }
 
-  constexpr size_type size() const noexcept
+  size_type size() const noexcept
   {
     size_type sz{};
 
@@ -200,40 +194,40 @@ public:
   }
 
   // iterators
-  constexpr iterator begin() noexcept { return {first_, {}}; }
-  constexpr iterator end() noexcept { return {{}, last_}; }
+  iterator begin() noexcept { return {first_, {}}; }
+  iterator end() noexcept { return {{}, last_}; }
 
   // const iterators
-  constexpr const_iterator begin() const noexcept { return {first_, {}}; }
-  constexpr const_iterator end() const noexcept { return {{}, last_}; }
+  const_iterator begin() const noexcept { return {first_, {}}; }
+  const_iterator end() const noexcept { return {{}, last_}; }
 
-  constexpr const_iterator cbegin() const noexcept { return {first_, {}}; }
-  constexpr const_iterator cend() const noexcept { return {{}, last_}; }
+  const_iterator cbegin() const noexcept { return {first_, {}}; }
+  const_iterator cend() const noexcept { return {{}, last_}; }
 
   // reverse iterators
-  constexpr reverse_iterator rbegin() noexcept
+  reverse_iterator rbegin() noexcept
   {
     return reverse_iterator(iterator({}, last_));
   }
 
-  constexpr reverse_iterator rend() noexcept
+  reverse_iterator rend() noexcept
   {
     return reverse_iterator(iterator(first_, {}));
   }
 
   // const reverse iterators
-  constexpr const_reverse_iterator crbegin() const noexcept
+  const_reverse_iterator crbegin() const noexcept
   {
     return const_reverse_iterator(const_iterator({}, last_));
   }
 
-  constexpr const_reverse_iterator crend() const noexcept
+  const_reverse_iterator crend() const noexcept
   {
     return const_reverse_iterator(const_iterator(first_, {}));
   }
 
   //
-  constexpr auto& operator[](size_type i) noexcept
+  auto& operator[](size_type i) noexcept
   {
     auto n(first_);
 
@@ -242,7 +236,7 @@ public:
     return n->v_;
   }
 
-  constexpr auto const& operator[](size_type i) const noexcept
+  auto const& operator[](size_type i) const noexcept
   {
     auto n(first_);
 
@@ -251,14 +245,14 @@ public:
     return n->v_;
   }
 
-  constexpr auto& at(size_type const i) noexcept { return (*this)[i]; }
-  constexpr auto& at(size_type const i) const noexcept { return (*this)[i]; }
+  auto& at(size_type const i) noexcept { return (*this)[i]; }
+  auto& at(size_type const i) const noexcept { return (*this)[i]; }
 
-  constexpr auto& back() noexcept { return last_->v_; }
-  constexpr auto const& back() const noexcept { return last_->v_; }
+  auto& back() noexcept { return last_->v_; }
+  auto const& back() const noexcept { return last_->v_; }
 
-  constexpr auto& front() noexcept { return first_->v_; }
-  constexpr auto const& front() const noexcept { return first_->v_; }
+  auto& front() noexcept { return first_->v_; }
+  auto const& front() const noexcept { return first_->v_; }
 
   //
   void assign(size_type count, value_type const& v)
@@ -294,7 +288,7 @@ public:
   }
 
   //
-  constexpr void clear() noexcept(noexcept(node::destroy(first_)))
+  void clear() noexcept(noexcept(node::destroy(first_)))
   {
     node::destroy(first_);
 
@@ -554,7 +548,7 @@ public:
   }
 
   //
-  constexpr void reverse() noexcept { std::swap(first_, last_); }
+  void reverse() noexcept { std::swap(first_, last_); }
 
   //
   void sort(auto cmp)
@@ -569,7 +563,7 @@ public:
   }
 
   //
-  constexpr void swap(list& o) noexcept
+  void swap(list& o) noexcept
   {
     std::swap(first_, o.first_);
     std::swap(last_, o.last_);
@@ -634,10 +628,7 @@ public:
   }
 
   //
-  friend constexpr void swap(list& lhs, decltype(lhs) rhs) noexcept
-  {
-    lhs.swap(rhs);
-  }
+  friend void swap(list& lhs, decltype(lhs) rhs) noexcept { lhs.swap(rhs); }
 };
 
 }
