@@ -79,8 +79,9 @@ private:
     //
     static void sort(auto const b, decltype(b) e, size_type const sz,
       auto&& c)
-      noexcept(
-        noexcept(std::inplace_merge(b, b, e, std::forward<decltype(c)>(c)))
+      noexcept(noexcept(
+          std::inplace_merge(b, b, e, std::forward<decltype(c)>(c))
+        )
       )
     {
       if (sz > 1)
