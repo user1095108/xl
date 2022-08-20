@@ -413,7 +413,7 @@ public:
 
     delete n;
 
-    return iterator{nxt, p};
+    return {nxt, p};
   }
 
   iterator erase(const_iterator a, const_iterator const b)
