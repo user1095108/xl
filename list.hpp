@@ -164,12 +164,22 @@ public:
   }
 
   //
-  friend bool operator==(list const& lhs, list const& rhs) noexcept
+  friend bool operator==(list const& lhs, list const& rhs)
+    noexcept(noexcept(
+        std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end())
+      )
+    )
   {
     return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
   }
 
-  friend auto operator<=>(list const& lhs, list const& rhs) noexcept
+  friend auto operator<=>(list const& lhs, list const& rhs)
+    noexcept(noexcept(
+        std::lexicographical_compare_three_way(
+          lhs.begin(), lhs.end(), rhs.begin(), rhs.end()
+        )
+      )
+    )
   {
     return std::lexicographical_compare_three_way(
       lhs.begin(), lhs.end(), rhs.begin(), rhs.end()
