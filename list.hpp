@@ -487,8 +487,7 @@ public:
     }
   }
 
-  iterator insert(const_iterator const i,
-    std::initializer_list<value_type> l)
+  iterator insert(const_iterator const i, std::initializer_list<value_type> l)
     noexcept(noexcept(insert(i, l.begin(), l.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
