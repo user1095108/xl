@@ -309,7 +309,7 @@ public:
   //
   iterator emplace(const_iterator const i, auto&& ...a)
     noexcept(noexcept(new node(std::forward<decltype(a)>(a)...)))
-    requires(std::is_constructible_v<value_type, decltype(a)&&...>)
+    requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
     auto const n(i.n());
     auto const p(n ? i.p() : last_);
@@ -341,7 +341,7 @@ public:
 
   iterator emplace_back(auto&& ...a)
     noexcept(noexcept(new node(std::forward<decltype(a)>(a)...)))
-    requires(std::is_constructible_v<value_type, decltype(a)&&...>)
+    requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
     auto const l(last_);
 
@@ -363,7 +363,7 @@ public:
 
   iterator emplace_front(auto&& ...a)
     noexcept(noexcept(new node(std::forward<decltype(a)>(a)...)))
-    requires(std::is_constructible_v<value_type, decltype(a)&&...>)
+    requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
     auto const f(first_);
 
@@ -431,7 +431,7 @@ public:
 
   iterator insert(const_iterator const i, auto&& v)
     noexcept(noexcept(emplace(i, std::declval<decltype(v)>())))
-    requires(std::is_constructible_v<value_type, decltype(v)&&>)
+    requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     return emplace(i, std::forward<decltype(v)>(v));
   }
@@ -541,7 +541,7 @@ public:
 
   void push_back(auto&& v)
     noexcept(noexcept(emplace_back(std::forward<decltype(v)>(v))))
-    requires(std::is_constructible_v<value_type, decltype(v)&&>)
+    requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     emplace_back(std::forward<decltype(v)>(v));
   }
@@ -555,7 +555,7 @@ public:
 
   void push_front(auto&& v)
     noexcept(noexcept(emplace_front(std::forward<decltype(v)>(v))))
-    requires(std::is_constructible_v<value_type, decltype(v)&&>)
+    requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     emplace_front(std::forward<decltype(v)>(v));
   }
