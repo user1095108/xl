@@ -431,7 +431,7 @@ public:
 
   iterator insert(const_iterator const i, auto&& v)
     noexcept(noexcept(emplace(i, std::declval<decltype(v)>())))
-    requires(std::is_copy_constructible_v<value_type>)
+    requires(std::is_constructible_v<value_type, decltype(v)&&>)
   {
     return emplace(i, std::forward<decltype(v)>(v));
   }
@@ -445,17 +445,14 @@ public:
 
   iterator insert(const_iterator i, size_type count, auto&& v)
     noexcept(noexcept(emplace(i, std::declval<decltype(v)>())))
-    requires(std::is_copy_constructible_v<value_type>)
+    requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     if (count)
     {
-      auto const r(emplace(i, std::forward<decltype(v)>(v)));
+      auto const r(emplace(i, v));
       i = {i.n(), r.n()};
 
-      for (--count; count; --count)
-      {
-        i = {i.n(), emplace(i, std::forward<decltype(v)>(v)).n()};
-      }
+      for (--count; count; --count) i = {i.n(), emplace(i, v).n()};
 
       return r;
     }
@@ -544,7 +541,7 @@ public:
 
   void push_back(auto&& v)
     noexcept(noexcept(emplace_back(std::forward<decltype(v)>(v))))
-    requires(std::is_copy_constructible_v<value_type>)
+    requires(std::is_constructible_v<value_type, decltype(v)&&>)
   {
     emplace_back(std::forward<decltype(v)>(v));
   }
@@ -558,7 +555,7 @@ public:
 
   void push_front(auto&& v)
     noexcept(noexcept(emplace_front(std::forward<decltype(v)>(v))))
-    requires(std::is_copy_constructible_v<value_type>)
+    requires(std::is_constructible_v<value_type, decltype(v)&&>)
   {
     emplace_front(std::forward<decltype(v)>(v));
   }
