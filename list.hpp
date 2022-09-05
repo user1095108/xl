@@ -438,7 +438,6 @@ public:
 
   iterator insert(const_iterator i, size_type count, value_type&& v)
     noexcept(noexcept(insert(i, count, v)))
-    requires(std::is_copy_constructible_v<value_type>)
   {
     return insert(i, count, v);
   }
