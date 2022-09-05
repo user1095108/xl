@@ -535,13 +535,6 @@ public:
   }
 
   //
-  void push_back(value_type const& v)
-    noexcept(noexcept(emplace_back(v)))
-    requires(std::is_copy_constructible_v<value_type>)
-  {
-    emplace_back(v);
-  }
-
   void push_back(value_type&& v)
     noexcept(noexcept(emplace_back(std::move(v))))
     requires(std::is_move_constructible_v<value_type>)
@@ -549,11 +542,11 @@ public:
     emplace_back(std::move(v));
   }
 
-  void push_front(value_type const& v)
-    noexcept(noexcept(emplace_front(v)))
+  void push_back(auto&& v)
+    noexcept(noexcept(emplace_back(std::forward<decltype(v)>(v))))
     requires(std::is_copy_constructible_v<value_type>)
   {
-    emplace_front(v);
+    emplace_back(std::forward<decltype(v)>(v));
   }
 
   void push_front(value_type&& v)
@@ -561,6 +554,13 @@ public:
     requires(std::is_move_constructible_v<value_type>)
   {
     emplace_front(std::move(v));
+  }
+
+  void push_front(auto&& v)
+    noexcept(noexcept(emplace_front(std::forward<decltype(v)>(v))))
+    requires(std::is_copy_constructible_v<value_type>)
+  {
+    emplace_front(std::forward<decltype(v)>(v));
   }
 
   //
