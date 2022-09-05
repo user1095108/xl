@@ -584,8 +584,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 inline auto erase(list<T>& c, auto&& k, char = {})
-  noexcept(
-    noexcept(
+  noexcept(noexcept(
       erase_if(
         c,
         [](T const&) noexcept(noexcept(
