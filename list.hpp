@@ -108,7 +108,6 @@ public:
     requires(std::is_copy_constructible_v<value_type>):
     list(o.cbegin(), o.cend())
   {
-    list(o.cbegin(), o.cend());
   }
 
   list(list&& o) noexcept
