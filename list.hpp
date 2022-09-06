@@ -103,11 +103,9 @@ private:
 public:
   list() = default;
 
-  list(std::initializer_list<value_type> l)
-    noexcept(noexcept(assign(l.begin(), l.end())))
-    requires(std::is_copy_constructible_v<value_type>)
+  list(std::initializer_list<value_type> l) noexcept(noexcept(assign(l)))
   {
-    assign(l.begin(), l.end());
+    assign(l);
   }
 
   list(list const& o)
@@ -121,7 +119,6 @@ public:
 
   list(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(emplace_back(*i)))
-    requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
     std::for_each(
       i,
@@ -156,10 +153,10 @@ public:
   }
 
   auto& operator=(std::initializer_list<value_type> l)
-    noexcept(noexcept(assign(l.begin(), l.end())))
+    noexcept(noexcept(assign(l)))
     requires(std::is_copy_constructible_v<value_type>)
   {
-    assign(l.begin(), l.end());
+    assign(l);
 
     return *this;
   }
@@ -266,18 +263,22 @@ public:
   auto const& front() const noexcept { return first_->v_; }
 
   //
-  void assign(size_type count, value_type const& v)
+  void assign(size_type count, auto&& v)
     noexcept(noexcept(clear()) && noexcept(emplace_back(v)))
-    requires(std::is_copy_constructible_v<value_type>)
   {
     clear();
 
     for (; count; --count) emplace_back(v);
   }
 
+  void assign(size_type count, value_type&& v)
+    noexcept(noexcept(assign(count, v)))
+  {
+    assign(count, v);
+  }
+
   void assign(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(clear()) && noexcept(emplace_back(*i)))
-    requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
     clear();
 
@@ -293,7 +294,6 @@ public:
 
   void assign(std::initializer_list<value_type> l)
     noexcept(noexcept(assign(l.begin(), l.end())))
-    requires(std::is_copy_constructible_v<value_type>)
   {
     assign(l.begin(), l.end());
   }
