@@ -110,10 +110,11 @@ public:
   }
 
   list(list const& o)
-    noexcept(noexcept(assign(o.begin(), o.end())))
-    requires(std::is_copy_constructible_v<value_type>)
+    noexcept(noexcept(list(o.cbegin(), o.cend())))
+    requires(std::is_copy_constructible_v<value_type>):
+    list(o.cbegin(), o.cend())
   {
-    assign(o.begin(), o.end());
+    list(o.cbegin(), o.cend());
   }
 
   list(list&& o) noexcept(noexcept(clear())) { *this = std::move(o); }
