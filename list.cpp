@@ -1,4 +1,6 @@
 #include <iostream>
+#include <memory>
+#include <list>
 
 #include "list.hpp"
 
@@ -47,6 +49,10 @@ int main()
   decltype(l) a(l), b(std::move(l));
 
   std::cout << a.size() << " " << b.size() << " " << (a == b) << std::endl;
+
+  xl::list<std::unique_ptr<int>> m;
+
+  m.push_back(std::make_unique<int>(1));
 
   return 0;
 }
