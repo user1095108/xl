@@ -422,16 +422,16 @@ public:
   }
 
   //
-  iterator insert(const_iterator const i, value_type&& v)
-    noexcept(noexcept(emplace(i, std::move(v))))
-  {
-    return emplace(i, std::move(v));
-  }
-
   iterator insert(const_iterator const i, auto&& v)
     noexcept(noexcept(emplace(i, std::declval<decltype(v)>())))
   {
     return emplace(i, std::forward<decltype(v)>(v));
+  }
+
+  iterator insert(const_iterator const i, value_type&& v)
+    noexcept(noexcept(emplace(i, std::move(v))))
+  {
+    return emplace(i, std::move(v));
   }
 
   iterator insert(const_iterator i, size_type count, auto&& v)
