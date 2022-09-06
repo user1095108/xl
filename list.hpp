@@ -103,12 +103,6 @@ private:
 public:
   list() = default;
 
-  list(std::initializer_list<value_type> l)
-    noexcept(noexcept(list(l.begin(), l.end()))):
-    list(l.begin(), l.end())
-  {
-  }
-
   list(list const& o)
     noexcept(noexcept(list(o.cbegin(), o.cend())))
     requires(std::is_copy_constructible_v<value_type>):
@@ -117,7 +111,17 @@ public:
     list(o.cbegin(), o.cend());
   }
 
-  list(list&& o) noexcept(noexcept(clear())) { *this = std::move(o); }
+  list(list&& o) noexcept
+  {
+    first_ = o.first_; last_ = o.last_;
+    o.first_ = o.last_ = {};
+  }
+
+  list(std::initializer_list<value_type> l)
+    noexcept(noexcept(list(l.begin(), l.end()))):
+    list(l.begin(), l.end())
+  {
+  }
 
   list(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(emplace_back(*i)))
