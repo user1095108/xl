@@ -3,9 +3,9 @@
 # pragma once
 
 #include <cstdint>
-
 #include <algorithm>
 #include <compare>
+#include <initializer_list>
 
 #include "listiterator.hpp"
 
@@ -117,12 +117,6 @@ public:
     o.first_ = o.last_ = {};
   }
 
-  list(std::initializer_list<value_type> l)
-    noexcept(noexcept(list(l.begin(), l.end()))):
-    list(l.begin(), l.end())
-  {
-  }
-
   list(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(emplace_back(*i)))
   {
@@ -134,6 +128,12 @@ public:
         emplace_back(std::forward<decltype(v)>(v));
       }
     );
+  }
+
+  list(std::initializer_list<value_type> l)
+    noexcept(noexcept(list(l.begin(), l.end()))):
+    list(l.begin(), l.end())
+  {
   }
 
   ~list() noexcept(noexcept(node::destroy(first_))) { node::destroy(first_); }
