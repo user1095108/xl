@@ -103,9 +103,10 @@ private:
 public:
   list() = default;
 
-  list(std::initializer_list<value_type> l) noexcept(noexcept(assign(l)))
+  list(std::initializer_list<value_type> l)
+    noexcept(noexcept(list(l.begin(), l.end()))):
+    list(l.begin(), l.end())
   {
-    assign(l);
   }
 
   list(list const& o)
@@ -132,11 +133,10 @@ public:
 
   ~list() noexcept(noexcept(node::destroy(first_))) { node::destroy(first_); }
 
-  // self-assign neglected
   auto& operator=(list const& o)
     noexcept(noexcept(assign(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>)
-  {
+  { // self-assign neglected
     assign(o.begin(), o.end());
 
     return *this;
@@ -154,7 +154,6 @@ public:
 
   auto& operator=(std::initializer_list<value_type> l)
     noexcept(noexcept(assign(l)))
-    requires(std::is_copy_constructible_v<value_type>)
   {
     assign(l);
 
