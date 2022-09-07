@@ -144,12 +144,7 @@ public:
       )
     )
     requires(
-      std::conjunction_v<
-        std::is_same<
-          std::remove_cvref_t<decltype((a, ...))>,
-          std::remove_cvref_t<decltype(a)>
-        >...
-      > &&
+      bool(sizeof...(a)) &&
       !std::conjunction_v<
         std::is_same<
           list,
