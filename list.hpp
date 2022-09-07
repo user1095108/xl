@@ -135,8 +135,44 @@ public:
   {
   }
 
+  explicit list(auto&& ...a)
+    noexcept(noexcept(
+        (
+          emplace_back(std::forward<decltype(a)>(a)),
+          ...
+        )
+      )
+    )
+    requires(
+      std::conjunction_v<
+        std::is_same<
+          std::remove_cvref_t<decltype((a, ...))>,
+          std::remove_cvref_t<decltype(a)>
+        >...
+      > &&
+      !std::conjunction_v<
+        std::is_same<
+          list,
+          std::remove_cvref_t<decltype(a)>
+        >...
+      > &&
+      !std::conjunction_v<
+        std::is_same<
+          std::initializer_list<value_type>,
+          std::remove_cvref_t<decltype(a)>
+        >...
+      >
+    )
+  {
+    (
+      emplace_back(std::forward<decltype(a)>(a)),
+      ...
+    );
+  }
+
   ~list() noexcept(noexcept(node::destroy(first_))) { node::destroy(first_); }
 
+  //
   auto& operator=(list const& o)
     noexcept(noexcept(assign(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>)
