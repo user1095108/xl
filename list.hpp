@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <compare>
 #include <initializer_list>
+#include <tuple>
 
 #include "listiterator.hpp"
 
@@ -144,18 +145,22 @@ public:
       )
     )
     requires(
-      !std::conjunction_v<
-        std::is_same<
-          list,
-          std::remove_cvref_t<decltype(a)>
-        >...
-      > &&
-      !std::conjunction_v<
-        std::is_same<
-          std::initializer_list<value_type>,
-          std::remove_cvref_t<decltype(a)>
-        >...
-      >
+      !((1 == sizeof...(a)) &&
+        (
+          std::is_same_v<
+            list,
+            std::remove_cvref_t<
+              std::tuple_element_t<0, std::tuple<decltype(a)...>>
+            >
+          > ||
+          std::is_same_v<
+            std::initializer_list<value_type>,
+            std::remove_cvref_t<
+              std::tuple_element_t<0, std::tuple<decltype(a)...>>
+            >
+          >
+        )
+      )
     )
   {
     (
