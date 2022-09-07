@@ -144,7 +144,6 @@ public:
       )
     )
     requires(
-      bool(sizeof...(a)) &&
       !std::conjunction_v<
         std::is_same<
           list,
