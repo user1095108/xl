@@ -145,6 +145,7 @@ public:
       )
     )
     requires(
+      bool(sizeof...(a)) &&
       !((1 == sizeof...(a)) &&
         (
           std::is_same_v<
