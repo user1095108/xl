@@ -58,14 +58,9 @@ private:
       return (std::uintptr_t(n) ^ ...);
     }
 
-    static void destroy(auto n) noexcept(noexcept(delete n))
+    static void destroy(node* n) noexcept(noexcept(delete n))
     {
-      for (decltype(n) p{}; n;)
-      {
-        assign(n, p)(n->link(p), n);
-
-        delete p;
-      }
+      for (decltype(n) p{}; n; assign(n, p)(n->link(p), n), delete p);
     }
 
     //
