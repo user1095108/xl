@@ -12,12 +12,6 @@
 namespace xl
 {
 
-template <typename A, typename ...B>
-struct front { using type = A; };
-
-template <typename ...A>
-using front_t = typename front<A...>::type;
-
 template <typename T>
 class list
 {
@@ -154,11 +148,11 @@ public:
         (
           std::is_same_v<
             list,
-            std::remove_cvref_t<front_t<decltype(a)...>>
+            std::remove_cvref_t<decltype((a, ...))>
           > ||
           std::is_same_v<
             std::initializer_list<value_type>,
-            std::remove_cvref_t<front_t<decltype(a)...>>
+            std::remove_cvref_t<decltype((a, ...))>
           >
         )
       )
