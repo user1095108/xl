@@ -467,7 +467,8 @@ public:
     }
   }
 
-  iterator insert(const_iterator i, size_type count, value_type&& v)
+  iterator insert(const_iterator const i, size_type const count,
+    value_type&& v)
     noexcept(noexcept(insert(i, count, v)))
   {
     return insert(i, count, v);
