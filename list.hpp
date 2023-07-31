@@ -433,7 +433,7 @@ public:
   iterator erase(const_iterator a, const_iterator const b)
     noexcept(noexcept(erase(a)))
   {
-    while (a != b) { a = erase(a); }; return a;
+    while (a != b) { a = erase(a); } return a;
   }
 
   //
