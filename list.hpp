@@ -454,7 +454,7 @@ public:
   iterator insert(const_iterator i, size_type count, auto&& v)
     noexcept(noexcept(emplace(i, std::declval<decltype(v)>())))
   {
-    if (count)
+    if (count) [[likely]]
     {
       auto const r(emplace(i, v));
       i = {i.n(), r.n()};
@@ -463,7 +463,7 @@ public:
 
       return r;
     }
-    else
+    else [[unlikely]]
     {
       return {i.n(), i.p()};
     }
@@ -479,11 +479,11 @@ public:
     std::input_iterator auto const j, decltype(j) k)
     noexcept(noexcept(emplace(i, *j)))
   {
-    if (j == k)
+    if (j == k) [[unlikely]]
     {
       return {i.n(), i.p()};
     }
-    else
+    else [[likely]]
     {
       auto const r(emplace(i, *j));
       i = {i.n(), r.n()};
