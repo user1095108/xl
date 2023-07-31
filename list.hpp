@@ -226,10 +226,8 @@ public:
   {
     size_type sz{};
 
-    for (decltype(first_) n(first_), p{}; n; ++sz)
-    {
-      node::assign(n, p)(n->link(p), n);
-    }
+    for (decltype(first_) n(first_), p{}; n;
+      ++sz, node::assign(n, p)(n->link(p), n));
 
     return sz;
   }
