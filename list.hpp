@@ -93,7 +93,7 @@ private:
   };
 
 private:
-  node* first_{}, *last_{};
+  node* f_{}, *l_{};
 
 public:
   list() = default;
@@ -107,8 +107,8 @@ public:
 
   list(list&& o) noexcept
   {
-    first_ = o.first_; last_ = o.last_;
-    o.first_ = o.last_ = {};
+    f_ = o.f_; l_ = o.l_;
+    o.f_ = o.l_ = {};
   }
 
   list(std::input_iterator auto const i, decltype(i) j)
@@ -159,7 +159,7 @@ public:
     );
   }
 
-  ~list() noexcept(noexcept(node::destroy(first_))) { node::destroy(first_); }
+  ~list() noexcept(noexcept(node::destroy(f_))) { node::destroy(f_); }
 
   //
   auto& operator=(list const& o)
@@ -175,8 +175,8 @@ public:
   {
     clear();
 
-    first_ = o.first_; last_ = o.last_;
-    o.first_ = o.last_ = {};
+    f_ = o.f_; l_ = o.l_;
+    o.f_ = o.l_ = {};
 
     return *this;
   }
@@ -215,55 +215,55 @@ public:
   //
   static constexpr size_type max_size() noexcept { return ~size_type{}; }
 
-  bool empty() const noexcept { return !first_; }
+  bool empty() const noexcept { return !f_; }
 
   size_type size() const noexcept
   {
     size_type sz{};
 
-    for (decltype(first_) n(first_), p{}; n;
+    for (decltype(f_) n(f_), p{}; n;
       ++sz, node::assign(n, p)(n->link(p), n));
 
     return sz;
   }
 
   // iterators
-  iterator begin() noexcept { return {first_, {}}; }
-  iterator end() noexcept { return {{}, last_}; }
+  iterator begin() noexcept { return {f_, {}}; }
+  iterator end() noexcept { return {{}, l_}; }
 
   // const iterators
-  const_iterator begin() const noexcept { return {first_, {}}; }
-  const_iterator end() const noexcept { return {{}, last_}; }
+  const_iterator begin() const noexcept { return {f_, {}}; }
+  const_iterator end() const noexcept { return {{}, l_}; }
 
-  const_iterator cbegin() const noexcept { return {first_, {}}; }
-  const_iterator cend() const noexcept { return {{}, last_}; }
+  const_iterator cbegin() const noexcept { return {f_, {}}; }
+  const_iterator cend() const noexcept { return {{}, l_}; }
 
   // reverse iterators
   reverse_iterator rbegin() noexcept
   {
-    return reverse_iterator(iterator({}, last_));
+    return reverse_iterator(iterator({}, l_));
   }
 
   reverse_iterator rend() noexcept
   {
-    return reverse_iterator(iterator(first_, {}));
+    return reverse_iterator(iterator(f_, {}));
   }
 
   // const reverse iterators
   const_reverse_iterator crbegin() const noexcept
   {
-    return const_reverse_iterator(const_iterator({}, last_));
+    return const_reverse_iterator(const_iterator({}, l_));
   }
 
   const_reverse_iterator crend() const noexcept
   {
-    return const_reverse_iterator(const_iterator(first_, {}));
+    return const_reverse_iterator(const_iterator(f_, {}));
   }
 
   //
   auto& operator[](size_type i) noexcept
   {
-    auto n(first_);
+    auto n(f_);
 
     for (decltype(n) p{}; i; --i) node::assign(n, p)(n->link(p), n);
 
@@ -272,7 +272,7 @@ public:
 
   auto const& operator[](size_type i) const noexcept
   {
-    auto n(first_);
+    auto n(f_);
 
     for (decltype(n) p{}; i; --i) node::assign(n, p)(n->link(p), n);
 
@@ -282,19 +282,17 @@ public:
   auto& at(size_type const i) noexcept { return (*this)[i]; }
   auto& at(size_type const i) const noexcept { return (*this)[i]; }
 
-  auto& back() noexcept { return last_->v_; }
-  auto const& back() const noexcept { return last_->v_; }
+  auto& back() noexcept { return l_->v_; }
+  auto const& back() const noexcept { return l_->v_; }
 
-  auto& front() noexcept { return first_->v_; }
-  auto const& front() const noexcept { return first_->v_; }
+  auto& front() noexcept { return f_->v_; }
+  auto const& front() const noexcept { return f_->v_; }
 
   //
   void assign(size_type count, auto&& v)
     noexcept(noexcept(clear()) && noexcept(emplace_back(v)))
   {
-    clear();
-
-    for (; count; --count) emplace_back(v);
+    clear(); for (; count; --count) emplace_back(v);
   }
 
   void assign(size_type count, value_type&& v)
@@ -325,11 +323,9 @@ public:
   }
 
   //
-  void clear() noexcept(noexcept(node::destroy(first_)))
+  void clear() noexcept(noexcept(node::destroy(f_)))
   {
-    node::destroy(first_);
-
-    first_ = last_ = {};
+    node::destroy(f_); f_ = l_ = {};
   }
 
   //
@@ -337,8 +333,7 @@ public:
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
-    auto const n(i.n());
-    auto const p(n ? i.p() : last_);
+    auto const n(i.n()), p(n ? i.p() : l_);
 
     // p q n
     auto const q(new node{std::forward<decltype(a)>(a)...});
@@ -350,7 +345,7 @@ public:
     }
     else
     {
-      last_ = q;
+      l_ = q;
     }
 
     if (p)
@@ -359,7 +354,7 @@ public:
     }
     else
     {
-      first_ = q;
+      f_ = q;
     }
 
     return {q, p};
@@ -369,9 +364,7 @@ public:
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
-    auto const l(last_);
-
-    auto const q(last_ = new node{std::forward<decltype(a)>(a)...});
+    auto const l(l_), q(l_ = new node{std::forward<decltype(a)>(a)...});
     q->l_ = node::conv(l);
 
     if (l)
@@ -381,7 +374,7 @@ public:
     }
     else
     {
-      first_ = q;
+      f_ = q;
     }
 
     return {q, l};
@@ -391,9 +384,7 @@ public:
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
-    auto const f(first_);
-
-    auto const q(first_ = new node{std::forward<decltype(a)>(a)...});
+    auto const f(f_), q(f_ = new node{std::forward<decltype(a)>(a)...});
     q->l_ = node::conv(f);
 
     if (f)
@@ -403,7 +394,7 @@ public:
     }
     else
     {
-      last_ = q;
+      l_ = q;
     }
 
     return {q, {}};
@@ -411,11 +402,9 @@ public:
 
   //
   iterator erase(const_iterator const i)
-    noexcept(noexcept(delete first_))
+    noexcept(noexcept(delete f_))
   {
-    auto const n(i.n());
-    auto const p(i.p());
-    auto const nxt(n->link(p));
+    auto const n(i.n()), p(i.p()), nxt(n->link(p));
 
     // p n nxt
     if (p)
@@ -424,7 +413,7 @@ public:
     }
     else
     {
-      first_ = nxt;
+      f_ = nxt;
     }
 
     if (nxt)
@@ -433,7 +422,7 @@ public:
     }
     else
     {
-      last_ = p;
+      l_ = p;
     }
 
     delete n;
@@ -444,7 +433,9 @@ public:
   iterator erase(const_iterator a, const_iterator const b)
     noexcept(noexcept(erase(a)))
   {
-    iterator i(b); for (; a != b; a = i) i = erase(a); return i;
+    for (; a.n() != b.n(); a = erase(a));
+
+    return a;
   }
 
   //
@@ -518,34 +509,34 @@ public:
 
   //
   void pop_back()
-    noexcept(noexcept(delete first_))
+    noexcept(noexcept(delete f_))
   {
-    auto const l0(last_);
+    auto const l0(l_);
 
-    if (auto const l1(last_ = l0->link()); l1)
+    if (auto const l1(l_ = l0->link()); l1)
     {
       l1->l_ = node::conv(l1->link(l0));
     }
     else
     {
-      first_ = {};
+      f_ = {};
     }
 
     delete l0;
   }
 
   void pop_front()
-    noexcept(noexcept(delete first_))
+    noexcept(noexcept(delete f_))
   {
-    auto const f0(first_);
+    auto const f0(f_);
 
-    if (auto const f1(first_ = f0->link()); f1)
+    if (auto const f1(f_ = f0->link()); f1)
     {
       f1->l_ = node::conv(f1->link(f0));
     }
     else
     {
-      last_ = {};
+      l_ = {};
     }
 
     delete f0;
@@ -577,7 +568,7 @@ public:
   }
 
   //
-  void reverse() noexcept { std::swap(first_, last_); }
+  void reverse() noexcept { std::swap(f_, l_); }
 
   //
   void sort(auto cmp)
@@ -594,8 +585,8 @@ public:
   //
   void swap(list& o) noexcept
   {
-    std::swap(first_, o.first_);
-    std::swap(last_, o.last_);
+    std::swap(f_, o.f_);
+    std::swap(l_, o.l_);
   }
 };
 
