@@ -640,7 +640,7 @@ inline auto erase_if(list<T>& c, auto pred)
     noexcept(c.erase(c.begin()))
   )
 {
-  typename list<T>::size_type r{};
+  typename std::remove_reference_t<decltype(c)>::size_type r{};
 
   for (auto i(c.begin()); i.n(); pred(*i) ? ++r, i = c.erase(i) : ++i);
 
