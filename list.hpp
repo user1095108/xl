@@ -292,7 +292,7 @@ public:
   void assign(size_type count, auto&& v)
     noexcept(noexcept(clear()) && noexcept(emplace_back(v)))
   {
-    clear(); for (; count; --count) emplace_back(v);
+    clear(); while (count--) emplace_back(v);
   }
 
   void assign(size_type count, value_type&& v)
@@ -457,7 +457,7 @@ public:
       auto const r(emplace(i, v));
       i = {i.n(), r.n()};
 
-      for (--count; count; --count) i = {i.n(), emplace(i, v).n()};
+      while (--count) i = {i.n(), emplace(i, v).n()};
 
       return r;
     }
