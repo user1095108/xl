@@ -339,65 +339,36 @@ public:
     auto const q(new node{std::forward<decltype(a)>(a)...});
     q->l_ = node::conv(n, p);
 
-    if (n)
-    {
-      n->l_ = node::conv(q, n->link(p));
-    }
-    else
-    {
-      l_ = q;
-    }
+    n ? void(n->l_ = node::conv(q, n->link(p))) : void(l_ = q);
+    p ? void(p->l_ = node::conv(q, p->link(n))) : void(f_ = q);
 
-    if (p)
-    {
-      p->l_ = node::conv(q, p->link(n));
-    }
-    else
-    {
-      f_ = q;
-    }
-
-    return {q, p};
+    return {q, p}; // return iterator to created node
   }
 
   iterator emplace_back(auto&& ...a)
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
+    // l q
     auto const l(l_), q(l_ = new node{std::forward<decltype(a)>(a)...});
     q->l_ = node::conv(l);
 
-    if (l)
-    {
-      // l q
-      l->l_ ^= node::conv(q);
-    }
-    else
-    {
-      f_ = q;
-    }
+    l ? void(l->l_ ^= node::conv(q)) : void(f_ = q);
 
-    return {q, l};
+    return {q, l}; // return iterator to created node
   }
 
   iterator emplace_front(auto&& ...a)
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
+    // q f
     auto const f(f_), q(f_ = new node{std::forward<decltype(a)>(a)...});
     q->l_ = node::conv(f);
 
-    if (f)
-    {
-      // q f
-      f->l_ ^= node::conv(q);
-    }
-    else
-    {
-      l_ = q;
-    }
+    f ? void(f->l_ ^= node::conv(q)) : void(l_ = q);
 
-    return {q, {}};
+    return {q, {}}; // return iterator to created node
   }
 
   //
@@ -407,23 +378,8 @@ public:
     auto const n(i.n()), p(i.p()), nxt(n->link(p));
 
     // p n nxt
-    if (p)
-    {
-      p->l_ = node::conv(nxt, p->link(n));
-    }
-    else
-    {
-      f_ = nxt;
-    }
-
-    if (nxt)
-    {
-      nxt->l_ = node::conv(p, nxt->link(n));
-    }
-    else
-    {
-      l_ = p;
-    }
+    p ? void(p->l_ = node::conv(nxt, p->link(n))) : void(f_ = nxt);
+    nxt ? void(nxt->l_ = node::conv(p, nxt->link(n))) : void(l_ = p);
 
     delete n;
 
@@ -453,7 +409,7 @@ public:
     noexcept(noexcept(emplace(i, std::declval<decltype(v)>())))
   {
     if (count) [[likely]]
-    {
+    { // the parent node of i.n() changes
       auto const r(emplace(i, v));
       i = {i.n(), r.n()};
 
@@ -490,8 +446,9 @@ public:
       std::for_each(
         std::next(j),
         k,
-        [&](auto&& v) noexcept(noexcept(emplace(i, *j)))
-        { // the parent changes
+        [&](auto&& v)
+          noexcept(noexcept(emplace(i, std::forward<decltype(v)>(v))))
+        { // the parent node of i.n() changes
           i = {i.n(), emplace(i, std::forward<decltype(v)>(v)).n()};
         }
       );
@@ -507,36 +464,20 @@ public:
   }
 
   //
-  void pop_back()
-    noexcept(noexcept(delete f_))
+  void pop_back() noexcept(noexcept(delete f_))
   {
-    auto const l0(l_);
+    auto const l0(l_), l1(l_ = l0->link());
 
-    if (auto const l1(l_ = l0->link()); l1)
-    {
-      l1->l_ = node::conv(l1->link(l0));
-    }
-    else
-    {
-      f_ = {};
-    }
+    l1 ? void(l1->l_ = node::conv(l1->link(l0))) : void(f_ = {});
 
     delete l0;
   }
 
-  void pop_front()
-    noexcept(noexcept(delete f_))
+  void pop_front() noexcept(noexcept(delete f_))
   {
-    auto const f0(f_);
+    auto const f0(f_), f1(f_ = f0->link());
 
-    if (auto const f1(f_ = f0->link()); f1)
-    {
-      f1->l_ = node::conv(f1->link(f0));
-    }
-    else
-    {
-      l_ = {};
-    }
+    f1 ? void(f1->l_ = node::conv(f1->link(f0))) : void(l_ = {});
 
     delete f0;
   }
