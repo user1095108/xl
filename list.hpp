@@ -64,11 +64,11 @@ private:
     }
 
     //
-    auto link() const noexcept { return reinterpret_cast<node*>(l_); }
+    auto link() const noexcept { return (node*)(l_); }
 
     auto link(auto const n) const noexcept
     {
-      return reinterpret_cast<node*>(std::uintptr_t(n) ^ l_);
+      return (node*)(std::uintptr_t(n) ^ l_);
     }
 
     //
