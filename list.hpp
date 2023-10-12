@@ -410,7 +410,7 @@ public:
   //
   template <int = 0>
   iterator insert(const_iterator const i, auto&& v)
-    noexcept(noexcept(emplace(i, std::declval<decltype(v)>())))
+    noexcept(noexcept(emplace(i, std::forward<decltype(v)>(v))))
   {
     return emplace(i, std::forward<decltype(v)>(v));
   }
@@ -422,7 +422,7 @@ public:
   }
 
   iterator insert(const_iterator i, size_type count, value_type const& v)
-    noexcept(noexcept(emplace(i, std::declval<decltype(v)>())))
+    noexcept(noexcept(emplace(i, v)))
   {
     if (count) [[likely]]
     { // the parent node of i.n() changes
