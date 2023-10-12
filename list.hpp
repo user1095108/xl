@@ -294,8 +294,7 @@ public:
     );
   }
 
-  template <typename U>
-  void assign(std::initializer_list<U> l)
+  void assign(std::initializer_list<value_type> l)
     noexcept(noexcept(assign(l.begin(), l.end())))
   {
     assign(l.begin(), l.end());
