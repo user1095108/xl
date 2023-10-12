@@ -131,32 +131,15 @@ public:
   }
 
   explicit list(auto&& ...a)
-    noexcept(noexcept(
-        (
-          emplace_back(std::forward<decltype(a)>(a)),
-          ...
-        )
-      )
-    )
+    noexcept(noexcept((emplace_back(std::forward<decltype(a)>(a)), ...)))
     requires(
-      !((1 == sizeof...(a)) &&
-        (
-          std::is_same_v<
-            list,
-            std::remove_cvref_t<decltype((a, ...))>
-          > ||
-          std::is_same_v<
-            std::initializer_list<value_type>,
-            std::remove_cvref_t<decltype((a, ...))>
-          >
-        )
-      )
+      !std::disjunction_v<
+        std::is_same<std::remove_cvref_t<decltype(a)>, list>...
+      > &&
+      requires{(emplace_back(std::forward<decltype(a)>(a)), ...);}
     )
   {
-    (
-      emplace_back(std::forward<decltype(a)>(a)),
-      ...
-    );
+    (emplace_back(std::forward<decltype(a)>(a)), ...);
   }
 
   ~list() noexcept(noexcept(node::destroy(f_))) { node::destroy(f_); }
