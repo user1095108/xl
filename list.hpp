@@ -133,9 +133,7 @@ public:
   explicit list(auto&& ...a)
     noexcept(noexcept((emplace_back(std::forward<decltype(a)>(a)), ...)))
     requires(
-      !std::disjunction_v<
-        std::is_same<std::remove_cvref_t<decltype(a)>, list>...
-      > &&
+      !std::is_same_v<std::remove_cvref_t<decltype((a, ...))>, list> &&
       requires{(emplace_back(std::forward<decltype(a)>(a)), ...);}
     )
   {
