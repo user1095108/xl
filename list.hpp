@@ -560,12 +560,12 @@ inline auto erase(list<T>& c, auto&& k)
   requires(requires{std::equal_to()(std::declval<T>(), k);})
 {
   return erase_if(
-    c,
-    [&](auto&& v) noexcept(noexcept(std::equal_to()(v, k)))
-    {
-      return std::equal_to()(v, k);
-    }
-  );
+      c,
+      [&](auto&& v) noexcept(noexcept(std::equal_to()(v, k)))
+      {
+        return std::equal_to()(v, k);
+      }
+    );
 }
 
 template <typename T>
