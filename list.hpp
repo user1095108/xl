@@ -111,6 +111,23 @@ public:
     o.f_ = o.l_ = {};
   }
 
+  explicit list(auto&& ...a)
+    noexcept(noexcept((emplace_back(std::forward<decltype(a)>(a)), ...)))
+    requires(
+      (1 != sizeof...(a)) ||
+      !std::is_same_v<std::remove_cvref_t<decltype((a, ...))>, list>
+    )
+  {
+    (emplace_back(std::forward<decltype(a)>(a)), ...);
+  }
+
+  list(std::initializer_list<value_type> l)
+    noexcept(noexcept(list(l.begin(), l.end())))
+    requires(std::is_copy_constructible_v<value_type>):
+    list(l.begin(), l.end())
+  {
+  }
+
   list(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(emplace_back(*i)))
   {
@@ -122,25 +139,6 @@ public:
         emplace_back(std::forward<decltype(v)>(v));
       }
     );
-  }
-
-  list(std::initializer_list<value_type> l)
-    noexcept(noexcept(list(l.begin(), l.end()))):
-    list(l.begin(), l.end())
-  {
-  }
-
-  explicit list(auto&& ...a)
-    noexcept(noexcept((emplace_back(std::forward<decltype(a)>(a)), ...)))
-    requires(
-      (
-        (1 != sizeof...(a)) ||
-        !std::is_same_v<std::remove_cvref_t<decltype((a, ...))>, list>
-      ) &&
-      requires{(emplace_back(std::forward<decltype(a)>(a)), ...);}
-    )
-  {
-    (emplace_back(std::forward<decltype(a)>(a)), ...);
   }
 
   ~list() noexcept(noexcept(node::destroy(f_))) { node::destroy(f_); }
@@ -167,6 +165,7 @@ public:
 
   auto& operator=(std::initializer_list<value_type> l)
     noexcept(noexcept(assign(l)))
+    requires(std::is_copy_constructible_v<value_type>)
   {
     assign(l);
 
@@ -281,6 +280,7 @@ public:
 
   void assign(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(clear()) && noexcept(emplace_back(*i)))
+    requires(std::is_assignable_v<value_type&, decltype(*i)>)
   {
     clear();
 
@@ -294,7 +294,8 @@ public:
     );
   }
 
-  void assign(std::initializer_list<value_type> l)
+  template <typename U>
+  void assign(std::initializer_list<U> l)
     noexcept(noexcept(assign(l.begin(), l.end())))
   {
     assign(l.begin(), l.end());
