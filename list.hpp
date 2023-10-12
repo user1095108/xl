@@ -289,16 +289,10 @@ public:
   auto const& front() const noexcept { return f_->v_; }
 
   //
-  void assign(size_type count, auto&& v)
+  void assign(size_type count, value_type const& v)
     noexcept(noexcept(clear()) && noexcept(emplace_back(v)))
   {
     clear(); while (count--) emplace_back(v);
-  }
-
-  void assign(size_type count, value_type&& v)
-    noexcept(noexcept(assign(count, v)))
-  {
-    assign(count, v);
   }
 
   void assign(std::input_iterator auto const i, decltype(i) j)
@@ -329,6 +323,7 @@ public:
   }
 
   //
+  template <int = 0>
   iterator emplace(const_iterator const i, auto&& ...a)
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
@@ -345,6 +340,13 @@ public:
     return {q, p}; // return iterator to created node
   }
 
+  auto emplace(const_iterator const i, value_type v)
+    noexcept(noexcept(emplace<0>(i, std::move(v))))
+  {
+    return emplace<0>(i, std::move(v));
+  }
+
+  template <int = 0>
   iterator emplace_back(auto&& ...a)
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
@@ -358,6 +360,13 @@ public:
     return {q, l}; // return iterator to created node
   }
 
+  auto emplace_back(value_type v)
+    noexcept(noexcept(emplace_back<0>(std::move(v))))
+  {
+    return emplace_back<0>(std::move(v));
+  }
+
+  template <int = 0>
   iterator emplace_front(auto&& ...a)
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
@@ -369,6 +378,12 @@ public:
     f ? void(f->l_ ^= node::conv(q)) : void(l_ = q);
 
     return {q, {}}; // return iterator to created node
+  }
+
+  auto emplace_front(value_type v)
+    noexcept(noexcept(emplace_front<0>(std::move(v))))
+  {
+    return emplace_front<0>(std::move(v));
   }
 
   //
@@ -393,19 +408,20 @@ public:
   }
 
   //
+  template <int = 0>
   iterator insert(const_iterator const i, auto&& v)
     noexcept(noexcept(emplace(i, std::declval<decltype(v)>())))
   {
     return emplace(i, std::forward<decltype(v)>(v));
   }
 
-  iterator insert(const_iterator const i, value_type&& v)
-    noexcept(noexcept(emplace(i, std::move(v))))
+  auto insert(const_iterator const i, value_type v)
+    noexcept(noexcept(insert<0>(i, std::move(v))))
   {
-    return emplace(i, std::move(v));
+    return insert<0>(i, std::move(v));
   }
 
-  iterator insert(const_iterator i, size_type count, auto&& v)
+  iterator insert(const_iterator i, size_type count, value_type const& v)
     noexcept(noexcept(emplace(i, std::declval<decltype(v)>())))
   {
     if (count) [[likely]]
@@ -421,13 +437,6 @@ public:
     {
       return {i.n(), i.p()};
     }
-  }
-
-  iterator insert(const_iterator const i, size_type const count,
-    value_type&& v)
-    noexcept(noexcept(insert(i, count, v)))
-  {
-    return insert(i, count, v);
   }
 
   iterator insert(const_iterator i,
@@ -457,7 +466,7 @@ public:
     }
   }
 
-  iterator insert(const_iterator const i, std::initializer_list<value_type> l)
+  auto insert(const_iterator const i, std::initializer_list<value_type> l)
     noexcept(noexcept(insert(i, l.begin(), l.end())))
   {
     return insert(i, l.begin(), l.end());
@@ -483,28 +492,30 @@ public:
   }
 
   //
-  void push_back(value_type&& v)
-    noexcept(noexcept(emplace_back(std::move(v))))
-  {
-    emplace_back(std::move(v));
-  }
-
+  template <int = 0>
   void push_back(auto&& v)
     noexcept(noexcept(emplace_back(std::forward<decltype(v)>(v))))
   {
     emplace_back(std::forward<decltype(v)>(v));
   }
 
-  void push_front(value_type&& v)
-    noexcept(noexcept(emplace_front(std::move(v))))
+  void push_back(value_type v)
+    noexcept(noexcept(push_back<0>(std::move(v))))
   {
-    emplace_front(std::move(v));
+    push_back<0>(std::move(v));
   }
 
+  template <int = 0>
   void push_front(auto&& v)
     noexcept(noexcept(emplace_front(std::forward<decltype(v)>(v))))
   {
     emplace_front(std::forward<decltype(v)>(v));
+  }
+
+  void push_front(value_type v)
+    noexcept(noexcept(push_front<0>(std::move(v))))
+  {
+    push_front<0>(std::move(v));
   }
 
   //
@@ -531,8 +542,8 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-template <typename T>
-inline auto erase(list<T>& c, auto&& k, char = {})
+template <int = 0, typename T>
+inline auto erase(list<T>& c, auto&& k)
   noexcept(noexcept(
       erase_if(
         c,
@@ -558,10 +569,10 @@ inline auto erase(list<T>& c, auto&& k, char = {})
 }
 
 template <typename T>
-inline auto erase(list<T>& c, T const& k)
-  noexcept(noexcept(erase(c, k, {})))
+inline auto erase(list<T>& c, T k)
+  noexcept(noexcept(erase<0>(c, std::move(k))))
 {
-  return erase(c, k, {});
+  return erase<0>(c, std::move(k));
 }
 
 template <typename T>
