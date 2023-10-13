@@ -42,8 +42,8 @@ private:
     value_type v_;
 
     explicit node(auto&& ...a)
-      noexcept(noexcept(T{std::forward<decltype(a)>(a)...})):
-      v_{std::forward<decltype(a)>(a)...}
+      noexcept(noexcept(T(std::forward<decltype(a)>(a)...))):
+      v_(std::forward<decltype(a)>(a)...)
     {
     }
 
