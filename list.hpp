@@ -114,7 +114,7 @@ public:
   explicit list(auto&& ...a)
     noexcept(noexcept((emplace_back(std::forward<decltype(a)>(a)), ...)))
     requires(
-      (1 != sizeof...(a)) ||
+      (1 < sizeof...(a)) ||
       !std::is_same_v<std::remove_cvref_t<decltype((a, ...))>, list>
     )
   {
