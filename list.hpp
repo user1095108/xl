@@ -151,9 +151,9 @@ public:
     return *this;
   }
 
-  auto& operator=(list&& o) noexcept(noexcept(clear()))
+  auto& operator=(list&& o) noexcept(noexcept(node::destroy(f_)))
   {
-    clear();
+    node::destroy(f_); // we are not necessarily empty
 
     f_ = o.f_; l_ = o.l_;
     o.f_ = o.l_ = {};
@@ -279,7 +279,7 @@ public:
   }
 
   void assign(std::input_iterator auto const i, decltype(i) j)
-    noexcept(noexcept(clear()) && noexcept(emplace_back(*i)))
+    noexcept(noexcept(clear(), emplace_back(*i)))
     requires(std::is_assignable_v<value_type&, decltype(*i)>)
   {
     clear();
