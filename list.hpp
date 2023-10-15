@@ -113,9 +113,10 @@ public:
   {
   }
 
-  list(list&& o) noexcept(noexcept(*this = std::move(o)))
-  {
-    *this = std::move(o);
+  list(list&& o) noexcept:
+    f_(o.f_), l_(o.l_)
+  { // we are empty so no need for clear()
+    o.f_ = o.l_ = {};
   }
 
   list(std::input_iterator auto const i, decltype(i) j)
