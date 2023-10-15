@@ -107,16 +107,15 @@ public:
   }
 
   list(list const& o)
-    noexcept(noexcept(list(o.cbegin(), o.cend())))
+    noexcept(noexcept(list(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>):
-    list(o.cbegin(), o.cend())
+    list(o.begin(), o.end())
   {
   }
 
-  list(list&& o) noexcept
+  list(list&& o) noexcept(noexcept(*this = std::move(o)))
   {
-    f_ = o.f_; l_ = o.l_;
-    o.f_ = o.l_ = {};
+    *this = std::move(o);
   }
 
   list(std::input_iterator auto const i, decltype(i) j)
