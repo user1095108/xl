@@ -6,7 +6,7 @@
 
 int main()
 {
-  xl::list<int> l{3, 4, 5};
+  xl::list<int> l(3, 4, 5);
 
   l.emplace_back(0);
   l.emplace_back(1);
