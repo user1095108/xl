@@ -12,6 +12,8 @@
 namespace xl
 {
 
+struct emplace_t{};
+
 template <typename T>
 class list
 {
@@ -96,15 +98,7 @@ private:
   node* f_{}, *l_{};
 
 public:
-  list(auto&& ...a)
-    noexcept(noexcept((emplace_back(std::forward<decltype(a)>(a)), ...)))
-    requires(
-      (1 < sizeof...(a)) ||
-      !std::is_same_v<std::remove_cvref_t<decltype((a, ...))>, list>
-    )
-  {
-    (emplace_back(std::forward<decltype(a)>(a)), ...);
-  }
+  list() = default;
 
   list(list const& o)
     noexcept(noexcept(list(o.begin(), o.end())))
@@ -117,6 +111,12 @@ public:
     f_(o.f_), l_(o.l_)
   { // we are empty, so no need for clear()
     o.f_ = o.l_ = {};
+  }
+
+  list(emplace_t, auto&& ...a)
+    noexcept(noexcept((emplace_back(std::forward<decltype(a)>(a)), ...)))
+  {
+    (emplace_back(std::forward<decltype(a)>(a)), ...);
   }
 
   list(std::input_iterator auto const i, decltype(i) j)
