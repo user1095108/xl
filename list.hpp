@@ -171,12 +171,12 @@ public:
   }
 
   //
-  friend bool operator==(list const& l, list const& r)
+  friend auto operator==(list const& l, list const& r)
     noexcept(noexcept(
         std::equal(l.begin(), l.end(), r.begin(), r.end())
       )
     )
-    requires(requires{std::equal(l.begin(), l.end(), r.begin(), r.end());})
+    requires(requires{std::declval<T>() == std::declval<T>();})
   {
     return std::equal(l.begin(), l.end(), r.begin(), r.end());
   }
@@ -188,16 +188,11 @@ public:
         )
       )
     )
-    requires(requires{
-        std::lexicographical_compare_three_way(
-          l.begin(), l.end(), r.begin(), r.end()
-        );
-      }
-    )
+    requires(std::three_way_comparable<T>)
   {
     return std::lexicographical_compare_three_way(
-      l.begin(), l.end(), r.begin(), r.end()
-    );
+        l.begin(), l.end(), r.begin(), r.end()
+      );
   }
 
   //
@@ -278,7 +273,7 @@ public:
 
   //
   void assign(size_type count, value_type const& v)
-    noexcept(noexcept(clear()) && noexcept(emplace_back(v)))
+    noexcept(noexcept(clear(), emplace_back(v)))
   {
     clear(); while (count--) emplace_back(v);
   }
