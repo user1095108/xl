@@ -2,9 +2,9 @@
 # define XL_LIST_HPP
 # pragma once
 
-#include <cstdint>
-#include <algorithm>
-#include <compare>
+#include <cstdint> // std::uintptr_t
+#include <algorithm> // std::move()
+#include <compare> // std::three_way_comparable
 #include <initializer_list>
 
 #include "listiterator.hpp"
@@ -561,10 +561,7 @@ inline auto erase(list<T>& c, T k)
 
 template <typename T>
 inline auto erase_if(list<T>& c, auto pred)
-  noexcept(
-    noexcept(pred(std::declval<T>())) &&
-    noexcept(c.erase(c.begin()))
-  )
+  noexcept(noexcept(pred(std::declval<T>()), c.erase(c.begin())))
 {
   typename std::remove_reference_t<decltype(c)>::size_type r{};
 
