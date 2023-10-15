@@ -272,10 +272,17 @@ public:
   auto const& front() const noexcept { return f_->v_; }
 
   //
-  void assign(size_type count, value_type const& v)
+  template <int = 0>
+  void assign(size_type count, auto const& v)
     noexcept(noexcept(clear(), emplace_back(v)))
   {
     clear(); while (count--) emplace_back(v);
+  }
+
+  void assign(size_type count, value_type const& v)
+    noexcept(noexcept(assign<0>(count, v)))
+  {
+    assign<0>(count, v);
   }
 
   void assign(std::input_iterator auto const i, decltype(i) j)
