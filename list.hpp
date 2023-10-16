@@ -176,7 +176,6 @@ public:
         std::equal(l.begin(), l.end(), r.begin(), r.end())
       )
     )
-    requires(requires{std::declval<T>() == std::declval<T>();})
   {
     return std::equal(l.begin(), l.end(), r.begin(), r.end());
   }
