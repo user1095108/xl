@@ -12,7 +12,7 @@
 namespace xl
 {
 
-struct emplace_t{};
+struct push_t{};
 
 template <typename T>
 class list
@@ -113,10 +113,10 @@ public:
     o.f_ = o.l_ = {};
   }
 
-  list(emplace_t, auto&& ...a)
-    noexcept(noexcept((emplace_back(std::forward<decltype(a)>(a)), ...)))
+  list(push_t, auto&& ...a)
+    noexcept(noexcept((push_back(std::forward<decltype(a)>(a)), ...)))
   {
-    (emplace_back(std::forward<decltype(a)>(a)), ...);
+    (push_back(std::forward<decltype(a)>(a)), ...);
   }
 
   list(std::input_iterator auto const i, decltype(i) j)
