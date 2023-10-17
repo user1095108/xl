@@ -133,8 +133,7 @@ public:
   }
 
   list(std::initializer_list<value_type> l)
-    noexcept(noexcept(list(l.begin(), l.end())))
-    requires(std::is_copy_constructible_v<value_type>):
+    noexcept(noexcept(list(l.begin(), l.end()))):
     list(l.begin(), l.end())
   {
   }
@@ -163,7 +162,6 @@ public:
 
   auto& operator=(std::initializer_list<value_type> l)
     noexcept(noexcept(assign(l)))
-    requires(std::is_copy_constructible_v<value_type>)
   {
     assign(l);
 
@@ -188,7 +186,6 @@ public:
         )
       )
     )
-    requires(std::three_way_comparable<T>)
   {
     return std::lexicographical_compare_three_way(
         l.begin(), l.end(), r.begin(), r.end()
@@ -275,6 +272,7 @@ public:
   template <int = 0>
   void assign(size_type count, auto const& v)
     noexcept(noexcept(clear(), emplace_back(v)))
+    requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     clear(); while (count--) emplace_back(v);
   }
@@ -402,6 +400,7 @@ public:
   template <int = 0>
   iterator insert(const_iterator const i, auto&& v)
     noexcept(noexcept(emplace(i, std::forward<decltype(v)>(v))))
+    requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     return emplace(i, std::forward<decltype(v)>(v));
   }
@@ -486,6 +485,7 @@ public:
   template <int = 0>
   void push_back(auto&& v)
     noexcept(noexcept(emplace_back(std::forward<decltype(v)>(v))))
+    requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     emplace_back(std::forward<decltype(v)>(v));
   }
@@ -499,6 +499,7 @@ public:
   template <int = 0>
   void push_front(auto&& v)
     noexcept(noexcept(emplace_front(std::forward<decltype(v)>(v))))
+    requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     emplace_front(std::forward<decltype(v)>(v));
   }
@@ -560,7 +561,7 @@ inline auto erase(list<T>& c, auto&& k)
 }
 
 template <typename T>
-inline auto erase(list<T>& c, T k)
+inline auto erase(list<T>& c, std::type_identity_t<T> k)
   noexcept(noexcept(erase<0>(c, std::move(k))))
 {
   return erase<0>(c, std::move(k));
