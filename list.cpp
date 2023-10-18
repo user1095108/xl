@@ -14,6 +14,7 @@ int main()
   l.insert(l.cbegin(), {1, 2, 3});
 
   erase(l, 1);
+  erase(l, 1ull);
 
   //
   std::cout << "size: " << l.size() << std::endl;

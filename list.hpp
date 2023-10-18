@@ -545,8 +545,7 @@ public:
 template <int = 0, typename T>
 inline auto erase(list<T>& c, auto&& k)
   noexcept(noexcept(std::equal_to()(std::declval<T>(), k)))
-  requires(requires{std::equal_to()(std::declval<T>(), k);} &&
-    !std::same_as<T, std::remove_cvref_t<decltype(k)>>)
+  requires(requires{std::equal_to()(std::declval<T>(), k);})
 {
   return erase_if(
       c,
