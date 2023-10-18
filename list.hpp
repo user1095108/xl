@@ -542,7 +542,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-template <typename T>
+template <int = 0, typename T>
 inline auto erase(list<T>& c, auto&& k)
   noexcept(noexcept(std::equal_to()(std::declval<T>(), k)))
   requires(requires{std::equal_to()(std::declval<T>(), k);} &&
@@ -558,16 +558,10 @@ inline auto erase(list<T>& c, auto&& k)
 }
 
 template <typename T>
-inline auto erase(list<T>& c, std::type_identity_t<T> const& k)
-  noexcept(noexcept(std::equal_to()(std::declval<T>(), k)))
+inline auto erase(list<T>& c, T const& k)
+  noexcept(noexcept(erase<0>(c, k)))
 {
-  return erase_if(
-      c,
-      [&](auto&& v) noexcept(noexcept(std::equal_to()(v, k)))
-      {
-        return std::equal_to()(v, k);
-      }
-    );
+  return erase<0>(c, k);
 }
 
 template <typename T>
