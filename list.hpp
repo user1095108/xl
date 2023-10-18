@@ -411,8 +411,10 @@ public:
     return insert<0>(i, std::move(v));
   }
 
-  iterator insert(const_iterator i, size_type count, value_type const& v)
+  template <int = 0>
+  iterator insert(const_iterator i, size_type count, auto const& v)
     noexcept(noexcept(emplace(i, v)))
+    requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     if (count) [[likely]]
     { // the parent node of i.n() changes
@@ -427,6 +429,12 @@ public:
     {
       return {i.n(), i.p()};
     }
+  }
+
+  auto insert(const_iterator i, size_type count, value_type const& v)
+    noexcept(noexcept(insert<0>(i, count, v)))
+  {
+    return insert<0>(i, count, v);
   }
 
   iterator insert(const_iterator i,
@@ -536,20 +544,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 template <int = 0, typename T>
 inline auto erase(list<T>& c, auto&& k)
-  noexcept(noexcept(
-      erase_if(
-        c,
-        [](T const&) noexcept(noexcept(
-            std::equal_to()(std::declval<T>(), std::declval<decltype(k)>())
-          )
-        )
-        {
-          return true;
-        }
-      )
-    )
-  )
-  requires(requires{std::equal_to()(std::declval<T>(), k);})
+  noexcept(noexcept(std::equal_to()(std::declval<T>(), k)))
 {
   return erase_if(
       c,
