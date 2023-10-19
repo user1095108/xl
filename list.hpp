@@ -557,10 +557,10 @@ inline auto erase(list<T>& c, auto&& k)
 }
 
 template <typename T>
-inline auto erase(list<T>& c, T const& k)
-  noexcept(noexcept(erase<0>(c, k)))
+inline auto erase(list<T>& c, T k)
+  noexcept(noexcept(erase<0>(c, std::move(k))))
 {
-  return erase<0>(c, k);
+  return erase<0>(c, std::move(k));
 }
 
 template <typename T>
