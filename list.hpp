@@ -15,6 +15,7 @@ namespace xl
 struct push_t{};
 
 template <typename T>
+  requires(!std::is_reference_v<T>)
 class list
 {
   struct node;
