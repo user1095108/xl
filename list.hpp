@@ -175,7 +175,6 @@ public:
         std::equal(l.begin(), l.end(), r.begin(), r.end())
       )
     )
-    //requires(requires{std::equal(l.begin(), l.end(), r.begin(), r.end());})
   {
     return std::equal(l.begin(), l.end(), r.begin(), r.end());
   }
