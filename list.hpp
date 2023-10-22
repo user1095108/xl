@@ -432,9 +432,9 @@ public:
   }
 
   auto insert(const_iterator i, size_type const count, value_type v)
-    noexcept(noexcept(insert<0>(i, count, std::move(v))))
+    noexcept(noexcept(insert<0>(i, count, v)))
   {
-    return insert<0>(i, count, std::move(v));
+    return insert<0>(i, count, v);
   }
 
   iterator insert(const_iterator i,
