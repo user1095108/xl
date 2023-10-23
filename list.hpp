@@ -549,9 +549,10 @@ inline auto erase(list<T>& c, auto const& k)
 {
   return erase_if(
       c,
-      [&](auto&& v) noexcept(noexcept(std::equal_to()(v, k)))
+      [&](auto&& v)
+        noexcept(noexcept(std::equal_to()(std::forward<decltype(v)>(v), k)))
       {
-        return std::equal_to()(v, k);
+        return std::equal_to()(std::forward<decltype(v)>(v), k);
       }
     );
 }
