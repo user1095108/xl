@@ -277,7 +277,7 @@ public:
     clear(); while (count--) emplace_back(v);
   }
 
-  void assign(size_type const count, value_type v)
+  void assign(size_type const count, value_type const v)
     noexcept(noexcept(assign<0>(count, v)))
   {
     assign<0>(count, v);
@@ -431,7 +431,7 @@ public:
     }
   }
 
-  auto insert(const_iterator i, size_type const count, value_type v)
+  auto insert(const_iterator i, size_type const count, value_type const v)
     noexcept(noexcept(insert<0>(i, count, v)))
   {
     return insert<0>(i, count, v);
@@ -557,7 +557,7 @@ inline auto erase(list<T>& c, auto const& k)
 }
 
 template <typename T>
-inline auto erase(list<T>& c, T k)
+inline auto erase(list<T>& c, T const k)
   noexcept(noexcept(erase<0>(c, k)))
 {
   return erase<0>(c, k);
