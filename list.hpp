@@ -544,8 +544,8 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 template <int = 0, typename T>
 inline auto erase(list<T>& c, auto const& k)
-  noexcept(noexcept(std::equal_to()(std::declval<T>(), k)))
-  requires(requires{std::equal_to()(std::declval<T>(), k);})
+  noexcept(noexcept(std::equal_to()(std::declval<T&>(), k)))
+  requires(requires{std::equal_to()(std::declval<T&>(), k);})
 {
   return erase_if(
       c,
