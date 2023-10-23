@@ -51,7 +51,7 @@ int main()
 
   std::cout << a.size() << " " << b.size() << " " << (a == b) << std::endl;
 
-  xl::list<std::unique_ptr<int>> m;
+  xl::list<std::unique_ptr<int>> m(xl::push_t{}, std::make_unique<int>(2));
 
   m.push_back(std::make_unique<int>(1));
 
