@@ -8,10 +8,8 @@ int main()
 {
   xl::list<int> l(xl::push_t{}, 3, 4, 5);
 
-  l.emplace_back(0);
-  l.emplace_back(1);
-
-  l.insert(l.cbegin(), {1, 2, 3});
+  l.push_back(0ull, 1ll);
+  l.push_front(1l, 2u, 3ll);
 
   erase(l, 1);
   erase(l, 1ull);

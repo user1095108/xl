@@ -491,11 +491,13 @@ public:
 
   //
   template <int = 0>
-  void push_back(auto&& v)
-    noexcept(noexcept(emplace_back(std::forward<decltype(v)>(v))))
-    requires(std::is_constructible_v<value_type, decltype(v)>)
+  void push_back(auto&& ...v)
+    noexcept(noexcept((emplace_back(std::forward<decltype(v)>(v)), ...)))
+    requires(
+      std::conjunction_v<std::is_constructible<value_type, decltype(v)>...>
+    )
   {
-    emplace_back(std::forward<decltype(v)>(v));
+    (emplace_back(std::forward<decltype(v)>(v)), ...);
   }
 
   void push_back(value_type v)
@@ -505,11 +507,13 @@ public:
   }
 
   template <int = 0>
-  void push_front(auto&& v)
-    noexcept(noexcept(emplace_front(std::forward<decltype(v)>(v))))
-    requires(std::is_constructible_v<value_type, decltype(v)>)
+  void push_front(auto&& ...v)
+    noexcept(noexcept((emplace_front(std::forward<decltype(v)>(v)), ...)))
+    requires(
+      std::conjunction_v<std::is_constructible<value_type, decltype(v)>...>
+    )
   {
-    emplace_front(std::forward<decltype(v)>(v));
+    (emplace_front(std::forward<decltype(v)>(v)), ...);
   }
 
   void push_front(value_type v)
@@ -542,17 +546,32 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
+template <typename T>
+inline auto erase_if(list<T>& c, auto pred)
+  noexcept(noexcept(pred(std::declval<T&>()), c.erase(c.begin())))
+  requires(requires{pred(std::declval<T&>());})
+{
+  typename std::remove_reference_t<decltype(c)>::size_type r{};
+
+  for (auto i(c.begin()); i.n(); pred(*i) ? ++r, i = c.erase(i) : ++i);
+
+  return r;
+}
+
 template <int = 0, typename T>
 inline auto erase(list<T>& c, auto const& k)
-  noexcept(noexcept(std::equal_to()(std::declval<T&>(), k)))
-  requires(requires{std::equal_to()(std::declval<T&>(), k);})
+  noexcept(noexcept(std::equal_to<>()(std::declval<T&>(), k)))
+  requires(requires{std::equal_to<>()(std::declval<T&>(), k);})
 {
   return erase_if(
       c,
-      [&](auto&& v)
-        noexcept(noexcept(std::equal_to()(std::forward<decltype(v)>(v), k)))
+      [eq(std::equal_to<>()), &k](auto&& v)
+        noexcept(noexcept(
+            std::declval<std::equal_to<>>()(std::forward<decltype(v)>(v), k)
+          )
+        )
       {
-        return std::equal_to()(std::forward<decltype(v)>(v), k);
+        return eq(std::forward<decltype(v)>(v), k);
       }
     );
 }
@@ -562,17 +581,6 @@ inline auto erase(list<T>& c, T const k)
   noexcept(noexcept(erase<0>(c, k)))
 {
   return erase<0>(c, k);
-}
-
-template <typename T>
-inline auto erase_if(list<T>& c, auto pred)
-  noexcept(noexcept(pred(std::declval<T>()), c.erase(c.begin())))
-{
-  typename std::remove_reference_t<decltype(c)>::size_type r{};
-
-  for (auto i(c.begin()); i.n(); pred(*i) ? ++r, i = c.erase(i) : ++i);
-
-  return r;
 }
 
 //////////////////////////////////////////////////////////////////////////////
