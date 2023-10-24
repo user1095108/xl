@@ -115,9 +115,9 @@ public:
   }
 
   list(init_t, auto&& ...a)
-    noexcept(noexcept((push_back(std::forward<decltype(a)>(a)), ...)))
+    noexcept(noexcept(push_back(std::forward<decltype(a)>(a)...)))
   {
-    (push_back(std::forward<decltype(a)>(a)), ...);
+    push_back(std::forward<decltype(a)>(a)...);
   }
 
   list(std::input_iterator auto const i, decltype(i) j)
