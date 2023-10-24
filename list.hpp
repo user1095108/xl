@@ -493,9 +493,7 @@ public:
   template <int = 0>
   void push_back(auto&& ...v)
     noexcept(noexcept((emplace_back(std::forward<decltype(v)>(v)), ...)))
-    requires(
-      std::conjunction_v<std::is_constructible<value_type, decltype(v)>...>
-    )
+    requires(requires{(emplace_back(std::forward<decltype(v)>(v)), ...);})
   {
     (emplace_back(std::forward<decltype(v)>(v)), ...);
   }
@@ -509,9 +507,7 @@ public:
   template <int = 0>
   void push_front(auto&& ...v)
     noexcept(noexcept((emplace_front(std::forward<decltype(v)>(v)), ...)))
-    requires(
-      std::conjunction_v<std::is_constructible<value_type, decltype(v)>...>
-    )
+    requires(requires{(emplace_front(std::forward<decltype(v)>(v)), ...);})
   {
     (emplace_front(std::forward<decltype(v)>(v)), ...);
   }
