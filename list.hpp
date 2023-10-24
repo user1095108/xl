@@ -548,7 +548,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 inline auto erase_if(list<T>& c, auto pred)
-  noexcept(noexcept(pred(std::declval<T&>()), c.erase(c.begin())))
+  noexcept(noexcept(c.erase(c.begin()), pred(std::declval<T&>())))
   requires(requires{pred(std::declval<T&>());})
 {
   typename std::remove_reference_t<decltype(c)>::size_type r{};
@@ -560,16 +560,15 @@ inline auto erase_if(list<T>& c, auto pred)
 
 template <int = 0, typename T>
 inline auto erase(list<T>& c, auto const& ...k)
-  noexcept(noexcept((std::equal_to<>()(std::declval<T&>(), k), ...)))
+  noexcept(noexcept(c.erase(c.begin()),
+    (std::equal_to<>()(std::declval<T&>(), k), ...)))
   requires(requires{(std::equal_to<>()(std::declval<T&>(), k), ...);})
 {
   return erase_if(
       c,
       [eq(std::equal_to<>()), &k...](auto&& v)
-        noexcept(noexcept(
-            (std::equal_to<>()(std::forward<decltype(v)>(v), k) || ...)
-          )
-        )
+        noexcept(noexcept((std::declval<std::equal_to<>>()(
+          std::forward<decltype(v)>(v), k), ...)))
       {
         return (eq(std::forward<decltype(v)>(v), k) || ...);
       }
