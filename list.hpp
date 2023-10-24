@@ -12,7 +12,7 @@
 namespace xl
 {
 
-struct push_t{};
+struct init_t{};
 
 template <typename T>
   requires(!std::is_reference_v<T>)
@@ -114,7 +114,7 @@ public:
     o.f_ = o.l_ = {};
   }
 
-  list(push_t, auto&& ...a)
+  list(init_t, auto&& ...a)
     noexcept(noexcept((push_back(std::forward<decltype(a)>(a)), ...)))
   {
     (push_back(std::forward<decltype(a)>(a)), ...);
