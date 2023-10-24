@@ -11,8 +11,7 @@ int main()
   l.push_back(0ull, 1ll);
   l.push_front(1l, 2u, 3ll);
 
-  erase(l, 1);
-  erase(l, 1ull);
+  erase(l, 1, 1ull, 1ll);
 
   //
   std::cout << "size: " << l.size() << std::endl;
