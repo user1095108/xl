@@ -254,8 +254,7 @@ void test1() {
   // Test iterating over the list
   int expected_value = 0;
   for(auto val : l) {
-      assert(val == expected_value);
-      ++expected_value;
+      assert(val == expected_value++);
   }
   }
 
