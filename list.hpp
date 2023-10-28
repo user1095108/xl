@@ -139,6 +139,13 @@ public:
   {
   }
 
+  explicit list(size_type count, value_type const& v = T())
+    noexcept(noexcept(emplace_back(v)))
+    requires(std::is_constructible_v<value_type, decltype(v)>)
+  {
+    while (count--) emplace_back(v);
+  }
+
   ~list() noexcept(noexcept(node::destroy(f_))) { node::destroy(f_); }
 
   //
@@ -393,7 +400,7 @@ public:
   iterator erase(const_iterator a, const_iterator const b)
     noexcept(noexcept(erase(a)))
   {
-    while (a != b) { a = erase(a); } return a;
+    while (a != b) { a = erase(a); } return {a.n(), a.p()};
   }
 
   //
