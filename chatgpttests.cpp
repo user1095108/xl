@@ -472,11 +472,11 @@ void test2() {
 }
 
 int main() {
-    // Run the test suite
-    test1();
-    test2();
+  // Run the test suite
+  test1();
+  test2();
 
-    std::cout << "All tests passed!" << std::endl;
+  std::cout << "All tests passed!" << std::endl;
 
-    return 0;
+  return 0;
 }
