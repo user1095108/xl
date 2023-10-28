@@ -6,6 +6,7 @@
 
 // Function to test various operations of your random-access container
 void test1() {
+  {
   // Create an instance of your container
   xl::list<int> container;
 
@@ -75,9 +76,9 @@ void test1() {
       sum += item;
   }
   assert(sum == 13);
-}
+  }
 
-void test2() {
+  {
   xl::list<int> l;
 
   // Test that the list is empty after default construction.
@@ -109,9 +110,9 @@ void test2() {
   assert(l.size() == 1);
   l.clear();
   assert(l.empty());
-}
+  }
 
-void test3() {
+  {
   xl::list<int> l;
 
   // Assert that the linked list is empty.
@@ -143,9 +144,9 @@ void test3() {
 
   // Assert that the linked list is now empty.
   assert(l.empty());
-}
+  }
 
-void test4() {
+  {
   xl::list<int> numbers = {1, 2, 3, 4, 5};
 
   // Accessing elements using iterators
@@ -170,10 +171,8 @@ void test4() {
       sum += num;
   }
   assert(sum == 24);
-}
+  }
 
-void test5() {
-  // Create a list with some initial values
   {
   xl::list<int> l{xl::init_t{}, 1, 2, 3, 4, 5};
 
@@ -261,7 +260,7 @@ void test5() {
   }
 }
 
-void test6() {
+void test2() {
   {
   // Default constructor
   xl::list<int> l1;
@@ -467,10 +466,6 @@ int main() {
     // Run the test suite
     test1();
     test2();
-    test3();
-    test4();
-    test5();
-    test6();
 
     std::cout << "All tests passed!" << std::endl;
 
