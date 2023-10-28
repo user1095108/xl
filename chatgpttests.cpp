@@ -258,6 +258,16 @@ void test1() {
       ++expected_value;
   }
   }
+
+  {
+  xl::list<int> l(5, 10);
+
+  // Check that the list has the correct size
+  assert(l.size() == 5);
+
+  // Check that all elements in the list are 10
+  for (const auto& e: l) assert(e == 10);
+  }
 }
 
 void test2() {
