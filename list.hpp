@@ -132,11 +132,18 @@ public:
   {
   }
 
-  explicit list(size_type count, value_type const& v = T())
-    noexcept(noexcept(emplace_back(v)))
-    requires(std::is_constructible_v<value_type, decltype(v)>)
+  explicit list(size_type c)
+    noexcept(noexcept(emplace_back()))
+    requires(std::is_default_constructible_v<value_type>)
   {
-    while (count--) emplace_back(v);
+    while (c--) emplace_back();
+  }
+
+  explicit list(size_type c, value_type const& v)
+    noexcept(noexcept(emplace_back(v)))
+    requires(std::is_copy_constructible_v<value_type>)
+  {
+    while (c--) emplace_back(v);
   }
 
   explicit list(auto&& c)
