@@ -146,6 +146,27 @@ public:
     while (count--) emplace_back(v);
   }
 
+  explicit constexpr list(auto&& c)
+    noexcept((std::is_rvalue_reference_v<decltype(c)> &&
+      noexcept(std::move(std::begin(c), std::end(c),
+        std::back_inserter(*this)))) ||
+      noexcept(std::copy(std::begin(c), std::end(c),
+        std::back_inserter(*this))))
+    requires(requires{std::begin(c), std::end(c);} &&
+      !std::same_as<list, std::remove_cvref_t<decltype(c)>> &&
+      !std::same_as<std::initializer_list<value_type>,
+        std::remove_cvref_t<decltype(c)>>)
+  {
+    if constexpr(std::is_rvalue_reference_v<decltype(c)>)
+    {
+      std::move(std::begin(c), std::end(c), std::back_inserter(*this));
+    }
+    else
+    {
+      std::copy(std::begin(c), std::end(c), std::back_inserter(*this));
+    }
+  }
+
   ~list() noexcept(noexcept(node::destroy(f_))) { node::destroy(f_); }
 
   //
