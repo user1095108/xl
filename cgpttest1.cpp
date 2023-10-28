@@ -174,6 +174,7 @@ void test4() {
 
 void test5() {
   // Create a list with some initial values
+  {
   xl::list<int> l{xl::init_t{}, 1, 2, 3, 4, 5};
 
   // Check the size of the list
@@ -198,12 +199,6 @@ void test5() {
   l.pop_back();
   assert(l.size() == 5);
   assert(l.back() == 5);
-
-  // Iterate over the list and print its contents
-  for (auto it = l.begin(); it != l.end(); ++it) {
-      std::cout << *it << " ";
-  }
-  std::cout << "\n";
 
   // Clear the list
   l.clear();
@@ -234,6 +229,36 @@ void test5() {
   // Test the clear method
   l.clear();
   assert(l.empty());
+  }
+
+  {
+  xl::list<int> l;
+
+  // Test push_back
+  for(int i = 0; i < 10; ++i) {
+      l.push_back(i);
+  }
+  assert(l.back() == 9);
+
+  // Test push_front
+  l.push_front(100);
+  assert(l.front() == 100);
+
+  // Test pop_back
+  l.pop_back();
+  assert(l.back() == 8);
+
+  // Test pop_front
+  l.pop_front();
+  assert(l.front() == 0);
+
+  // Test iterating over the list
+  int expected_value = 0;
+  for(auto val : l) {
+      assert(val == expected_value);
+      ++expected_value;
+  }
+  }
 }
 
 void test6() {
