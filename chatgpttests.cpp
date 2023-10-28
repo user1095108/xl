@@ -267,6 +267,18 @@ void test1() {
   // Check that all elements in the list are 10
   for (const auto& e: l) assert(e == 10);
   }
+
+  {
+  xl::list<char> palindrome(std::string_view("racecar"));
+
+  while(palindrome.size() > 1) {
+    assert(palindrome.front() == palindrome.back());
+    palindrome.pop_front();
+    palindrome.pop_back();
+  }
+
+  assert(1 == palindrome.size());
+  }
 }
 
 void test2() {
