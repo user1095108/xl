@@ -10,9 +10,7 @@ void testRandomAccessContainer() {
     xl::list<int> container;
 
     // Test adding elements to the container
-    container.push_back(1);
-    container.push_back(2);
-    container.push_back(3);
+    container.push_back(1, 2, 3);
 
     // Test the size of the container
     assert(container.size() == 3);
