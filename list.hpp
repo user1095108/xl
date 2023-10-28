@@ -121,16 +121,9 @@ public:
   }
 
   list(std::input_iterator auto const i, decltype(i) j)
-    noexcept(noexcept(emplace_back(*i)))
+    noexcept(noexcept(std::copy(i, j, std::back_inserter(*this))))
   {
-    std::for_each(
-      i,
-      j,
-      [&](auto&& a) noexcept(noexcept(emplace_back(*i)))
-      {
-        emplace_back(std::forward<decltype(a)>(a));
-      }
-    );
+    std::copy(i, j, std::back_inserter(*this));
   }
 
   list(std::initializer_list<value_type> l)
@@ -146,13 +139,13 @@ public:
     while (count--) emplace_back(v);
   }
 
-  explicit constexpr list(auto&& c)
+  list(auto&& c)
     noexcept((std::is_rvalue_reference_v<decltype(c)> &&
       noexcept(std::move(std::begin(c), std::end(c),
         std::back_inserter(*this)))) ||
       noexcept(std::copy(std::begin(c), std::end(c),
         std::back_inserter(*this))))
-    requires(requires{std::begin(c), std::end(c);} &&
+    requires(requires{std::begin(c), std::end(c), std::size(c);} &&
       !std::same_as<list, std::remove_cvref_t<decltype(c)>> &&
       !std::same_as<std::initializer_list<value_type>,
         std::remove_cvref_t<decltype(c)>>)
@@ -197,27 +190,44 @@ public:
     return *this;
   }
 
+  auto& operator=(auto&& c)
+    noexcept((std::is_rvalue_reference_v<decltype(c)> &&
+      noexcept(std::move(std::begin(c), std::end(c),
+        std::back_inserter(*this)))) ||
+      noexcept(std::copy(std::begin(c), std::end(c),
+        std::back_inserter(*this))))
+    requires(requires{std::begin(c), std::end(c), std::size(c);} &&
+      !std::same_as<list, std::remove_cvref_t<decltype(c)>> &&
+      !std::same_as<std::initializer_list<value_type>,
+        std::remove_cvref_t<decltype(c)>>)
+  {
+    clear();
+
+    if constexpr(std::is_rvalue_reference_v<decltype(c)>)
+    {
+      std::move(std::begin(c), std::end(c), std::back_inserter(*this));
+    }
+    else
+    {
+      std::copy(std::begin(c), std::end(c), std::back_inserter(*this));
+    }
+
+    return *this;
+  }
+
   //
   friend auto operator==(list const& l, list const& r)
-    noexcept(noexcept(
-        std::equal(l.begin(), l.end(), r.begin(), r.end())
-      )
-    )
+    noexcept(noexcept(std::equal(l.begin(), l.end(), r.begin(), r.end())))
   {
     return std::equal(l.begin(), l.end(), r.begin(), r.end());
   }
 
   friend auto operator<=>(list const& l, list const& r)
-    noexcept(noexcept(
-        std::lexicographical_compare_three_way(
-          l.begin(), l.end(), r.begin(), r.end()
-        )
-      )
-    )
+    noexcept(noexcept(std::lexicographical_compare_three_way(
+      l.begin(), l.end(), r.begin(), r.end())))
   {
     return std::lexicographical_compare_three_way(
-        l.begin(), l.end(), r.begin(), r.end()
-      );
+      l.begin(), l.end(), r.begin(), r.end());
   }
 
   //
