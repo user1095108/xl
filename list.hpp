@@ -333,19 +333,11 @@ public:
   }
 
   void assign(std::input_iterator auto const i, decltype(i) j)
-    noexcept(noexcept(clear(), emplace_back(*i)))
+    noexcept(noexcept(clear(), std::copy(i, j, std::back_inserter(*this))))
     requires(std::is_assignable_v<value_type&, decltype(*i)>)
   {
     clear();
-
-    std::for_each(
-      i,
-      j,
-      [&](auto&& v) noexcept(noexcept(emplace_back(*i)))
-      {
-        emplace_back(std::forward<decltype(v)>(v));
-      }
-    );
+    std::copy(i, j, std::back_inserter(*this));
   }
 
   void assign(std::initializer_list<value_type> l)
