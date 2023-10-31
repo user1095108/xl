@@ -81,6 +81,44 @@ void test1() {
   {
   xl::list<int> l;
 
+  // Add elements to the list
+  l.push_back(1);
+  l.push_back(2);
+  l.push_back(3);
+
+  // Test the size of the list
+  assert(l.size() == 3);
+
+  // Test if the list is empty
+  assert(!l.empty());
+
+  // Test accessing elements in the list
+  assert(l.front() == 1);
+  assert(l.back() == 3);
+
+  // Test inserting elements at specific positions
+  auto it = l.begin();
+  ++it; // Move to the second element
+  it = l.insert(it, 4);
+  assert(l.size() == 4);
+  assert(*it == 4);
+
+  // Test erasing elements
+  it = l.begin();
+  ++it; // Move to the second element
+  it = l.erase(it);
+  assert(l.size() == 3);
+  assert(*it == 2);
+
+  // Test clearing the list
+  l.clear();
+  assert(l.size() == 0);
+  assert(l.empty());
+  }
+
+  {
+  xl::list<int> l;
+
   // Test that the list is empty after default construction.
   assert(l.empty());
 
