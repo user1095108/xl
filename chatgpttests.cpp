@@ -344,6 +344,15 @@ void test2() {
   }
 
   {
+  // Range constructor
+  int arr[] = {1, 2, 3, 4, 5};
+  xl::list<int> l3(arr);
+  assert(l3.size() == 5);
+  assert(l3.front() == 1);
+  assert(l3.back() == 5);
+  }
+
+  {
   // Copy constructor
   xl::list<int> l4{1, 2, 3};
   xl::list<int> l5(l4);
