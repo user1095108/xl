@@ -579,8 +579,7 @@ public:
   //
   void swap(list& o) noexcept
   {
-    std::swap(f_, o.f_);
-    std::swap(l_, o.l_);
+    node::assign(f_, l_, o.f_, o.l_)(o.f_, o.l_, f_, l_);
   }
 };
 
