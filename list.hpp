@@ -562,7 +562,7 @@ public:
   }
 
   //
-  void reverse() noexcept { std::swap(f_, l_); }
+  void reverse() noexcept { node::assign(f_, l_)(l_, f_); }
 
   //
   void sort(auto cmp)
