@@ -137,11 +137,18 @@ public:
     while (c--) emplace_back();
   }
 
-  explicit list(size_type c, value_type const& v)
+  explicit list(size_type c, auto const& v, init_t = {})
     noexcept(noexcept(emplace_back(v)))
-    requires(std::is_copy_constructible_v<value_type>)
+    requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     while (c--) emplace_back(v);
+  }
+
+  explicit list(size_type const c, value_type const& v)
+    noexcept(noexcept(list(c, v, init_t{})))
+    requires(std::is_copy_constructible_v<value_type>):
+    list(c, v, init_t{})
+  {
   }
 
   explicit list(auto&& c)
@@ -319,7 +326,6 @@ public:
   template <int = 0>
   void assign(size_type count, auto const& v)
     noexcept(noexcept(clear(), emplace_back(v)))
-    requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     clear(); while (count--) emplace_back(v);
   }
@@ -332,7 +338,6 @@ public:
 
   void assign(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(clear(), std::copy(i, j, std::back_inserter(*this))))
-    requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
     clear(); std::copy(i, j, std::back_inserter(*this));
   }
