@@ -326,6 +326,7 @@ public:
   template <int = 0>
   void assign(size_type count, auto const& v)
     noexcept(noexcept(clear(), emplace_back(v)))
+    requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     clear(); while (count--) emplace_back(v);
   }
