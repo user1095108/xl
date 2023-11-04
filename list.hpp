@@ -78,9 +78,7 @@ private:
     static void sort(auto const b, decltype(b) e, size_type const sz,
       auto&& c)
       noexcept(noexcept(
-          std::inplace_merge(b, b, e, std::forward<decltype(c)>(c))
-        )
-      )
+        std::inplace_merge(b, b, e, std::forward<decltype(c)>(c))))
     {
       if (sz > 1)
       {
@@ -334,10 +332,9 @@ public:
 
   void assign(std::input_iterator auto const i, decltype(i) j)
     noexcept(noexcept(clear(), std::copy(i, j, std::back_inserter(*this))))
-    requires(std::is_assignable_v<value_type&, decltype(*i)>)
+    requires(std::is_constructible_v<value_type, decltype(*i)>)
   {
-    clear();
-    std::copy(i, j, std::back_inserter(*this));
+    clear(); std::copy(i, j, std::back_inserter(*this));
   }
 
   void assign(std::initializer_list<value_type> l)
