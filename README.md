@@ -3,8 +3,7 @@ This is a c++ implementation of an [XOR linked list](https://en.wikipedia.org/wi
 
 [STL](https://en.wikipedia.org/wiki/Standard_Template_Library) containers are often slowed by various safety checks, exception safety and legacy code. A general rule of thumb seems to be, that pretty much anything we implement ourselves will outperform an [STL](https://en.wikipedia.org/wiki/Standard_Template_Library) implementation; we have more flexibility than [STL](https://en.wikipedia.org/wiki/Standard_Template_Library) programmers and can adapt/optimize our implementations to our particular needs.
 
-As usual with XOR containers, when you erase an iterator, the preceding and succeeding iterators, but not `end()`, are invalidated. However, these iterators can still be dereferenced to access the values of the elements before and after the erased iterator. You should not use these invalidated iterators for any other operations, such as incrementing. The same principle applies to insertion.
-
+As usual with XOR containers, when you erase an iterator, the succeeding iterator, but not `end()`, is invalidated. However, this iterator can still be dereferenced. You should not use invalidated iterators for any operations, other than dereferencing. The same applies to insertion.
 
 # build instructions
     g++ -std=c++20 -Ofast list.cpp -o l
