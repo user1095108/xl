@@ -144,9 +144,8 @@ public:
     while (c--) emplace_back(v);
   }
 
-  explicit list(size_type const c, value_type const& v)
-    noexcept(noexcept(list(c, v, init_t{})))
-    requires(std::is_copy_constructible_v<value_type>):
+  explicit list(size_type const c, value_type const v)
+    noexcept(noexcept(list(c, v, init_t{}))):
     list(c, v, init_t{})
   {
   }
