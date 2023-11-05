@@ -562,7 +562,7 @@ public:
   }
 
   //
-  void reverse() noexcept { node::assign(f_, l_)(l_, f_); }
+  void reverse() noexcept { node::assign(f_, l_)(l_, f_); } // swap
 
   //
   void sort(auto cmp)
@@ -578,7 +578,7 @@ public:
 
   //
   void swap(list& o) noexcept
-  {
+  { // swap state
     node::assign(f_, l_, o.f_, o.l_)(o.f_, o.l_, f_, l_);
   }
 };
