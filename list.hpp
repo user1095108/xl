@@ -614,15 +614,14 @@ inline auto erase(list<T>& c, auto const& ...k)
 }
 
 template <typename T>
-inline auto erase(list<T>& c, T const k)
-  noexcept(noexcept(erase<0>(c, k)))
+inline auto erase(list<T>& c, T const k) noexcept(noexcept(erase<0>(c, k)))
 {
   return erase<0>(c, k);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
-inline void swap(list<T>& lhs, decltype(lhs) rhs) noexcept { lhs.swap(rhs); }
+inline void swap(list<T>& l, decltype(l) r) noexcept { l.swap(r); }
 
 }
 
