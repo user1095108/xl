@@ -366,8 +366,8 @@ public:
     auto const q(new node{std::forward<decltype(a)>(a)...});
     q->l_ = node::conv(n, p);
 
-    n ? void(n->l_ = node::conv(q, n->link(p))) : void(l_ = q);
-    p ? void(p->l_ = node::conv(q, p->link(n))) : void(f_ = q);
+    n ? n->l_ = node::conv(q, n->link(p)) : bool(l_ = q);
+    p ? p->l_ = node::conv(q, p->link(n)) : bool(f_ = q);
 
     return {q, p}; // return iterator to created node
   }
@@ -387,7 +387,7 @@ public:
     auto const l(l_), q(l_ = new node{std::forward<decltype(a)>(a)...});
     q->l_ = node::conv(l);
 
-    l ? void(l->l_ ^= node::conv(q)) : void(f_ = q);
+    l ? l->l_ ^= node::conv(q) : bool(f_ = q);
 
     return {q, l}; // return iterator to created node
   }
@@ -407,7 +407,7 @@ public:
     auto const f(f_), q(f_ = new node{std::forward<decltype(a)>(a)...});
     q->l_ = node::conv(f);
 
-    f ? void(f->l_ ^= node::conv(q)) : void(l_ = q);
+    f ? f->l_ ^= node::conv(q) : bool(l_ = q);
 
     return {q, {}}; // return iterator to created node
   }
@@ -425,8 +425,8 @@ public:
     auto const n(i.n()), p(i.p()), nxt(n->link(p));
 
     // p n nxt
-    p ? void(p->l_ = node::conv(nxt, p->link(n))) : void(f_ = nxt);
-    nxt ? void(nxt->l_ = node::conv(p, nxt->link(n))) : void(l_ = p);
+    p ? p->l_ = node::conv(nxt, p->link(n)) : bool(f_ = nxt);
+    nxt ? nxt->l_ = node::conv(p, nxt->link(n)) : bool(l_ = p);
 
     delete n;
 
@@ -518,7 +518,7 @@ public:
   {
     auto const l0(l_), l1(l_ = l0->link());
 
-    l1 ? void(l1->l_ = node::conv(l1->link(l0))) : void(f_ = {});
+    l1 ? l1->l_ = node::conv(l1->link(l0)) : bool(f_ = {});
 
     delete l0;
   }
@@ -527,7 +527,7 @@ public:
   {
     auto const f0(f_), f1(f_ = f0->link());
 
-    f1 ? void(f1->l_ = node::conv(f1->link(f0))) : void(l_ = {});
+    f1 ? f1->l_ = node::conv(f1->link(f0)) : bool(l_ = {});
 
     delete f0;
   }
