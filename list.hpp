@@ -108,7 +108,7 @@ public:
 
   list(list&& o) noexcept:
     f_(o.f_), l_(o.l_)
-  { // we are empty, so no need for clear()
+  { // we are empty, so no need to clear()
     o.f_ = o.l_ = {};
   }
 
