@@ -11,13 +11,8 @@ namespace xl
 template <typename T>
 class listiterator
 {
-  using inverse_const_t = std::conditional_t<
-      std::is_const_v<T>,
-      listiterator<std::remove_const_t<T>>,
-      listiterator<T const>
-    >;
-
-  friend inverse_const_t;
+  using iterator_t = listiterator<std::remove_const_t<T>>;
+  friend listiterator<T const>;
 
   using node_t = std::remove_const_t<T>;
   node_t* n_, *p_;
@@ -46,8 +41,7 @@ public:
   listiterator(listiterator const&) = default;
   listiterator(listiterator&&) = default;
 
-  listiterator(inverse_const_t const& o) noexcept
-    requires(std::is_const_v<T>):
+  listiterator(iterator_t const& o) noexcept requires(std::is_const_v<T>):
     n_(o.n_),
     p_(o.p_)
   {
