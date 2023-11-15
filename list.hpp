@@ -491,7 +491,7 @@ public:
     else [[likely]]
     {
       auto const r(emplace(i, *j));
-      i = decltype(i)(i.n(), r.n());
+      i.p_ = r.n();
 
       std::for_each(
         std::next(j),
@@ -499,8 +499,7 @@ public:
         [&](auto&& v)
           noexcept(noexcept(emplace(i, std::forward<decltype(v)>(v))))
         { // the parent node of i.n() changes
-          i = decltype(i)(
-            i.n(), emplace(i, std::forward<decltype(v)>(v)).n());
+          i.p_ = emplace(i, std::forward<decltype(v)>(v)).n();
         }
       );
 
