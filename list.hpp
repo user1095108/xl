@@ -460,9 +460,9 @@ public:
     requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     if (count) [[likely]]
-    { // the parent node of i.n() changes
+    {
       auto const r(emplace(i, v));
-      i.p_ = r.n();
+      i.p_ = r.n(); // the parent node of i.n() changes
 
       while (--count) i.p_ = emplace(i, v).n();
 
