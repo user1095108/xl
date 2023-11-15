@@ -462,7 +462,7 @@ public:
     if (count) [[likely]]
     { // the parent node of i.n() changes
       auto const r(emplace(i, v));
-      i = decltype(i)(i.n(), r.n());
+      i.p_ = r.n();
 
       while (--count) i.p_ = emplace(i, v).n();
 
