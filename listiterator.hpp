@@ -8,11 +8,15 @@
 namespace xl
 {
 
+template <typename T> requires(!std::is_reference_v<T>) class list;
+
 template <typename T>
 class listiterator
 {
   using iterator_t = listiterator<std::remove_const_t<T>>;
   friend listiterator<T const>;
+
+  friend class list<typename T::value_type>;
 
   using node_t = std::remove_const_t<T>;
   node_t* n_, *p_;

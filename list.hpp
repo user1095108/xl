@@ -464,7 +464,7 @@ public:
       auto const r(emplace(i, v));
       i = decltype(i)(i.n(), r.n());
 
-      while (--count) i = decltype(i)(i.n(), emplace(i, v).n());
+      while (--count) i.p_ = emplace(i, v).n();
 
       return r;
     }
