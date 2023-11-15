@@ -41,7 +41,8 @@ public:
   listiterator(listiterator const&) = default;
   listiterator(listiterator&&) = default;
 
-  listiterator(iterator_t const& o) noexcept requires(std::is_const_v<T>):
+  listiterator(iterator_t const& o) noexcept
+    requires(std::is_const_v<T>):
     n_(o.n_),
     p_(o.p_)
   {

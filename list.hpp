@@ -462,9 +462,9 @@ public:
     if (count) [[likely]]
     { // the parent node of i.n() changes
       auto const r(emplace(i, v));
-      i = {i.n(), r.n()};
+      i = decltype(i)(i.n(), r.n());
 
-      while (--count) i = {i.n(), emplace(i, v).n()};
+      while (--count) i = decltype(i)(i.n(), emplace(i, v).n());
 
       return r;
     }
@@ -491,7 +491,7 @@ public:
     else [[likely]]
     {
       auto const r(emplace(i, *j));
-      i = {i.n(), r.n()};
+      i = decltype(i)(i.n(), r.n());
 
       std::for_each(
         std::next(j),
@@ -499,7 +499,8 @@ public:
         [&](auto&& v)
           noexcept(noexcept(emplace(i, std::forward<decltype(v)>(v))))
         { // the parent node of i.n() changes
-          i = {i.n(), emplace(i, std::forward<decltype(v)>(v)).n()};
+          i = decltype(i)(
+            i.n(), emplace(i, std::forward<decltype(v)>(v)).n());
         }
       );
 
