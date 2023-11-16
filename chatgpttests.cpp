@@ -212,7 +212,7 @@ void test1() {
   }
 
   {
-  xl::list<int> l{xl::init_t{}, 1, 2, 3, 4, 5};
+  xl::list<int> l{xl::multi_t{}, 1, 2, 3, 4, 5};
 
   // Check the size of the list
   assert(l.size() == 5);

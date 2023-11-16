@@ -12,7 +12,7 @@
 namespace xl
 {
 
-struct init_t{};
+struct multi_t{};
 
 template <typename T>
   requires(!std::is_reference_v<T>)
@@ -112,7 +112,7 @@ public:
     o.f_ = o.l_ = {};
   }
 
-  list(init_t, auto&& ...a)
+  list(multi_t, auto&& ...a)
     noexcept(noexcept(push_back(std::forward<decltype(a)>(a)...)))
   {
     push_back(std::forward<decltype(a)>(a)...);
@@ -137,7 +137,7 @@ public:
     while (c--) emplace_back();
   }
 
-  explicit list(size_type c, auto const& v, init_t = {})
+  explicit list(size_type c, auto const& v, multi_t = {})
     noexcept(noexcept(emplace_back(v)))
     requires(std::is_constructible_v<value_type, decltype(v)>)
   {
@@ -145,8 +145,8 @@ public:
   }
 
   explicit list(size_type const c, value_type const v)
-    noexcept(noexcept(list(c, v, init_t{}))):
-    list(c, v, init_t{})
+    noexcept(noexcept(list(c, v, multi_t{}))):
+    list(c, v, multi_t{})
   {
   }
 
@@ -452,6 +452,20 @@ public:
     noexcept(noexcept(insert<0>(i, std::move(v))))
   {
     return insert<0>(i, std::move(v));
+  }
+
+  template <int = 0>
+  iterator insert(multi_t, const_iterator i, auto&& a, auto&& ...b)
+    noexcept(noexcept(emplace(i, std::forward<decltype(a)>(a)),
+      (emplace(i, std::forward<decltype(b)>(b)), ...)))
+    requires(requires{emplace(i, std::forward<decltype(a)>(a)),
+      (emplace(i, std::forward<decltype(b)>(b)), ...);})
+  {
+    auto const r(++(i = emplace(i, std::forward<decltype(a)>(a))));
+
+    (++(i = emplace(i, std::forward<decltype(b)>(b))), ...);
+
+    return {r.n(), r.p()};
   }
 
   template <int = 0>

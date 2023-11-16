@@ -5,7 +5,7 @@
 
 int main()
 {
-  xl::list<int> l(xl::init_t{}, 3u, 4ll, 5ull);
+  xl::list<int> l(xl::multi_t{}, 3u, 4ll, 5ull);
 
   l.push_back(0ull, 1ll);
   l.push_front(1l, 2u, 3ll);
@@ -47,9 +47,10 @@ int main()
 
   std::cout << a.size() << " " << b.size() << " " << (a == b) << std::endl;
 
-  xl::list<std::unique_ptr<int>> m(xl::init_t{}, std::make_unique<int>(2));
+  xl::list<std::unique_ptr<int>> m(xl::multi_t{}, std::make_unique<int>(2));
 
   m.push_back(std::make_unique<int>(1));
+  m.insert(xl::multi_t{}, m.begin(), std::make_unique<int>(3), std::make_unique<int>(4));
 
   return 0;
 }
