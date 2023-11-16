@@ -461,11 +461,19 @@ public:
     requires(requires{emplace(i, std::forward<decltype(a)>(a)),
       (emplace(i, std::forward<decltype(b)>(b)), ...);})
   {
-    auto const r(++(i = emplace(i, std::forward<decltype(a)>(a))));
+    auto const r(emplace(i, std::forward<decltype(a)>(a)));
+    i.p_ = r.n();
 
-    (++(i = emplace(i, std::forward<decltype(b)>(b))), ...);
+    ((i.p_ = emplace(i, std::forward<decltype(b)>(b)).n()), ...);
 
-    return {r.n(), r.p()};
+    return r;
+  }
+
+  auto insert(multi_t, const_iterator const i, value_type a)
+    noexcept(noexcept(emplace(i, std::move(a))))
+    requires(requires{emplace(i, std::move(a));})
+  {
+    return emplace(i, std::move(a));
   }
 
   template <int = 0>
