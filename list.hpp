@@ -495,7 +495,8 @@ public:
     }
   }
 
-  auto insert(const_iterator i, size_type const count, value_type const v)
+  auto insert(const_iterator const i, size_type const count,
+    value_type const v)
     noexcept(noexcept(insert<0>(i, count, v)))
   {
     return insert<0>(i, count, v);
