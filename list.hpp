@@ -470,10 +470,10 @@ public:
   }
 
   auto insert(multi_t, const_iterator const i, value_type a)
-    noexcept(noexcept(emplace(i, std::move(a))))
-    requires(requires{emplace(i, std::move(a));})
+    noexcept(noexcept(insert<0>(multi_t{}, i, std::move(a))))
+    requires(requires{insert<0>(multi_t{}, i, std::move(a));})
   {
-    return emplace(i, std::move(a));
+    return insert<0>(multi_t{}, i, std::move(a));
   }
 
   template <int = 0>
