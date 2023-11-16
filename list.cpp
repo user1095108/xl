@@ -51,6 +51,7 @@ int main()
 
   m.push_back(std::make_unique<int>(1));
   m.insert(xl::multi_t{}, m.begin(), std::make_unique<int>(3), std::make_unique<int>(4));
+  m.insert(xl::multi_t{}, m.end(), std::make_unique<int>(3), std::make_unique<int>(4));
 
   return 0;
 }
