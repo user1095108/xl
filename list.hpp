@@ -625,17 +625,19 @@ public:
     noexcept(noexcept(erase(cbegin()), pred(*cbegin(), *cbegin())))
     requires(requires{pred(*cbegin(), *cbegin());})
   {
-    size_type r{};
-
-    for (auto i(cbegin()); i.n(); ++i)
+    if (empty()) [[unlikely]]
     {
-      for (auto j(std::next(i)); j.n();)
-      {
-        pred(*i, *j) ? ++r, j = erase(j) : ++j;
-      }
+      return {};
     }
+    else [[likely]]
+    {
+      size_type r{};
 
-    return r;
+      for (auto a(cbegin()), b(std::next(a)); b.n();)
+        pred(*a, *b) ? ++r, b = erase(b) : a = b++;
+
+      return r;
+    }
   }
 
   auto unique()
