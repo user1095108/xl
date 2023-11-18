@@ -660,9 +660,9 @@ inline auto erase_if(list<T>& c, auto pred)
 
 template <int = 0, typename T>
 inline auto erase(list<T>& c, auto const& ...k)
-  noexcept(noexcept(c.erase(c.begin()),
-    (std::equal_to<>()(std::declval<T&>(), k), ...)))
-  requires(requires{(std::equal_to<>()(std::declval<T&>(), k), ...);})
+  noexcept(noexcept(c.erase(c.cbegin()),
+    (std::equal_to<>()(*c.cbegin(), k), ...)))
+  requires(requires{(std::equal_to<>()(*c.cbegin(), k), ...);})
 {
   return erase_if(
       c,
