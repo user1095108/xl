@@ -584,28 +584,27 @@ public:
   }
 
   size_type remove_if(auto pred)
-    noexcept(noexcept(erase(begin()), pred(std::declval<value_type&>())))
-    requires(requires{pred(std::declval<T&>());})
+    noexcept(noexcept(erase(cbegin()), pred(*cbegin())))
+    requires(requires{pred(*cbegin());})
   {
     size_type r{};
 
-    for (auto i(begin()); i.n(); pred(*i) ? ++r, i = erase(i) : ++i);
+    for (auto i(cbegin()); i.n(); pred(*i) ? ++r, i = erase(i) : ++i);
 
     return r;
   }
 
   template <int = 0>
   auto remove(auto const& ...k)
-    noexcept(noexcept(erase(begin()),
-      (std::equal_to<>()(std::declval<value_type&>(), k), ...)))
-    requires(requires{(std::equal_to<>()(std::declval<T&>(), k), ...);})
+    noexcept(noexcept(erase(cbegin()),
+      (std::equal_to<>()(*cbegin(), k), ...)))
+    requires(requires{(std::equal_to<>()(*cbegin(), k), ...);})
   {
     return remove_if(
-        [eq(std::equal_to<>()), &k...](auto&& v)
-          noexcept(noexcept((std::declval<std::equal_to<>>()(
-            std::forward<decltype(v)>(v), k), ...)))
+        [eq(std::equal_to<>()), &k...](auto const& v)
+          noexcept(noexcept((std::declval<std::equal_to<>>()(v, k), ...)))
         {
-          return (eq(std::forward<decltype(v)>(v), k) || ...);
+          return (eq(v, k) || ...);
         }
       );
   }
@@ -683,10 +682,9 @@ inline auto erase(list<T>& c, auto const& ...k)
   return erase_if(
       c,
       [eq(std::equal_to<>()), &k...](auto const& v)
-        noexcept(noexcept((std::declval<std::equal_to<>>()(
-          std::forward<decltype(v)>(v), k), ...)))
+        noexcept(noexcept((std::declval<std::equal_to<>>()(v, k), ...)))
       {
-        return (eq(std::forward<decltype(v)>(v), k) || ...);
+        return (eq(v, k) || ...);
       }
     );
 }
