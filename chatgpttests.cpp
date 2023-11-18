@@ -317,6 +317,40 @@ void test1() {
 
   assert(1 == palindrome.size());
   }
+
+  {
+  xl::list<int> myList = {1, 2, 3, 4, 5};
+  myList.insert(myList.begin(), 0);
+  assert(myList.front() == 0);
+
+  //Test that insert() inserts an element at the end of the list:
+  myList = {1, 2, 3, 4, 5};
+  myList.insert(myList.end(), 6);
+  assert(myList.back() == 6);
+
+  //Test that insert() inserts an element at a specific position in the list:
+  myList = {1, 2, 3, 4, 5};
+  myList.insert(std::next(myList.begin(), 2), 10);
+  assert(myList[2] == 10);
+
+  //Test that insert() inserts multiple elements at the beginning of the list:
+  myList = {1, 2, 3, 4, 5};
+  myList.insert(myList.begin(), {0, 0, 0});
+  assert(myList.front() == 0);
+  assert(myList.size() == 8);
+
+  //Test that insert() inserts multiple elements at the end of the list:
+  myList = {1, 2, 3, 4, 5};
+  myList.insert(myList.end(), {6, 6, 6});
+  assert(myList.back() == 6);
+  assert(myList.size() == 8);
+
+  //Test that insert() inserts multiple elements at a specific position in the list:
+  myList = {1, 2, 3, 4, 5};
+  myList.insert(std::next(myList.begin(), 2), {10, 10, 10});
+  assert(myList[2] == 10);
+  assert(myList.size() == 8);
+  }
 }
 
 void test2() {
@@ -511,6 +545,14 @@ void test2() {
   xl::list<int> l28{1, 2, 3};
   l28.clear();
   assert(l28.empty());
+  }
+
+  {
+  // remove_if()
+  xl::list<int> l36{1, 2, 3, 4, 5};
+  l36.remove_if([](int x) { return x % 2 == 0; });
+  assert(l36.size() == 3);
+  assert(l36.front() == 1);
   }
 
   {
