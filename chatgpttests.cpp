@@ -357,26 +357,6 @@ void test1() {
   xl::list<int> my_list;
   assert(my_list.unique() == 0);
 
-  // Test 2: List with one element
-  my_list.push_back(1);
-  assert(!my_list.unique());
-
-  // Test 3: List with two elements
-  my_list.push_back(2);
-  assert(!my_list.unique());
-
-  // Test 4: List with three elements
-  my_list.push_back(3);
-  assert(!my_list.unique());
-
-  // Test 5: List with duplicates
-  my_list.push_back(2);
-  assert(my_list.unique() == 1);
-
-  // Test 6: List with duplicates and non-duplicates
-  my_list.push_back(4);
-  assert(!my_list.unique());
-
   // Test 7: List with all duplicates
   my_list = {1, 1, 1};
   assert(my_list.unique() == 2);
@@ -386,12 +366,15 @@ void test1() {
   assert(!my_list.unique());
 
   // Test 9: List with mixed duplicates and non-duplicates
-  my_list = {1, 2, 3, 2, 1};
+  my_list = {1, 1, 2, 2, 3};
   assert(my_list.unique() == 2);
 
   // Test 10: List with all duplicates and non-duplicates
-  my_list = {1, 2, 3, 2, 1, 4};
+  my_list = {1, 1, 2, 2, 3, 4};
   assert(my_list.unique() == 2);
+
+  my_list = {1, 2, 1, 1, 3, 3, 3, 4, 5, 4};
+  assert(my_list.unique() == 3);
   }
 }
 
