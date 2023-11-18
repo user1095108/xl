@@ -583,6 +583,17 @@ public:
     push_front<0>(std::move(v));
   }
 
+  size_type remove_if(auto pred)
+    noexcept(noexcept(erase(begin()), pred(std::declval<value_type&>())))
+    requires(requires{pred(std::declval<T&>());})
+  {
+    size_type r{};
+
+    for (auto i(begin()); i.n(); pred(*i) ? ++r, i = erase(i) : ++i);
+
+    return r;
+  }
+
   //
   void reverse() noexcept { node::assign(f_, l_)(l_, f_); } // swap
 
