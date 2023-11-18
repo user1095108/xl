@@ -231,21 +231,6 @@ public:
   }
 
   //
-  friend auto operator==(list const& l, list const& r)
-    noexcept(noexcept(std::equal(l.begin(), l.end(), r.begin(), r.end())))
-  {
-    return std::equal(l.begin(), l.end(), r.begin(), r.end());
-  }
-
-  friend auto operator<=>(list const& l, list const& r)
-    noexcept(noexcept(std::lexicographical_compare_three_way(
-      l.begin(), l.end(), r.begin(), r.end())))
-  {
-    return std::lexicographical_compare_three_way(
-      l.begin(), l.end(), r.begin(), r.end());
-  }
-
-  //
   static constexpr size_type max_size() noexcept { return ~size_type{}; }
 
   bool empty() const noexcept { return !f_; }
@@ -696,6 +681,22 @@ inline auto erase(list<T>& c, T const k) noexcept(noexcept(erase<0>(c, k)))
 }
 
 //////////////////////////////////////////////////////////////////////////////
+template <typename U, typename V>
+inline auto operator==(list<U> const& l, list<V> const& r)
+  noexcept(noexcept(std::equal(l.begin(), l.end(), r.begin(), r.end())))
+{
+  return std::equal(l.begin(), l.end(), r.begin(), r.end());
+}
+
+template <typename U, typename V>
+inline auto operator<=>(list<U> const& l, list<V> const& r)
+  noexcept(noexcept(std::lexicographical_compare_three_way(
+    l.begin(), l.end(), r.begin(), r.end())))
+{
+  return std::lexicographical_compare_three_way(
+    l.begin(), l.end(), r.begin(), r.end());
+}
+
 template <typename T>
 inline void swap(list<T>& l, decltype(l) r) noexcept { l.swap(r); }
 
