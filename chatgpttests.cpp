@@ -353,7 +353,8 @@ void test1() {
   }
 }
 
-void test2() {
+void test2()
+{
   {
   // Default constructor
   xl::list<int> l1;
@@ -547,6 +548,42 @@ void test2() {
   assert(l28.empty());
   }
 
+  /* {
+  // splice() entire list
+  std::list<int> l29{1, 2, 3};
+  std::list<int> l30{4, 5, 6};
+  l29.splice(l29.begin(), l30);
+  assert(l29.size() == 6);
+  assert(l30.empty());
+  }
+
+  {
+  // splice() single element
+  std::list<int> l31{1, 2, 3};
+  std::list<int> l32{4, 5, 6};
+  l31.splice(l31.begin(), l32, l32.begin());
+  assert(l31.front() == 4);
+  assert(l31.size() == 4);
+  assert(l32.size() == 2);
+  }
+
+  {
+  // splice() element range
+  std::list<int> l33{1, 2, 3};
+  std::list<int> l34{4, 5, 6};
+  l33.splice(l33.begin(), l34, std::next(l34.begin()), l34.end());
+  assert(l33.size() == 5);
+  assert(l34.size() == 1);
+  } */
+
+  {
+  // remove()
+  xl::list<int> l35{1, 2, 1, 3, 1, 4};
+  l35.remove(1);
+  assert(l35.size() == 3);
+  assert(l35.front() == 2);
+  }
+
   {
   // remove_if()
   xl::list<int> l36{1, 2, 3, 4, 5};
@@ -554,6 +591,23 @@ void test2() {
   assert(l36.size() == 3);
   assert(l36.front() == 1);
   }
+
+  {
+  // unique()
+  xl::list<int> l37{1, 2, 2, 3, 3, 3};
+  l37.unique();
+  assert(l37.size() == 3);
+  }
+
+  /* {
+  // merge()
+  std::list<int> l38{1, 3, 5};
+  std::list<int> l39{2, 4, 6};
+  l38.merge(l39);
+  assert(l38.size() == 6);
+  assert(l38.front() == 1);
+  assert(l38.back() == 6);
+  } */
 
   {
   // reverse()

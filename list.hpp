@@ -594,6 +594,27 @@ public:
     return r;
   }
 
+  template <int = 0>
+  auto remove(auto const& ...k)
+    noexcept(noexcept(erase(begin()),
+      (std::equal_to<>()(std::declval<value_type&>(), k), ...)))
+    requires(requires{(std::equal_to<>()(std::declval<T&>(), k), ...);})
+  {
+    return remove_if(
+        [eq(std::equal_to<>()), &k...](auto&& v)
+          noexcept(noexcept((std::declval<std::equal_to<>>()(
+            std::forward<decltype(v)>(v), k), ...)))
+        {
+          return (eq(std::forward<decltype(v)>(v), k) || ...);
+        }
+      );
+  }
+
+  auto remove(value_type const k) noexcept(noexcept(remove<0>(k)))
+  {
+    return remove<0>(k);
+  }
+
   //
   void reverse() noexcept { node::assign(f_, l_)(l_, f_); } // swap
 
@@ -614,17 +635,41 @@ public:
   { // swap state
     node::assign(f_, l_, o.f_, o.l_)(o.f_, o.l_, f_, l_);
   }
+
+  //
+  size_type unique(auto pred)
+    noexcept(noexcept(erase(cbegin()), pred(*cbegin(), *cbegin())))
+    requires(requires{pred(*cbegin(), *cbegin());})
+  {
+    size_type r{};
+
+    for (auto i(cbegin()); i.n(); ++i)
+    {
+      for (auto j(std::next(i)); j.n();)
+      {
+        pred(*i, *j) ? ++r, j = erase(j) : ++j;
+      }
+    }
+
+    return r;
+  }
+
+  auto unique()
+    noexcept(noexcept(unique(std::equal_to<>())))
+  {
+    return unique(std::equal_to<>());
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 inline auto erase_if(list<T>& c, auto pred)
-  noexcept(noexcept(c.erase(c.begin()), pred(std::declval<T&>())))
-  requires(requires{pred(std::declval<T&>());})
+  noexcept(noexcept(c.erase(c.cbegin()), pred(*c.cbegin())))
+  requires(requires{pred(*c.cbegin());})
 {
   typename std::remove_reference_t<decltype(c)>::size_type r{};
 
-  for (auto i(c.begin()); i.n(); pred(*i) ? ++r, i = c.erase(i) : ++i);
+  for (auto i(c.cbegin()); i.n(); pred(*i) ? ++r, i = c.erase(i) : ++i);
 
   return r;
 }
@@ -637,7 +682,7 @@ inline auto erase(list<T>& c, auto const& ...k)
 {
   return erase_if(
       c,
-      [eq(std::equal_to<>()), &k...](auto&& v)
+      [eq(std::equal_to<>()), &k...](auto const& v)
         noexcept(noexcept((std::declval<std::equal_to<>>()(
           std::forward<decltype(v)>(v), k), ...)))
       {
