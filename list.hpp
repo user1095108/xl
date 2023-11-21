@@ -525,11 +525,11 @@ public:
     }
     else [[likely]]
     {
-      auto const r(emplace(i, *j++));
+      auto const r(emplace(i, *j));
       i.p_ = r.n();
 
       std::for_each(
-        j,
+        ++j,
         k,
         [&](auto&& v)
           noexcept(noexcept(emplace(i, std::forward<decltype(v)>(v))))
