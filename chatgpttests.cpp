@@ -608,6 +608,96 @@ void test1() {
   assert(list8.back() == 2);
   assert(list8.at(1) == 2);
   }
+
+  {
+  // Create two lists
+  xl::list<int> list1 = {1, 2, 3, 4, 5};
+  xl::list<int> list2 = {10, 20, 30};
+
+  // Test case 1: splice at the beginning of the list
+  auto it1 = list1.begin();
+  auto it2 = list2.begin();
+  list1.splice(it1, std::move(list2));
+  assert((list1 == xl::list<int>{10, 20, 30, 1, 2, 3, 4, 5}));
+  assert(list2.empty());
+
+  // Test case 2: splice in the middle of the list
+  it1 = list1.begin();
+  std::advance(it1, 3); // Move iterator to position 3
+  it2 = list2.begin();
+  list1.splice(it1, std::move(list2));
+  assert((list1 == xl::list<int>{10, 20, 30, 1, 2, 3, 4, 5}));
+  assert(list2.empty());
+
+  // Test case 3: splice at the end of the list
+  it1 = list1.end();
+  it2 = list2.begin();
+  list1.splice(it1, std::move(list2));
+  assert((list1 == xl::list<int>{10, 20, 30, 1, 2, 3, 4, 5}));
+  assert(list2.empty());
+
+  // Test case 4: splice a single element from one list to another
+  xl::list<int> list3 = {100};
+  it1 = list1.begin();
+  it2 = list3.begin();
+  list1.splice(it1, std::move(list3), it2);
+  assert((list1 == xl::list<int>{100, 10, 20, 30, 1, 2, 3, 4, 5}));
+  assert(list3.empty());
+
+  it1 = list1.begin();
+  auto it2_begin = list1.begin();
+  std::advance(it2_begin, 3); // Move iterator to position 3
+  auto it2_end = list1.begin();
+  std::advance(it2_end, 6); // Move iterator to position 6
+  list3 = {200, 300};
+  list3.splice(list3.begin(), std::move(list1), it2_begin, it2_end);
+  assert(list1 == xl::list<int>({100, 10, 20, 3, 4, 5}));
+  assert(list3 == xl::list<int>({30, 1, 2, 200, 300})); // Ensure list3 contains spliced elements
+  }
+
+  {
+  // Testing first overload
+  {
+  xl::list<int> list1{1, 2, 3, 4, 5};
+  xl::list<int> list2{6, 7, 8, 9, 10};
+
+  list1.splice(list1.begin(), list2);
+
+  assert(list1.size() == 10);
+  assert(list2.empty());
+  }
+
+  // Testing second overload
+  {
+  xl::list<int> list1{1, 2, 3, 4, 5};
+  xl::list<int> list2{6, 7, 8, 9, 10};
+
+  auto it = list2.begin();
+  std::advance(it, 2); // pointing to 8
+
+  list1.splice(list1.begin(), list2, it);
+
+  assert(list1.size() == 6);
+  assert(list2.size() == 4);
+  assert(list1.front() == 8);
+  }
+
+  // Testing third overload
+  {
+  xl::list<int> list1{1, 2, 3, 4, 5};
+  xl::list<int> list2{6, 7, 8, 9, 10};
+
+  auto it1 = list2.begin();
+  auto it2 = it1;
+  std::advance(it2, 3); // range [6, 7, 8]
+
+  list1.splice(list1.begin(), list2, it1, it2);
+
+  assert(list1.size() == 8);
+  assert(list2.size() == 2);
+  assert(list1.front() == 6);
+  }
+  }
 }
 
 void test2()
