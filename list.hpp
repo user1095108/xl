@@ -371,16 +371,14 @@ public:
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
-    auto const n(i.n()), p(n ? i.p() : l_);
-
     // p q n
     auto const q(new node{std::forward<decltype(a)>(a)...});
-    q->l_ = node::conv(n, p);
+    q->l_ = node::conv(i.n_, i.p_);
 
-    n ? n->l_ = node::conv(q, n->link(p)) : bool(l_ = q);
-    p ? p->l_ = node::conv(q, p->link(n)) : bool(f_ = q);
+    i.n_ ? i.n_->l_ = node::conv(q, i.n_->link(i.p_)) : bool(l_ = q);
+    i.p_ ? i.p_->l_ = node::conv(q, i.p_->link(i.n_)) : bool(f_ = q);
 
-    return {q, p}; // return iterator to created node
+    return {q, i.p_}; // return iterator to created node
   }
 
   auto emplace(const_iterator const i, value_type v)
@@ -686,6 +684,41 @@ public:
     auto b(begin()), e(end());
     node::sort(b, e, size(), cmp);
     node::assign(f_, l_)(b.n(), e.p());
+  }
+
+  void splice(const_iterator const i, list&& o,
+    const_iterator const it) noexcept
+  {
+    { // unlink it from o
+      auto const itnxt(it.n_->link(it.p_));
+
+      itnxt ?
+        itnxt->l_ ^= node::conv(it.n_, it.p_) :
+        bool(o.l_ = o.l_->link());
+
+      it.p_ ?
+        it.p_->l_ ^= node::conv(it.n_, itnxt) :
+        bool(o.f_ = o.f_->link());
+    }
+
+    // i.p_ it i.n_
+    it.n_->l_ = node::conv(i.p_, i.n_); // it - i
+    i.n_ ? i.n_->l_ ^= node::conv(i.p_, it.n_) : bool(l_ = it.n_);
+    i.p_ ? i.p_->l_ ^= node::conv(i.n_, it.n_) : bool(f_ = it.n_);
+  }
+
+  void splice(const_iterator i, list&& o, const_iterator b,
+    const_iterator const e) noexcept
+  {
+    for (node* p; b != e;)
+    {
+      p = b.p_; splice(i, std::move(o), b++); i.p_ = b.p_; b.p_ = p;
+    }
+  }
+
+  void splice(const_iterator const i, list&& o) noexcept
+  {
+    splice(i, std::move(o), o.cbegin(), o.cend());
   }
 
   //

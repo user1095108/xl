@@ -805,11 +805,11 @@ void test2()
   assert(l28.empty());
   }
 
-  /* {
+  {
   // splice() entire list
   xl::list<int> l29{1, 2, 3};
   xl::list<int> l30{4, 5, 6};
-  l29.splice(l29.begin(), l30);
+  l29.splice(l29.begin(), std::move(l30));
   assert(l29.size() == 6);
   assert(l30.empty());
   }
@@ -818,7 +818,7 @@ void test2()
   // splice() single element
   xl::list<int> l31{1, 2, 3};
   xl::list<int> l32{4, 5, 6};
-  l31.splice(l31.begin(), l32, l32.begin());
+  l31.splice(l31.begin(), std::move(l32), l32.begin());
   assert(l31.front() == 4);
   assert(l31.size() == 4);
   assert(l32.size() == 2);
@@ -828,10 +828,10 @@ void test2()
   // splice() element range
   xl::list<int> l33{1, 2, 3};
   xl::list<int> l34{4, 5, 6};
-  l33.splice(l33.begin(), l34, std::next(l34.begin()), l34.end());
+  l33.splice(l33.begin(), std::move(l34), std::next(l34.begin()), l34.end());
   assert(l33.size() == 5);
   assert(l34.size() == 1);
-  } */
+  }
 
   {
   // remove()

@@ -16,6 +16,11 @@ void print_container(const xl::list<int>& c)
   std::cout << '\n';
 }
 
+std::ostream& operator<<(std::ostream& ostr, const xl::list<int>& list)
+{
+  for (auto& i : list) ostr << ' ' << i; return ostr;
+}
+
 int main ()
 {
   { // https://en.cppreference.com/w/cpp/container/list/insert
@@ -89,6 +94,26 @@ int main ()
   for (int n : l)
       std::cout << n << ", ";
   std::cout << "};\n";
+  }
+
+  { // https://en.cppreference.com/w/cpp/container/list/splice
+  xl::list<int> list1{1, 2, 3, 4, 5};
+  xl::list<int> list2{10, 20, 30, 40, 50};
+
+  auto it = list1.begin();
+  std::advance(it, 2);
+
+  list1.splice(it, std::move(list2));
+
+  std::cout << "list1:" << list1 << '\n';
+  std::cout << "list2:" << list2 << '\n';
+
+  it = std::prev(list1.end(), 3); // it is invalidated
+
+  list2.splice(list2.begin(), std::move(list1), it, list1.end());
+
+  std::cout << "list1:" << list1 << '\n';
+  std::cout << "list2:" << list2 << '\n';
   }
 
   return 0;
