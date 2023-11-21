@@ -114,38 +114,17 @@ private:
     { // merge sort
       if (sz > 1)
       {
-        iterator ni;
+        iterator m;
 
         {
-          iterator m;
+          auto const hsz(sz / 2);
+          m = std::next(b, hsz);
 
-          {
-            auto const hsz(sz / 2);
-            m = std::next(b, hsz);
-
-            sort(b, m, hsz, std::forward<decltype(c)>(c));
-            sort(m, e, sz - hsz, std::forward<decltype(c)>(c));
-          }
-
-          {
-            auto i(b), j(m);
-            ni = c(*i, *j) ? i++ : j++;
-
-            // relink b and ni
-            if (b.p_) b.p_->l_ ^= conv(b.n_, ni.n_);
-            (b.n_ = ni.n_)->l_ = conv(ni.p_ = b.p_);
-
-            //
-            while ((i != m) && (j != e)) link_node(ni, c(*i, *j) ? i++ : j++);
-            while (i != m) link_node(ni, i++);
-            while (j != e) link_node(ni, j++);
-          }
+          sort(b, m, hsz, std::forward<decltype(c)>(c));
+          sort(m, e, sz - hsz, std::forward<decltype(c)>(c));
         }
 
-        // relink ni and e
-        ni.n_->l_ ^= conv(e.n_); // ni - e
-        if (e.n_) e.n_->l_ ^= conv(e.p_, ni.n_); // ni - e
-        e.p_ = ni.n_;
+        node::merge(b, m, e, std::forward<decltype(c)>(c));
       }
     }
   };
