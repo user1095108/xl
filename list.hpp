@@ -87,21 +87,16 @@ private:
     static void merge(iterator& b, iterator const& m, decltype(b) e,
       auto&& c) noexcept(noexcept(c(*b, *b)))
     {
-      iterator ni;
+      auto i(b), j(m), ni(c(*i, *j) ? i++ : j++);
 
-      {
-        auto i(b), j(m);
-        ni = c(*i, *j) ? i++ : j++;
+      // relink b and ni
+      if (b.p_) b.p_->l_ ^= conv(b.n_, ni.n_);
+      (b.n_ = ni.n_)->l_ = conv(ni.p_ = b.p_);
 
-        // relink b and ni
-        if (b.p_) b.p_->l_ ^= conv(b.n_, ni.n_);
-        (b.n_ = ni.n_)->l_ = conv(ni.p_ = b.p_);
-
-        //
-        while ((i != m) && (j != e)) link_node(ni, c(*i, *j) ? i++ : j++);
-        while (i != m) link_node(ni, i++);
-        while (j != e) link_node(ni, j++);
-      }
+      //
+      while ((i != m) && (j != e)) link_node(ni, c(*i, *j) ? i++ : j++);
+      while (i != m) link_node(ni, i++);
+      while (j != e) link_node(ni, j++);
 
       // relink ni and e
       ni.n_->l_ ^= conv(e.n_); // ni - e
@@ -635,7 +630,8 @@ public:
   void reverse() noexcept { node::assign(f_, l_)(l_, f_); } // swap
 
   //
-  void merge(list&& o, auto cmp)
+  template <class Comp = std::less<value_type>>
+  void merge(list&& o, Comp cmp = Comp())
     noexcept(noexcept(node::merge(std::declval<iterator&>(),
       std::declval<iterator const&>(), std::declval<iterator&>(), cmp)))
   {
@@ -656,25 +652,15 @@ public:
     }
   }
 
-  void merge(list&& o)
-    noexcept(noexcept(merge(std::move(o), std::less<value_type>())))
-  {
-    merge(std::move(o), std::less<value_type>());
-  }
-
   //
-  void sort(auto cmp)
+  template <class Comp = std::less<value_type>>
+  void sort(Comp cmp = Comp())
     noexcept(noexcept(node::sort(
       std::declval<iterator&>(), std::declval<iterator&>(), size(), cmp)))
   {
     auto b(begin()), e(end());
     node::sort(b, e, size(), cmp);
     node::assign(f_, l_)(b.n(), e.p());
-  }
-
-  void sort() noexcept(noexcept(sort(std::less<value_type>())))
-  {
-    sort(std::less<value_type>());
   }
 
   //
