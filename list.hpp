@@ -547,20 +547,20 @@ public:
   //
   void pop_back() noexcept(noexcept(delete f_))
   {
-    auto const l0(l_), l1(l_ = l0->link());
+    auto const l(l_->link());
 
-    l1 ? l1->l_ = node::conv(l1->link(l0)) : bool(f_ = {});
+    l ? l->l_ ^= node::conv(l_) : bool(f_ = {});
 
-    delete l0;
+    delete std::exchange(l_, l);
   }
 
   void pop_front() noexcept(noexcept(delete f_))
   {
-    auto const f0(f_), f1(f_ = f0->link());
+    auto const f(f_->link());
 
-    f1 ? f1->l_ = node::conv(f1->link(f0)) : bool(l_ = {});
+    f ? f->l_ ^= node::conv(f_) : bool(l_ = {});
 
-    delete f0;
+    delete std::exchange(f_, f);
   }
 
   //
