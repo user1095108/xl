@@ -75,13 +75,13 @@ private:
     }
 
     //
-    static auto&& append_node(auto& i, auto&& j) noexcept
+    static void append_node(auto& i, auto&& j) noexcept
     { // i  j
       i.n_->l_ = conv(i.p_, j.n_); // set-up link to j
       j.n_->l_ = conv(i.n_); // change parent of j to i
       j.p_ = i.n_;
 
-      return j;
+      i = j;
     }
 
     static void sort(iterator& b, decltype(b) e, size_type const sz,
@@ -108,12 +108,10 @@ private:
 
           //
           while ((i != m) && (j != e))
-          {
-            ni = c(*i, *j) ? append_node(ni, i++) : append_node(ni, j++);
-          }
+            c(*i, *j) ? append_node(ni, i++) : append_node(ni, j++);
 
-          while (i != m) ni = append_node(ni, i++);
-          while (j != e) ni = append_node(ni, j++);
+          while (i != m) append_node(ni, i++);
+          while (j != e) append_node(ni, j++);
         }
 
         //
