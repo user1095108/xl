@@ -84,7 +84,7 @@ private:
       i = j;
     }
 
-    static void merge(iterator& b, iterator m, decltype(b) e,
+    static void merge(iterator& b, iterator const& m, decltype(b) e,
       auto&& c) noexcept(noexcept(c(*b, *b)))
     {
       iterator ni;
