@@ -376,6 +376,26 @@ void test1() {
   my_list = {1, 2, 1, 1, 3, 3, 3, 4, 5, 4};
   assert(my_list.unique() == 3);
   }
+
+  {
+  xl::list<int> mylist = {1, 2, 3, 4, 5};
+
+  // Test case 1: Resize to a smaller size
+  mylist.resize(3);
+  assert(mylist.size() == 3);
+
+  // Test case 2: Resize to the same size
+  mylist.resize(3);
+  assert(mylist.size() == 3);
+
+  // Test case 3: Resize to a larger size with default values (0)
+  mylist.resize(5);
+  assert(mylist.size() == 5);
+
+  // Test case 4: Resize to a larger size with a specific value (10)
+  mylist.resize(8, 10);
+  assert(mylist.size() == 8);
+  }
 }
 
 void test2()
