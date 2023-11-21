@@ -76,7 +76,8 @@ private:
 
     static auto next(auto n, size_type i) noexcept
     {
-      for (decltype(n) p{}; i--;) assign(n, p)(n->link(p), n); return n;
+      for (decltype(n) p{}; i--; assign(n, p)(n->link(p), n));
+      return n;
     }
 
     //
