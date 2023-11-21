@@ -637,7 +637,7 @@ public:
   //
   void merge(list&& o, auto cmp)
     noexcept(noexcept(node::merge(std::declval<iterator&>(),
-      std::declval<iterator>(), std::declval<iterator&>(), cmp)))
+      std::declval<iterator const&>(), std::declval<iterator&>(), cmp)))
   {
     if (!o.empty())
     {
