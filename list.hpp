@@ -90,8 +90,7 @@ private:
     static void link_node(auto& i, auto&& j) noexcept
     { // i  j
       i.n_->l_ = conv(i.p_, j.n_); // set-up link to j
-      j.n_->l_ = conv(i.n_); // change parent of j to i
-      j.p_ = i.n_;
+      j.n_->l_ = conv(j.p_ = i.n_); // change parent of j to i
 
       i = j;
     }
