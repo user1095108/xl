@@ -689,9 +689,10 @@ public:
     }
   }
 
-  void merge(list&& o) noexcept(noexcept(merge(std::move(o), std::less())))
+  void merge(list&& o)
+    noexcept(noexcept(merge(std::move(o), std::less<value_type>())))
   {
-    merge(std::move(o), std::less<>());
+    merge(std::move(o), std::less<value_type>());
   }
 
   //
@@ -704,7 +705,7 @@ public:
     node::assign(f_, l_)(b.n(), e.p());
   }
 
-  void sort() noexcept(noexcept(sort(std::less())))
+  void sort() noexcept(noexcept(sort(std::less<value_type>())))
   {
     sort(std::less());
   }
