@@ -551,7 +551,7 @@ public:
 
     l ? l->l_ ^= node::conv(l_) : bool(f_ = {});
 
-    delete std::exchange(l_, l);
+    delete l_; l_ = l;
   }
 
   void pop_front() noexcept(noexcept(delete f_))
@@ -560,7 +560,7 @@ public:
 
     f ? f->l_ ^= node::conv(f_) : bool(l_ = {});
 
-    delete std::exchange(f_, f);
+    delete f_; f_ = f;
   }
 
   //
