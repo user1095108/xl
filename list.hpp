@@ -113,9 +113,8 @@ private:
         }
 
         // relink ni and e
-        ni.n_->l_ ^= conv(e.n_);
-
-        if (e.n_) e.n_->l_ ^= conv(e.p_, ni.n_);
+        ni.n_->l_ ^= conv(e.n_); // ni - e
+        if (e.n_) e.n_->l_ ^= conv(e.p_, ni.n_); // ni - e
         e.p_ = ni.n_;
       }
     }
