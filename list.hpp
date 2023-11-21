@@ -659,7 +659,7 @@ public:
   {
     if (auto const sz(size()); c > sz)
     {
-      c -= sz; while (c--) emplace_back();
+      for (c -= sz; c--;) emplace_back();
     }
   }
 
@@ -669,7 +669,7 @@ public:
   {
     if (auto const sz(size()); c > sz)
     {
-      c -= sz; while (c--) emplace_back(v);
+      for (c -= sz; c--;) emplace_back(v);
     }
   }
 
