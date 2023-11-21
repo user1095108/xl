@@ -659,7 +659,7 @@ public:
   {
     auto sz(size());
     for (; c > sz; ++sz, emplace_back());
-    for (; c < sz; --sz, pop_back());
+    for (; c < sz; --sz, pop_front());
   }
 
   template <int = 0>
@@ -669,7 +669,7 @@ public:
   {
     auto sz(size());
     for (; c > sz; ++sz, emplace_back(v));
-    for (; c < sz; --sz, pop_back());
+    for (; c < sz; --sz, pop_front());
   }
 
   void resize(size_type const c, value_type const v)
