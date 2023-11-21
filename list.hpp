@@ -696,7 +696,8 @@ public:
   }
 
   //
-  size_type unique(auto pred)
+  template <class Comp = std::equal_to<value_type>>
+  size_type unique(Comp pred = Comp())
     noexcept(noexcept(erase(cbegin()), pred(*cbegin(), *cbegin())))
     requires(requires{pred(*cbegin(), *cbegin());})
   {
@@ -711,12 +712,6 @@ public:
     }
 
     return r;
-  }
-
-  auto unique()
-    noexcept(noexcept(unique(std::equal_to<>())))
-  {
-    return unique(std::equal_to<>());
   }
 };
 
