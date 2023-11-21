@@ -115,7 +115,7 @@ private:
         sort(b, m, hsz, std::forward<decltype(c)>(c));
         sort(m, e, sz - hsz, std::forward<decltype(c)>(c));
 
-        node::merge(b, m, e, std::forward<decltype(c)>(c));
+        merge(b, m, e, std::forward<decltype(c)>(c));
       }
     }
   };
