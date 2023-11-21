@@ -431,15 +431,15 @@ public:
   iterator erase(const_iterator const i)
     noexcept(noexcept(delete f_))
   {
-    auto const n(i.n()), p(i.p()), nxt(n->link(p));
+    auto const nxt(i.n_->link(i.p_));
 
     // p n nxt
-    p ? p->l_ = node::conv(nxt, p->link(n)) : bool(f_ = nxt);
-    nxt ? nxt->l_ = node::conv(p, nxt->link(n)) : bool(l_ = p);
+    i.p_ ? i.p_->l_ ^= node::conv(i.n_, nxt) : bool(f_ = nxt);
+    nxt ? nxt->l_ ^= node::conv(i.n_, i.p_) : bool(l_ = i.p_);
 
-    delete n;
+    delete i.n_;
 
-    return {nxt, p};
+    return {nxt, i.p_};
   }
 
   iterator erase(const_iterator a, const_iterator const b)
