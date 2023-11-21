@@ -107,9 +107,7 @@ private:
           (b.n_ = ni.n_)->l_ = conv(ni.p_ = b.p_);
 
           //
-          while ((i != m) && (j != e))
-            c(*i, *j) ? append_node(ni, i++) : append_node(ni, j++);
-
+          while ((i != m) && (j != e)) append_node(ni, c(*i, *j) ? i++ : j++);
           while (i != m) append_node(ni, i++);
           while (j != e) append_node(ni, j++);
         }
