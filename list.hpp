@@ -75,20 +75,52 @@ private:
     }
 
     //
-    static void sort(auto const b, decltype(b) e, size_type const sz,
-      auto&& c)
-      noexcept(noexcept(
-        std::inplace_merge(b, b, e, std::forward<decltype(c)>(c))))
-    {
+    static auto append_node(auto& i, auto&& j) noexcept
+    { // i  j
+      i.n_->l_ = conv(i.p_, j.n_); // set-up link to j
+      j.n_->l_ = conv(i.n_); // change parent of j to i
+      j.p_ = i.n_;
+
+      return j;
+    }
+
+    static void sort(iterator& b, decltype(b) e, size_type const sz,
+      auto&& c) noexcept(noexcept(c(*b, *b)))
+    { // merge sort
       if (sz > 1)
       {
         auto const hsz(sz / 2);
-        auto const m(std::next(b, hsz));
+        auto m(std::next(b, hsz));
 
         sort(b, m, hsz, std::forward<decltype(c)>(c));
         sort(m, e, sz - hsz, std::forward<decltype(c)>(c));
 
-        std::inplace_merge(b, m, e, std::forward<decltype(c)>(c));
+        //
+        iterator ni;
+
+        {
+          auto i(b), j(m);
+          ni = c(*i, *j) ? i++ : j++;
+
+          // relink b and ni
+          if (b.p_) b.p_->l_ ^= conv(b.n_, ni.n_);
+          (b.n_ = ni.n_)->l_ = conv(ni.p_ = b.p_);
+
+          //
+          while ((i != m) && (j != e))
+          {
+            ni = c(*i, *j) ? append_node(ni, i++) : append_node(ni, j++);
+          }
+
+          while (i != m) ni = append_node(ni, i++);
+          while (j != e) ni = append_node(ni, j++);
+        }
+
+        //
+        ni.n_->l_ ^= conv(e.n_);
+
+        if (e.n_) e.n_->l_ ^= conv(e.p_, ni.n_);
+        e.p_ = ni.n_;
       }
     }
   };
@@ -604,9 +636,12 @@ public:
 
   //
   void sort(auto cmp)
-    noexcept(noexcept(node::sort(begin(), end(), size(), cmp)))
+    noexcept(noexcept(node::sort(
+      std::declval<iterator&>(), std::declval<iterator&>(), size(), cmp)))
   {
-    node::sort(begin(), end(), size(), cmp);
+    auto b(begin()), e(end());
+    node::sort(b, e, size(), cmp);
+    node::assign(f_, l_)(b.n(), e.p());
   }
 
   void sort() noexcept(noexcept(sort(std::less<value_type>())))
