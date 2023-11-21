@@ -393,12 +393,12 @@ public:
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
     // l q
-    auto const l(l_), q(l_ = new node{std::forward<decltype(a)>(a)...});
-    q->l_ = node::conv(l);
+    auto const q(new node{std::forward<decltype(a)>(a)...});
+    q->l_ = node::conv(l_);
 
-    l ? l->l_ ^= node::conv(q) : bool(f_ = q);
+    l_ ? l_->l_ ^= node::conv(q) : bool(f_ = q);
 
-    return {q, l}; // return iterator to created node
+    return {q, std::exchange(l_, q)}; // return iterator to created node
   }
 
   auto emplace_back(value_type v)
@@ -413,12 +413,12 @@ public:
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
     // q f
-    auto const f(f_), q(f_ = new node{std::forward<decltype(a)>(a)...});
-    q->l_ = node::conv(f);
+    auto const q(new node{std::forward<decltype(a)>(a)...});
+    q->l_ = node::conv(f_);
 
-    f ? f->l_ ^= node::conv(q) : bool(l_ = q);
+    f_ ? f_->l_ ^= node::conv(q) : bool(l_ = q);
 
-    return {q, {}}; // return iterator to created node
+    return {f_ = q, {}}; // return iterator to created node
   }
 
   auto emplace_front(value_type v)
