@@ -413,10 +413,10 @@ public:
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
     // q f
-    auto const q(new node{std::forward<decltype(a)>(a)...});
-    q->l_ = node::conv(f_);
+    auto const f(f_), q(new node{std::forward<decltype(a)>(a)...});
+    q->l_ = node::conv(f);
 
-    f_ ? f_->l_ ^= node::conv(q) : bool(l_ = q);
+    f ? f->l_ ^= node::conv(q) : bool(l_ = q);
 
     return {f_ = q, {}}; // return iterator to created node
   }
