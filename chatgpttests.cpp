@@ -396,6 +396,218 @@ void test1() {
   mylist.resize(8, 10);
   assert(mylist.size() == 8);
   }
+
+  {
+  xl::list<int> list1 = {1, 2, 3, 4, 5};
+  xl::list<int> list2 = {6, 7, 8, 9, 10};
+
+  // Test merge()
+  list1.merge(std::move(list2));
+  assert(list1.size() == 10);
+  assert(list1.front() == 1);
+  assert(list1.back() == 10);
+
+  // Test resize()
+  list1.resize(5);
+  assert(list1.size() == 5);
+  assert(list1.front() == 1);
+  assert(list1.back() == 5);
+  }
+
+  {
+  // Test 1: Merge two empty lists
+  xl::list<int> list1;
+  xl::list<int> list2;
+  list1.merge(std::move(list2));
+  assert(list1.empty());
+
+  // Test 2: Merge two non-empty lists
+  list1.push_back(1);
+  list1.push_back(2);
+  list2.push_back(3);
+  list2.push_back(4);
+  list1.merge(std::move(list2));
+  assert(list1.size() == 4);
+  assert(list1.front() == 1);
+  assert(list1.back() == 4);
+
+  // Test 3: Merge two lists with different sizes
+  list1.clear();
+  list2.clear();
+  list1.push_back(1);
+  list1.push_back(2);
+  list2.push_back(3);
+  list2.push_back(4);
+  list2.push_back(5);
+  list1.merge(std::move(list2));
+  assert(list1.size() == 5);
+  assert(list1.front() == 1);
+  assert(list1.back() == 5);
+
+  // Test 4: Merge two lists with the same size
+  list1.clear();
+  list2.clear();
+  list1.push_back(1);
+  list1.push_back(2);
+  list2.push_back(3);
+  list2.push_back(4);
+  list1.merge(std::move(list2));
+  assert(list1.size() == 4);
+  assert(list1.front() == 1);
+  assert(list1.back() == 4);
+
+  // Test 5: Merge two lists with different elements
+  list1.clear();
+  list2.clear();
+  list1.push_back(1);
+  list1.push_back(2);
+  list2.push_back(3);
+  list2.push_back(4);
+  list2.push_back(5);
+  list1.merge(std::move(list2));
+  assert(list1.size() == 5);
+  assert(list1.front() == 1);
+  assert(list1.back() == 5);
+
+  // Test 6: Merge two lists with the same elements
+  list1.clear();
+  list2.clear();
+  list1.push_back(1);
+  list1.push_back(2);
+  list2.push_back(1);
+  list2.push_back(2);
+  list1.merge(std::move(list2));
+  assert(list1.size() == 4);
+  assert(list1.front() == 1);
+  assert(list1.back() == 2);
+
+  // Test 7: Merge two lists with different sizes and elements
+  list1.clear();
+  list2.clear();
+  list1.push_back(1);
+  list1.push_back(2);
+  list2.push_back(3);
+  list2.push_back(4);
+  list2.push_back(5);
+  list1.merge(std::move(list2));
+  assert(list1.size() == 5);
+  assert(list1.front() == 1);
+  assert(list1.back() == 5);
+
+  // Test 8: Merge two lists with the same size and elements
+  list1.clear();
+  list2.clear();
+  list1.push_back(1);
+  list1.push_back(2);
+  list2.push_back(1);
+  list2.push_back(2);
+  list1.merge(std::move(list2));
+  assert(list1.size() == 4);
+  assert(list1.front() == 1);
+  assert(list1.back() == 2);
+
+  // Test 9: Merge two lists with different sizes and elements, and check the order
+  list1.clear();
+  list2.clear();
+  list1.push_back(1);
+  list1.push_back(2);
+  list2.push_back(3);
+  list2.push_back(4);
+  list2.push_back(5);
+  list1.merge(std::move(list2));
+  assert(list1.size() == 5);
+  assert(list1.front() == 1);
+  assert(list1.back() == 5);
+  assert(list1.at(1) == 2);
+  assert(list1.at(2) == 3);
+  assert(list1.at(3) == 4);
+
+  // Test 10: Merge two lists with the same size and elements, and check the order
+  list1.clear();
+  list2.clear();
+  list1.push_back(1);
+  list1.push_back(2);
+  list2.push_back(1);
+  list2.push_back(2);
+  list1.merge(std::move(list2));
+  assert(list1.size() == 4);
+  assert(list1.front() == 1);
+  assert(list1.back() == 2);
+  assert(list1.at(1) == 1);
+  assert(list1.at(2) == 2);
+  }
+
+  {
+  // Test 1: Resize an empty list
+  xl::list<int> list1;
+  list1.resize(0);
+  assert(list1.empty());
+
+  // Test 2: Resize a non-empty list
+  xl::list<int> list2;
+  list2.push_back(1);
+  list2.push_back(2);
+  list2.resize(2);
+  assert(list2.size() == 2);
+  assert(list2.front() == 1);
+  assert(list2.back() == 2);
+
+  // Test 3: Resize a list with a different size
+  xl::list<int> list3;
+  list3.push_back(1);
+  list3.push_back(2);
+  list3.resize(3);
+  assert(list3.size() == 3);
+  assert(list3.front() == 1);
+  assert(list3.back() == 0);
+
+  // Test 4: Resize a list with the same size
+  xl::list<int> list4;
+  list4.push_back(1);
+  list4.push_back(2);
+  list4.resize(2);
+  assert(list4.size() == 2);
+  assert(list4.front() == 1);
+  assert(list4.back() == 2);
+
+  // Test 5: Resize a list with a different size and elements
+  xl::list<int> list5;
+  list5.push_back(1);
+  list5.push_back(2);
+  list5.resize(3);
+  assert(list5.size() == 3);
+  assert(list5.front() == 1);
+  assert(list5.back() == 0);
+
+  // Test 6: Resize a list with the same size and elements
+  xl::list<int> list6;
+  list6.push_back(1);
+  list6.push_back(2);
+  list6.resize(2);
+  assert(list6.size() == 2);
+  assert(list6.front() == 1);
+  assert(list6.back() == 2);
+
+  // Test 7: Resize a list with a different size and elements, and check the order
+  xl::list<int> list7;
+  list7.push_back(1);
+  list7.push_back(2);
+  list7.resize(3);
+  assert(list7.size() == 3);
+  assert(list7.front() == 1);
+  assert(list7.back() == 0);
+  assert(list7.at(1) == 2);
+
+  // Test 8: Resize a list with the same size and elements, and check the order
+  xl::list<int> list8;
+  list8.push_back(1);
+  list8.push_back(2);
+  list8.resize(2);
+  assert(list8.size() == 2);
+  assert(list8.front() == 1);
+  assert(list8.back() == 2);
+  assert(list8.at(1) == 2);
+  }
 }
 
 void test2()
@@ -595,8 +807,8 @@ void test2()
 
   /* {
   // splice() entire list
-  std::list<int> l29{1, 2, 3};
-  std::list<int> l30{4, 5, 6};
+  xl::list<int> l29{1, 2, 3};
+  xl::list<int> l30{4, 5, 6};
   l29.splice(l29.begin(), l30);
   assert(l29.size() == 6);
   assert(l30.empty());
@@ -604,8 +816,8 @@ void test2()
 
   {
   // splice() single element
-  std::list<int> l31{1, 2, 3};
-  std::list<int> l32{4, 5, 6};
+  xl::list<int> l31{1, 2, 3};
+  xl::list<int> l32{4, 5, 6};
   l31.splice(l31.begin(), l32, l32.begin());
   assert(l31.front() == 4);
   assert(l31.size() == 4);
@@ -614,8 +826,8 @@ void test2()
 
   {
   // splice() element range
-  std::list<int> l33{1, 2, 3};
-  std::list<int> l34{4, 5, 6};
+  xl::list<int> l33{1, 2, 3};
+  xl::list<int> l34{4, 5, 6};
   l33.splice(l33.begin(), l34, std::next(l34.begin()), l34.end());
   assert(l33.size() == 5);
   assert(l34.size() == 1);
