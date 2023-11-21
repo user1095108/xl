@@ -698,6 +698,49 @@ void test1() {
   assert(list1.front() == 6);
   }
   }
+
+  {
+  // Test case 1: Merging two empty lists
+  xl::list<int> list1, list2;
+  list1.merge(list2);
+  assert(list1.empty() && list2.empty());
+
+  // Test case 2: Merging an empty list into a non-empty list
+  xl::list<int> list3 = {1, 2, 3};
+  xl::list<int> list4;
+  list3.merge(list4);
+  assert(list3 == xl::list<int>({1, 2, 3}) && list4.empty());
+
+  // Test case 3: Merging a non-empty list into an empty list
+  xl::list<int> list5;
+  xl::list<int> list6 = {4, 5, 6};
+  list5.merge(list6);
+  assert(list5 == xl::list<int>({4, 5, 6}) && list6.empty());
+
+  // Test case 4: Merging two non-empty lists of equal size
+  xl::list<int> list7 = {1, 3, 5};
+  xl::list<int> list8 = {2, 4, 6};
+  list7.merge(list8);
+  assert(list7 == xl::list<int>({1, 2, 3, 4, 5, 6}) && list8.empty());
+
+  // Test case 5: Merging two non-empty lists of different sizes
+  xl::list<int> list9 = {1, 3, 5};
+  xl::list<int> list10 = {2, 4};
+  list9.merge(list10);
+  assert(list9 == xl::list<int>({1, 2, 3, 4, 5}) && list10.empty());
+
+  // Test case 6: Merging two non-empty lists with duplicates
+  xl::list<int> list11 = {1, 2, 3};
+  xl::list<int> list12 = {2, 3, 4};
+  list11.merge(list12);
+  assert(list11 == xl::list<int>({1, 2, 2, 3, 3, 4}) && list12.empty());
+
+  // Test case 7: Merging two non-empty lists with a custom comparator
+  xl::list<int> list13 = {5, 3, 1};
+  xl::list<int> list14 = {6, 4, 2};
+  list13.merge(list14, [](int a, int b) { return a > b; });
+  assert(list13 == xl::list<int>({6, 5, 4, 3, 2, 1}) && list14.empty());
+  }
 }
 
 void test2()

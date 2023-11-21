@@ -626,9 +626,10 @@ public:
 
   //
   template <class Comp = std::less<value_type>>
-  void merge(list&& o, Comp cmp = Comp())
+  void merge(auto&& o, Comp cmp = Comp())
     noexcept(noexcept(node::merge(std::declval<iterator&>(),
       std::declval<iterator const&>(), std::declval<iterator&>(), cmp)))
+    requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
     if (!o.empty())
     {
