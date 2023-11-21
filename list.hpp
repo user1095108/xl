@@ -114,7 +114,7 @@ private:
           while (j != e) append_node(ni, j++);
         }
 
-        //
+        // relink ni and e
         ni.n_->l_ ^= conv(e.n_);
 
         if (e.n_) e.n_->l_ ^= conv(e.p_, ni.n_);
