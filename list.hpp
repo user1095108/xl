@@ -653,13 +653,13 @@ public:
   }
 
   //
-  void resize(size_type c)
+  void resize(size_type const c)
     noexcept(noexcept(emplace_back()))
     requires(std::is_default_constructible_v<value_type>)
   {
     if (auto sz(size()); c > sz)
     {
-      for (c -= sz; c--;) emplace_back();
+      for (; c > sz; ++sz, emplace_back());
     }
     else
     {
@@ -668,13 +668,13 @@ public:
   }
 
   template <int = 0>
-  void resize(size_type c, auto const& v)
+  void resize(size_type const c, auto const& v)
     noexcept(noexcept(emplace_back(v)))
     requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     if (auto sz(size()); c > sz)
     {
-      for (c -= sz; c--;) emplace_back(v);
+      for (; c > sz; ++sz, emplace_back(v));
     }
     else
     {
