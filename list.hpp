@@ -516,7 +516,7 @@ public:
   }
 
   iterator insert(const_iterator i,
-    std::input_iterator auto const j, decltype(j) k)
+    std::input_iterator auto j, decltype(j) k)
     noexcept(noexcept(emplace(i, *j)))
   {
     if (j == k) [[unlikely]]
@@ -525,11 +525,11 @@ public:
     }
     else [[likely]]
     {
-      auto const r(emplace(i, *j));
+      auto const r(emplace(i, *j++));
       i.p_ = r.n();
 
       std::for_each(
-        std::next(j),
+        j,
         k,
         [&](auto&& v)
           noexcept(noexcept(emplace(i, std::forward<decltype(v)>(v))))
