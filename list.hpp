@@ -75,7 +75,7 @@ private:
     }
 
     //
-    static void append_node(auto& i, auto&& j) noexcept
+    static void link_node(auto& i, auto&& j) noexcept
     { // i  j
       i.n_->l_ = conv(i.p_, j.n_); // set-up link to j
       j.n_->l_ = conv(i.n_); // change parent of j to i
@@ -89,31 +89,32 @@ private:
     { // merge sort
       if (sz > 1)
       {
-        iterator m;
-
-        {
-          auto const hsz(sz / 2);
-          m = std::next(b, hsz);
-
-          sort(b, m, hsz, std::forward<decltype(c)>(c));
-          sort(m, e, sz - hsz, std::forward<decltype(c)>(c));
-        }
-
-        //
         iterator ni;
 
         {
-          auto i(b), j(m);
-          ni = c(*i, *j) ? i++ : j++;
+          iterator m;
 
-          // relink b and ni
-          if (b.p_) b.p_->l_ ^= conv(b.n_, ni.n_);
-          (b.n_ = ni.n_)->l_ = conv(ni.p_ = b.p_);
+          {
+            auto const hsz(sz / 2);
+            m = std::next(b, hsz);
 
-          //
-          while ((i != m) && (j != e)) append_node(ni, c(*i, *j) ? i++ : j++);
-          while (i != m) append_node(ni, i++);
-          while (j != e) append_node(ni, j++);
+            sort(b, m, hsz, std::forward<decltype(c)>(c));
+            sort(m, e, sz - hsz, std::forward<decltype(c)>(c));
+          }
+
+          {
+            auto i(b), j(m);
+            ni = c(*i, *j) ? i++ : j++;
+
+            // relink b and ni
+            if (b.p_) b.p_->l_ ^= conv(b.n_, ni.n_);
+            (b.n_ = ni.n_)->l_ = conv(ni.p_ = b.p_);
+
+            //
+            while ((i != m) && (j != e)) link_node(ni, c(*i, *j) ? i++ : j++);
+            while (i != m) link_node(ni, i++);
+            while (j != e) link_node(ni, j++);
+          }
         }
 
         // relink ni and e
