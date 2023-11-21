@@ -84,6 +84,43 @@ private:
       i = j;
     }
 
+    static void merge(iterator& b, decltype(b) e, size_type const sz,
+      auto&& c) noexcept(noexcept(c(*b, *b)))
+    {
+      if (sz > 1)
+      {
+        iterator ni;
+
+        {
+          iterator m;
+
+          {
+            auto const hsz(sz / 2);
+            m = std::next(b, hsz);
+          }
+
+          {
+            auto i(b), j(m);
+            ni = c(*i, *j) ? i++ : j++;
+
+            // relink b and ni
+            if (b.p_) b.p_->l_ ^= conv(b.n_, ni.n_);
+            (b.n_ = ni.n_)->l_ = conv(ni.p_ = b.p_);
+
+            //
+            while ((i != m) && (j != e)) link_node(ni, c(*i, *j) ? i++ : j++);
+            while (i != m) link_node(ni, i++);
+            while (j != e) link_node(ni, j++);
+          }
+        }
+
+        // relink ni and e
+        ni.n_->l_ ^= conv(e.n_); // ni - e
+        if (e.n_) e.n_->l_ ^= conv(e.p_, ni.n_); // ni - e
+        e.p_ = ni.n_;
+      }
+    }
+
     static void sort(iterator& b, decltype(b) e, size_type const sz,
       auto&& c) noexcept(noexcept(c(*b, *b)))
     { // merge sort
@@ -635,6 +672,29 @@ public:
   void reverse() noexcept { node::assign(f_, l_)(l_, f_); } // swap
 
   //
+  void merge(list&& o, auto cmp)
+    noexcept(noexcept(node::merge(
+      std::declval<iterator&>(), std::declval<iterator&>(), size(), cmp)))
+  {
+    if (!o.empty())
+    {
+      auto b(empty() ? o.begin() : begin()), e(o.end());
+
+      if (l_) l_->l_ ^= node::conv(o.f_);
+      o.f_->l_ ^= node::conv(l_);
+      o.f_ = o.l_ = {};
+
+      node::merge(b, e, size(), cmp);
+      node::assign(f_, l_)(b.n(), e.p());
+    }
+  }
+
+  void merge(list&& o) noexcept(noexcept(merge(std::move(o), std::less())))
+  {
+    merge(std::move(o), std::less<>());
+  }
+
+  //
   void sort(auto cmp)
     noexcept(noexcept(node::sort(
       std::declval<iterator&>(), std::declval<iterator&>(), size(), cmp)))
@@ -644,9 +704,9 @@ public:
     node::assign(f_, l_)(b.n(), e.p());
   }
 
-  void sort() noexcept(noexcept(sort(std::less<value_type>())))
+  void sort() noexcept(noexcept(sort(std::less())))
   {
-    sort(std::less<value_type>());
+    sort(std::less());
   }
 
   //
