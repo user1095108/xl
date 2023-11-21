@@ -624,15 +624,15 @@ void test2()
   assert(l37.size() == 3);
   }
 
-  /* {
+  {
   // merge()
-  std::list<int> l38{1, 3, 5};
-  std::list<int> l39{2, 4, 6};
-  l38.merge(l39);
+  xl::list<int> l38{1, 3, 5};
+  xl::list<int> l39{2, 4, 6};
+  l38.merge(std::move(l39));
   assert(l38.size() == 6);
   assert(l38.front() == 1);
   assert(l38.back() == 6);
-  } */
+  }
 
   {
   // reverse()
