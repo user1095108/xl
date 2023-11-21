@@ -714,7 +714,7 @@ public:
     for (decltype(b.p_) p; b != e;)
     {
       p = b.p_; splice(i, std::forward<decltype(o)>(o), b++);
-      i.p_ = b.p_; b.p_ = p;
+      i.p_ = b.p_; b.p_ = p; // fix iterators
     }
   }
 
