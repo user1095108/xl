@@ -114,15 +114,11 @@ private:
     { // merge sort
       if (sz > 1)
       {
-        iterator m;
+        auto const hsz(sz / 2);
+        auto m(std::next(b, hsz));
 
-        {
-          auto const hsz(sz / 2);
-          m = std::next(b, hsz);
-
-          sort(b, m, hsz, std::forward<decltype(c)>(c));
-          sort(m, e, sz - hsz, std::forward<decltype(c)>(c));
-        }
+        sort(b, m, hsz, std::forward<decltype(c)>(c));
+        sort(m, e, sz - hsz, std::forward<decltype(c)>(c));
 
         node::merge(b, m, e, std::forward<decltype(c)>(c));
       }
