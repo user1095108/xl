@@ -84,41 +84,29 @@ private:
       i = j;
     }
 
-    static void merge(iterator& b, decltype(b) e, size_type const sz,
+    static void merge(iterator& b, iterator m, decltype(b) e,
       auto&& c) noexcept(noexcept(c(*b, *b)))
     {
-      if (sz > 1)
+      iterator ni;
+
       {
-        iterator ni;
+        auto i(b), j(m);
+        ni = c(*i, *j) ? i++ : j++;
 
-        {
-          iterator m;
+        // relink b and ni
+        if (b.p_) b.p_->l_ ^= conv(b.n_, ni.n_);
+        (b.n_ = ni.n_)->l_ = conv(ni.p_ = b.p_);
 
-          {
-            auto const hsz(sz / 2);
-            m = std::next(b, hsz);
-          }
-
-          {
-            auto i(b), j(m);
-            ni = c(*i, *j) ? i++ : j++;
-
-            // relink b and ni
-            if (b.p_) b.p_->l_ ^= conv(b.n_, ni.n_);
-            (b.n_ = ni.n_)->l_ = conv(ni.p_ = b.p_);
-
-            //
-            while ((i != m) && (j != e)) link_node(ni, c(*i, *j) ? i++ : j++);
-            while (i != m) link_node(ni, i++);
-            while (j != e) link_node(ni, j++);
-          }
-        }
-
-        // relink ni and e
-        ni.n_->l_ ^= conv(e.n_); // ni - e
-        if (e.n_) e.n_->l_ ^= conv(e.p_, ni.n_); // ni - e
-        e.p_ = ni.n_;
+        //
+        while ((i != m) && (j != e)) link_node(ni, c(*i, *j) ? i++ : j++);
+        while (i != m) link_node(ni, i++);
+        while (j != e) link_node(ni, j++);
       }
+
+      // relink ni and e
+      ni.n_->l_ ^= conv(e.n_); // ni - e
+      if (e.n_) e.n_->l_ ^= conv(e.p_, ni.n_); // ni - e
+      e.p_ = ni.n_;
     }
 
     static void sort(iterator& b, decltype(b) e, size_type const sz,
@@ -673,8 +661,8 @@ public:
 
   //
   void merge(list&& o, auto cmp)
-    noexcept(noexcept(node::merge(
-      std::declval<iterator&>(), std::declval<iterator&>(), size(), cmp)))
+    noexcept(noexcept(node::merge(std::declval<iterator&>(),
+      std::declval<iterator>(), std::declval<iterator&>(), cmp)))
   {
     if (!o.empty())
     {
@@ -682,9 +670,13 @@ public:
 
       if (l_) l_->l_ ^= node::conv(o.f_);
       o.f_->l_ ^= node::conv(l_);
+
+      auto m(o.begin());
+      m.p_ = l_;
+
       o.f_ = o.l_ = {};
 
-      node::merge(b, e, size(), cmp);
+      node::merge(b, m, e, cmp);
       node::assign(f_, l_)(b.n(), e.p());
     }
   }
