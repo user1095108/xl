@@ -686,8 +686,9 @@ public:
     node::assign(f_, l_)(b.n(), e.p());
   }
 
-  void splice(const_iterator const i, list&& o,
+  void splice(const_iterator const i, auto&& o,
     const_iterator const it) noexcept
+    requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
     { // unlink it from o
       auto const itnxt(it.n_->link(it.p_));
@@ -707,18 +708,19 @@ public:
     i.p_ ? i.p_->l_ ^= node::conv(i.n_, it.n_) : bool(f_ = it.n_);
   }
 
-  void splice(const_iterator i, list&& o, const_iterator b,
+  void splice(const_iterator i, auto&& o, const_iterator b,
     const_iterator const e) noexcept
   {
-    for (node* p; b != e;)
+    for (decltype(b.p_) p; b != e;)
     {
-      p = b.p_; splice(i, std::move(o), b++); i.p_ = b.p_; b.p_ = p;
+      p = b.p_; splice(i, std::forward<decltype(o)>(o), b++);
+      i.p_ = b.p_; b.p_ = p;
     }
   }
 
-  void splice(const_iterator const i, list&& o) noexcept
+  void splice(const_iterator const i, auto&& o) noexcept
   {
-    splice(i, std::move(o), o.cbegin(), o.cend());
+    splice(i, std::forward<decltype(o)>(o), o.cbegin(), o.cend());
   }
 
   //
