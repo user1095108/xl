@@ -393,12 +393,12 @@ public:
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
     // l q
-    auto const q(new node{std::forward<decltype(a)>(a)...});
-    q->l_ = node::conv(l_);
+    auto const l(l_), q(new node{std::forward<decltype(a)>(a)...});
+    q->l_ = node::conv(l);
 
-    l_ ? l_->l_ ^= node::conv(q) : bool(f_ = q);
+    l ? l->l_ ^= node::conv(q) : bool(f_ = q);
 
-    return {q, std::exchange(l_, q)}; // return iterator to created node
+    return {l_ = q, l}; // return iterator to created node
   }
 
   auto emplace_back(value_type v)
