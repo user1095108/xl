@@ -375,8 +375,8 @@ public:
     auto const q(new node{std::forward<decltype(a)>(a)...});
     q->l_ = node::conv(i.n_, i.p_);
 
-    i.n_ ? i.n_->l_ = node::conv(q, i.n_->link(i.p_)) : bool(l_ = q);
-    i.p_ ? i.p_->l_ = node::conv(q, i.p_->link(i.n_)) : bool(f_ = q);
+    i.n_ ? i.n_->l_ ^= node::conv(q, i.p_) : bool(l_ = q);
+    i.p_ ? i.p_->l_ ^= node::conv(q, i.n_) : bool(f_ = q);
 
     return {q, i.p_}; // return iterator to created node
   }
