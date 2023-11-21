@@ -739,7 +739,7 @@ public:
 
     if (!empty()) [[likely]]
     {
-      for (auto a(cbegin()), b(std::next(a)); b.n();)
+      for (auto b(cbegin()), a(b++); b.n();)
       {
         pred(*a, *b) ? ++r, b = erase(b) : a = b++;
       }
