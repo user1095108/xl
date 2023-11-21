@@ -75,7 +75,7 @@ private:
     }
 
     //
-    static auto append_node(auto& i, auto&& j) noexcept
+    static auto&& append_node(auto& i, auto&& j) noexcept
     { // i  j
       i.n_->l_ = conv(i.p_, j.n_); // set-up link to j
       j.n_->l_ = conv(i.n_); // change parent of j to i
