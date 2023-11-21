@@ -654,22 +654,22 @@ public:
 
   //
   void resize(size_type const c)
-    noexcept(noexcept(emplace_back()))
+    noexcept(noexcept(emplace_back(), pop_back()))
     requires(std::is_default_constructible_v<value_type>)
   {
     auto sz(size());
     for (; c > sz; ++sz, emplace_back());
-    for (; c < sz; --sz, pop_front());
+    for (; c < sz; --sz, pop_back());
   }
 
   template <int = 0>
   void resize(size_type const c, auto const& v)
-    noexcept(noexcept(emplace_back(v)))
+    noexcept(noexcept(emplace_back(v), pop_back()))
     requires(std::is_constructible_v<value_type, decltype(v)>)
   {
     auto sz(size());
     for (; c > sz; ++sz, emplace_back(v));
-    for (; c < sz; --sz, pop_front());
+    for (; c < sz; --sz, pop_back());
   }
 
   void resize(size_type const c, value_type const v)
