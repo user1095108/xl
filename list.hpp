@@ -707,7 +707,7 @@ public:
 
   void sort() noexcept(noexcept(sort(std::less<value_type>())))
   {
-    sort(std::less());
+    sort(std::less<value_type>());
   }
 
   //
