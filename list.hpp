@@ -99,9 +99,8 @@ private:
       while (j != e) link_node(ni, j++);
 
       // relink ni and e
-      ni.n_->l_ ^= conv(e.n_); // ni - e
       if (e.n_) e.n_->l_ ^= conv(e.p_, ni.n_); // ni - e
-      e.p_ = ni.n_;
+      (e.p_ = ni.n_)->l_ ^= conv(e.n_); // ni - e
     }
 
     static void sort(iterator& b, decltype(b) e, size_type const sz,
