@@ -74,10 +74,18 @@ private:
       return (node*)(std::uintptr_t(n) ^ l_);
     }
 
-    static auto next(auto n, size_type i) noexcept
+    static auto next(auto* n, decltype(p) p, size_type i) noexcept
     {
-      for (decltype(n) p{}; i--; assign(n, p)(n->link(p), n));
+      for (; i--; assign(n, p)(n->link(p), n));
       return n;
+    }
+
+    static auto next(auto i) noexcept { return ++i; }
+
+    static auto next(auto i, size_type n) noexcept
+    {
+      for (; n--; ++i);
+      return i;
     }
 
     //
@@ -115,7 +123,7 @@ private:
       if (sz > 1)
       {
         auto const hsz(sz / 2);
-        auto m(std::next(b, hsz));
+        auto m(node::next(b, hsz));
 
         sort(b, m, hsz, std::forward<decltype(c)>(c));
         sort(m, e, sz - hsz, std::forward<decltype(c)>(c));
@@ -313,12 +321,12 @@ public:
   //
   auto& operator[](size_type const i) noexcept
   {
-    return node::next(f_, i)->v_;
+    return node::next(f_, {}, i)->v_;
   }
 
   auto const& operator[](size_type const i) const noexcept
   {
-    return node::next(f_, i)->v_;
+    return node::next(f_, {}, i)->v_;
   }
 
   auto& at(size_type const i) noexcept { return (*this)[i]; }
@@ -523,7 +531,7 @@ public:
       i.p_ = r.n();
 
       std::for_each(
-        std::next(j),
+        node::next(j),
         k,
         [&](auto&& v)
           noexcept(noexcept(emplace(i, std::forward<decltype(v)>(v))))
