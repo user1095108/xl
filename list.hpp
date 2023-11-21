@@ -653,6 +653,33 @@ public:
   }
 
   //
+  void resize(size_type c)
+    noexcept(noexcept(emplace_back()))
+    requires(std::is_default_constructible_v<value_type>)
+  {
+    if (auto const sz(size()); c > sz)
+    {
+      c -= sz; while (c--) emplace_back();
+    }
+  }
+
+  void resize(size_type c, auto const& v)
+    noexcept(noexcept(emplace_back(v)))
+    requires(std::is_constructible_v<value_type, decltype(v)>)
+  {
+    if (auto const sz(size()); c > sz)
+    {
+      c -= sz; while (c--) emplace_back(v);
+    }
+  }
+
+  void resize(size_type const c, value_type const v)
+    noexcept(noexcept(resize(c, v)))
+  {
+    resize(c, v);
+  }
+
+  //
   template <class Comp = std::less<value_type>>
   void sort(Comp cmp = Comp())
     noexcept(noexcept(node::sort(
