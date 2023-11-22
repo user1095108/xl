@@ -692,30 +692,9 @@ public:
     node::assign(f_, l_)(b.n_, e.p_);
   }
 
-  void splice(const_iterator const i, auto&& o,
-    const_iterator const it) noexcept
-    requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
-  {
-    { // unlink it from o
-      auto const itnxt(it.n_->link(it.p_));
-
-      itnxt ?
-        itnxt->l_ ^= node::conv(it.n_, it.p_) :
-        bool(o.l_ = o.l_->link());
-
-      it.p_ ?
-        it.p_->l_ ^= node::conv(it.n_, itnxt) :
-        bool(o.f_ = o.f_->link());
-    }
-
-    // i.p_ it i.n_
-    it.n_->l_ = node::conv(i.p_, i.n_); // it - i
-    i.n_ ? i.n_->l_ ^= node::conv(i.p_, it.n_) : bool(l_ = it.n_);
-    i.p_ ? i.p_->l_ ^= node::conv(i.n_, it.n_) : bool(f_ = it.n_);
-  }
-
   void splice(const_iterator i, auto&& o, const_iterator b,
     const_iterator const e) noexcept
+    requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
     if (b != e)
     {
@@ -731,6 +710,13 @@ public:
       e.n_ ? e.n_->l_ ^= node::conv(b.p_, e.p_) : bool(o.l_ = b.p_);
     }
   }
+
+  void splice(const_iterator const i, auto&& o,
+    const_iterator const it) noexcept
+  {
+    splice(i, std::forward<decltype(o)>(o), it, std::next(it));
+  }
+
 
   void splice(const_iterator const i, auto&& o) noexcept
   {
