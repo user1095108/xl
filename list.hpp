@@ -636,21 +636,23 @@ public:
       std::declval<iterator const&>(), std::declval<iterator&>(), cmp)))
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
-    if (!o.empty())
+    if (empty())
     {
-      auto b(empty() ? o.begin() : begin()), e(o.end());
+      f_ = o.f_; l_ = o.l_;
+    }
+    else if (!o.empty())
+    { // link linked lists, reset o
+      auto b(begin()), m(o.begin()), e(o.end());
+      m.p_ = l_; // fix iterator
 
-      if (l_) l_->l_ ^= node::conv(o.f_);
+      l_->l_ ^= node::conv(o.f_); // link linked lists
       o.f_->l_ ^= node::conv(l_);
 
-      auto m(o.begin());
-      m.p_ = l_;
-
-      o.f_ = o.l_ = {};
-
       node::merge(b, m, e, cmp);
-      node::assign(f_, l_)(b.n(), e.p());
+      node::assign(f_, l_)(b.n_, e.p_);
     }
+
+    o.f_ = o.l_ = {}; // reset o
   }
 
   //
