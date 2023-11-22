@@ -689,7 +689,7 @@ public:
   {
     auto b(begin()), e(end());
     node::sort(b, e, size(), cmp);
-    node::assign(f_, l_)(b.n(), e.p());
+    node::assign(f_, l_)(b.n_, e.p_);
   }
 
   void splice(const_iterator const i, auto&& o,
