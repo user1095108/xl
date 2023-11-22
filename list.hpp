@@ -641,12 +641,12 @@ public:
       f_ = o.f_; l_ = o.l_;
     }
     else if (!o.empty())
-    { // link linked lists, reset o
+    {
+      l_->l_ ^= node::conv(o.f_); // link this and o
+      o.f_->l_ ^= node::conv(l_);
+
       auto b(begin()), m(o.begin()), e(o.end());
       m.p_ = l_; // fix iterator
-
-      l_->l_ ^= node::conv(o.f_); // link linked lists
-      o.f_->l_ ^= node::conv(l_);
 
       node::merge(b, m, e, cmp);
       node::assign(f_, l_)(b.n_, e.p_);
