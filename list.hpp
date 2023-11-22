@@ -717,10 +717,18 @@ public:
   void splice(const_iterator i, auto&& o, const_iterator b,
     const_iterator const e) noexcept
   {
-    for (decltype(b.p_) p; b != e;)
+    if (b != e)
     {
-      p = b.p_; splice(i, std::forward<decltype(o)>(o), b++);
-      i.p_ = b.p_; b.p_ = p; // fix iterators
+      i.p_ ? i.p_->l_ ^= node::conv(i.n_, b.n_) : bool(f_ = b.n_);
+      i.n_ ? i.n_->l_ ^= node::conv(i.p_, e.p_) : bool(l_ = e.p_);
+
+      //
+      b.n_->l_ ^= node::conv(i.p_, b.p_);
+      e.p_->l_ ^= node::conv(e.n_, i.n_);
+
+      //
+      b.p_ ? b.p_->l_ ^= node::conv(b.n_, e.n_) : bool(o.f_ = e.n_);
+      e.n_ ? e.n_->l_ ^= node::conv(b.p_, e.p_) : bool(o.l_ = b.p_);
     }
   }
 
