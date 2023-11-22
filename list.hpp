@@ -697,17 +697,17 @@ public:
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
     if (b != e)
-    { // relink b, e, i
-      i.p_ ? i.p_->l_ ^= node::conv(i.n_, b.n_) : bool(f_ = b.n_);
+    { // relink i, b, e
       i.n_ ? i.n_->l_ ^= node::conv(i.p_, e.p_) : bool(l_ = e.p_);
+      i.p_ ? i.p_->l_ ^= node::conv(i.n_, b.n_) : bool(f_ = b.n_);
 
       //
+      b.n_->l_ ^= node::conv(b.p_, i.p_);
       b.p_ ? b.p_->l_ ^= node::conv(b.n_, e.n_) : bool(o.f_ = e.n_);
-      b.n_->l_ ^= node::conv(i.p_, b.p_);
 
       //
+      e.n_ ? e.n_->l_ ^= node::conv(e.p_, b.p_) : bool(o.l_ = b.p_);
       e.p_->l_ ^= node::conv(e.n_, i.n_);
-      e.n_ ? e.n_->l_ ^= node::conv(b.p_, e.p_) : bool(o.l_ = b.p_);
     }
   }
 
