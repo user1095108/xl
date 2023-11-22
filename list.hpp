@@ -722,7 +722,7 @@ public:
     b.n_->l_ = node::conv(i.p_, i.n_);
     b.p_ ? b.p_->l_ ^= node::conv(b.n_, e) : bool(o.f_ = e);
 
-    // b e
+    // b.p_ b.n_ e
     e ? e->l_ ^= node::conv(b.n_, b.p_) : bool(o.l_ = b.p_);
   }
 
