@@ -474,7 +474,7 @@ public:
       (emplace(i, std::forward<decltype(b)>(b)), ...);})
   {
     auto const r(emplace(i, std::forward<decltype(a)>(a)));
-    i.p_ = r.n();
+    i.p_ = r.n(); // fix iterator
 
     ((i.p_ = emplace(i, std::forward<decltype(b)>(b)).n()), ...);
 
