@@ -717,7 +717,6 @@ public:
     splice(i, std::forward<decltype(o)>(o), it, std::next(it));
   }
 
-
   void splice(const_iterator const i, auto&& o) noexcept
   {
     splice(i, std::forward<decltype(o)>(o), o.cbegin(), o.cend());
