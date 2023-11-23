@@ -436,9 +436,9 @@ public:
   {
     auto const nxt(i.n_->link(i.p_));
 
-    // p n nxt
-    i.p_ ? i.p_->l_ ^= node::conv(i.n_, nxt) : bool(f_ = nxt);
+    // i.p_, i.n_, nxt
     nxt ? nxt->l_ ^= node::conv(i.n_, i.p_) : bool(l_ = i.p_);
+    i.p_ ? i.p_->l_ ^= node::conv(i.n_, nxt) : bool(f_ = nxt);
 
     delete i.n_;
 
