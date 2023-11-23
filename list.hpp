@@ -374,7 +374,7 @@ public:
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   {
-    // p q n
+    // i.p_, q, i.n_
     auto const q(new node{std::forward<decltype(a)>(a)...});
     q->l_ = node::conv(i.n_, i.p_);
 
