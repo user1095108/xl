@@ -719,11 +719,11 @@ public:
 
     // i.p_ b.n_ i.n_
     auto const e(b.n_->link(b.p_));
-    b.n_->l_ = node::conv(i.p_, i.n_);
     b.p_ ? b.p_->l_ ^= node::conv(b.n_, e) : bool(o.f_ = e);
 
     // b.p_ b.n_ e
     e ? e->l_ ^= node::conv(b.n_, b.p_) : bool(o.l_ = b.p_);
+    b.n_->l_ = node::conv(i.p_, i.n_);
   }
 
   void splice(const_iterator const i, auto&& o) noexcept
