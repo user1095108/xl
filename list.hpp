@@ -189,7 +189,7 @@ public:
 
   explicit list(auto&& c)
     noexcept((std::is_rvalue_reference_v<decltype(c)> &&
-      noexcept(std::move(std::begin(c), std::end(c),
+      noexcept(c.clear(), std::move(std::begin(c), std::end(c),
         std::back_inserter(*this)))) ||
       noexcept(std::copy(std::begin(c), std::end(c),
         std::back_inserter(*this))))
@@ -243,7 +243,7 @@ public:
 
   auto& operator=(auto&& c)
     noexcept((std::is_rvalue_reference_v<decltype(c)> &&
-      noexcept(clear(), std::move(std::begin(c), std::end(c),
+      noexcept(clear(), c.clear(), std::move(std::begin(c), std::end(c),
         std::back_inserter(*this)))) ||
       noexcept(clear(), std::copy(std::begin(c), std::end(c),
         std::back_inserter(*this))))
