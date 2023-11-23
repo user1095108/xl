@@ -203,6 +203,7 @@ public:
     if constexpr(std::is_rvalue_reference_v<decltype(c)>)
     {
       std::move(std::begin(c), std::end(c), std::back_inserter(*this));
+      c.clear();
     }
     else
     {
@@ -258,6 +259,7 @@ public:
     if constexpr(std::is_rvalue_reference_v<decltype(c)>)
     {
       std::move(std::begin(c), std::end(c), std::back_inserter(*this));
+      c.clear();
     }
     else
     {
