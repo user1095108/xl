@@ -645,7 +645,7 @@ public:
       l_->l_ ^= node::conv(o.f_); // link this and o
       o.f_->l_ ^= node::conv(l_);
 
-      auto b(begin()), m(o.begin()), e(o.end());
+      auto b(begin()), e(o.end()), m(o.begin());
       m.p_ = l_; // fix iterator
 
       node::merge(b, m, e, cmp);
