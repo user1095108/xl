@@ -13,7 +13,11 @@
 namespace xl
 {
 
-struct multi_t{};
+struct from_range_t { explicit from_range_t() = default; };
+constexpr from_range_t from_range {};
+
+struct multi_t { explicit multi_t() = default; };
+constexpr multi_t multi {};
 
 template <typename T>
   requires(!std::is_reference_v<T>)
@@ -188,27 +192,12 @@ public:
   {
   }
 
-  explicit list(auto&& c)
-    noexcept((std::is_rvalue_reference_v<decltype(c)> &&
-      noexcept(std::move(std::begin(c), std::end(c),
-        std::back_inserter(*this)))) ||
-      noexcept(std::copy(std::begin(c), std::end(c),
-        std::back_inserter(*this))))
-    requires(requires{std::begin(c), std::end(c), std::size(c);} &&
-      !std::same_as<list, std::remove_cvref_t<decltype(c)>> &&
-      !std::same_as<std::initializer_list<value_type>,
-        std::remove_cvref_t<decltype(c)>> &&
-      (std::is_constructible_v<T, decltype(*std::begin(c))> ||
-      std::is_constructible_v<T, decltype(std::move(*std::begin(c)))>))
+  template <std::ranges::input_range R>
+  list(from_range_t, R&& rg)
+    noexcept(noexcept(
+      std::copy(std::begin(rg), std::end(rg), std::back_inserter(*this))))
   {
-    if constexpr(std::is_rvalue_reference_v<decltype(c)>)
-    {
-      std::move(std::begin(c), std::end(c), std::back_inserter(*this));
-    }
-    else
-    {
-      std::copy(std::begin(c), std::end(c), std::back_inserter(*this));
-    }
+    std::copy(std::begin(rg), std::end(rg), std::back_inserter(*this));
   }
 
   ~list() noexcept(noexcept(node::destroy(f_))) { node::destroy(f_); }
@@ -553,21 +542,21 @@ public:
   iterator append_range(R&& rg)
     noexcept(noexcept(insert(cend(), rg.begin(), rg.end())))
   {
-    return insert(cend(), rg.begin(), rg.end());
+    return insert(cend(), std::begin(rg), std::end(rg));
   }
 
   template <std::ranges::input_range R>
   iterator insert_range(const_iterator const pos, R&& rg)
     noexcept(noexcept(insert(pos, rg.begin(), rg.end())))
   {
-    return insert(pos, rg.begin(), rg.end());
+    return insert(pos, std::begin(rg), std::end(rg));
   }
 
   template <std::ranges::input_range R>
   iterator prepend_range(R&& rg)
     noexcept(noexcept(insert(cbegin(), rg.begin(), rg.end())))
   {
-    return insert(cbegin(), rg.begin(), rg.end());
+    return insert(cbegin(), std::begin(rg), std::end(rg));
   }
 
   //
@@ -834,6 +823,13 @@ inline auto operator<=>(list<U> const& l, list<V> const& r)
 
 template <typename T>
 inline void swap(list<T>& l, decltype(l) r) noexcept { l.swap(r); }
+
+//
+template <class It>
+list(It, It) -> list<typename std::iterator_traits<It>::value_type>;
+
+template <std::ranges::input_range R>
+list(from_range_t, R&& rg) -> list<std::ranges::range_value_t<R>>;
 
 }
 

@@ -308,7 +308,7 @@ void test1() {
   }
 
   {
-  xl::list<char> palindrome(std::string_view("racecar"));
+  xl::list palindrome(xl::from_range, std::string_view("racecar"));
 
   while(palindrome.size() > 1) {
     assert(palindrome.front() == palindrome.back());
@@ -793,7 +793,7 @@ void test2()
   {
   // Range constructor
   int arr[] = {1, 2, 3, 4, 5};
-  xl::list<int> l3(arr);
+  xl::list l3(xl::from_range, arr);
   assert(l3.size() == 5);
   assert(l3.front() == 1);
   assert(l3.back() == 5);
