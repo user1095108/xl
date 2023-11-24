@@ -1,5 +1,6 @@
 #include <cassert>
 #include <iostream>
+#include <vector>
 #include "list.hpp" // Replace with the actual container header
 
 // Include your testing framework of choice (e.g., Google Test or Catch2)
@@ -740,6 +741,27 @@ void test1() {
   xl::list<int> list14 = {6, 4, 2};
   list13.merge(list14, [](int a, int b) { return a > b; });
   assert(list13 == xl::list<int>({6, 5, 4, 3, 2, 1}) && list14.empty());
+  }
+
+  {
+  xl::list<int> lst{1, 2, 3};
+
+  // Create a vector with elements 4, 5, 6
+  std::vector<int> vec{4, 5, 6};
+
+  // Test append_range()
+  lst.append_range(vec);
+  assert((lst == xl::list<int>{1, 2, 3, 4, 5, 6}));
+
+  // Test prepend_range()
+  lst.prepend_range(vec);
+  assert((lst == xl::list<int>{4, 5, 6, 1, 2, 3, 4, 5, 6}));
+
+  // Test insert_range()
+  auto it = lst.begin();
+  std::advance(it, 3); // Move iterator to the 4th element
+  lst.insert_range(it, vec);
+  assert((lst == xl::list<int>{4, 5, 6, 4, 5, 6, 1, 2, 3, 4, 5, 6}));
   }
 }
 
