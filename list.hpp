@@ -517,22 +517,20 @@ public:
   }
 
   //
-  template <std::ranges::input_range R>
-  iterator append_range(R&& rg)
+  constexpr iterator append_range(std::ranges::input_range auto&& rg)
     noexcept(noexcept(insert(cend(), rg.begin(), rg.end())))
   {
     return insert(cend(), std::begin(rg), std::end(rg));
   }
 
-  template <std::ranges::input_range R>
-  iterator insert_range(const_iterator const pos, R&& rg)
+  constexpr iterator insert_range(const_iterator const pos,
+    std::ranges::input_range auto&& rg)
     noexcept(noexcept(insert(pos, rg.begin(), rg.end())))
   {
     return insert(pos, std::begin(rg), std::end(rg));
   }
 
-  template <std::ranges::input_range R>
-  iterator prepend_range(R&& rg)
+  constexpr iterator prepend_range(std::ranges::input_range auto&& rg)
     noexcept(noexcept(insert(cbegin(), rg.begin(), rg.end())))
   {
     return insert(cbegin(), std::begin(rg), std::end(rg));
