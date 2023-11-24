@@ -11,7 +11,7 @@ int main()
 {
   std::list<int> l1(100000);
   std::iota(l1.rbegin(), l1.rend(), 0);
-  xl::list<int> l2(xl::from_range, l1);
+  xl::list l2(xl::from_range, l1);
 
   // Measure the time it takes to sort the vector using std::sort
   auto start = std::chrono::high_resolution_clock::now();
