@@ -192,8 +192,7 @@ public:
   {
   }
 
-  template <std::ranges::input_range R>
-  list(from_range_t, R&& rg)
+  list(from_range_t, std::ranges::input_range auto&& rg)
     noexcept(noexcept(list(std::begin(rg), std::end(rg)))):
     list(std::begin(rg), std::end(rg))
   {
@@ -227,6 +226,12 @@ public:
     assign(l);
 
     return *this;
+  }
+
+  auto& operator=(std::ranges::input_range auto&& rg)
+    noexcept(noexcept(assign(std::begin(rg), std::end(rg))))
+  {
+    assign(std::begin(rg), std::end(rg)); return *this;
   }
 
   //
