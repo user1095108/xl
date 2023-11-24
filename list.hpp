@@ -14,10 +14,10 @@ namespace xl
 {
 
 struct from_range_t { explicit from_range_t() = default; };
-constexpr from_range_t from_range {};
+constexpr from_range_t from_range{};
 
 struct multi_t { explicit multi_t() = default; };
-constexpr multi_t multi {};
+constexpr multi_t multi{};
 
 template <typename T>
   requires(!std::is_reference_v<T>)
