@@ -6,6 +6,7 @@
 #include <algorithm> // std::move()
 #include <compare> // std::three_way_comparable
 #include <initializer_list>
+#include <ranges>
 
 #include "listiterator.hpp"
 
@@ -545,6 +546,28 @@ public:
     noexcept(noexcept(insert(i, l.begin(), l.end())))
   {
     return insert(i, l.begin(), l.end());
+  }
+
+  //
+  template <std::ranges::input_range R>
+  iterator append_range(R&& rg)
+    noexcept(noexcept(insert(cend(), rg.begin(), rg.end())))
+  {
+    return insert(cend(), rg.begin(), rg.end());
+  }
+
+  template <std::ranges::input_range R>
+  iterator insert_range(const_iterator const pos, R&& rg)
+    noexcept(noexcept(insert(pos, rg.begin(), rg.end())))
+  {
+    return insert(pos, rg.begin(), rg.end());
+  }
+
+  template <std::ranges::input_range R>
+  iterator prepend_range(R&& rg)
+    noexcept(noexcept(insert(cbegin(), rg.begin(), rg.end())))
+  {
+    return insert(cbegin(), rg.begin(), rg.end());
   }
 
   //
