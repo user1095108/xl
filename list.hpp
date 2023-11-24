@@ -205,9 +205,7 @@ public:
     noexcept(noexcept(assign(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>)
   { // self-assign neglected
-    assign(o.begin(), o.end());
-
-    return *this;
+    assign(o.begin(), o.end()); return *this;
   }
 
   auto& operator=(list&& o) noexcept(noexcept(node::destroy(f_)))
@@ -223,9 +221,7 @@ public:
   auto& operator=(std::initializer_list<value_type> l)
     noexcept(noexcept(assign(l)))
   {
-    assign(l);
-
-    return *this;
+    assign(l); return *this;
   }
 
   auto& operator=(std::ranges::input_range auto&& rg)
@@ -327,6 +323,12 @@ public:
     noexcept(noexcept(assign(l.begin(), l.end())))
   {
     assign(l.begin(), l.end());
+  }
+
+  void assign(std::ranges::input_range auto&& rg)
+    noexcept(noexcept(assign(std::begin(rg), std::end(rg))))
+  {
+    assign(std::begin(rg), std::end(rg));
   }
 
   //
