@@ -194,10 +194,9 @@ public:
 
   template <std::ranges::input_range R>
   list(from_range_t, R&& rg)
-    noexcept(noexcept(
-      std::copy(std::begin(rg), std::end(rg), std::back_inserter(*this))))
+    noexcept(noexcept(list(std::begin(rg), std::end(rg)))):
+    list(std::begin(rg), std::end(rg))
   {
-    std::copy(std::begin(rg), std::end(rg), std::back_inserter(*this));
   }
 
   ~list() noexcept(noexcept(node::destroy(f_))) { node::destroy(f_); }
