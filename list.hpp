@@ -193,8 +193,8 @@ public:
   }
 
   list(from_range_t, std::ranges::input_range auto&& rg)
-    noexcept(noexcept(list(std::begin(rg), std::end(rg)))):
-    list(std::begin(rg), std::end(rg))
+    noexcept(noexcept(list(std::ranges::begin(rg), std::ranges::end(rg)))):
+    list(std::ranges::begin(rg), std::ranges::end(rg))
   {
   }
 
@@ -326,9 +326,9 @@ public:
   }
 
   void assign_range(std::ranges::input_range auto&& rg)
-    noexcept(noexcept(assign(std::begin(rg), std::end(rg))))
+    noexcept(noexcept(assign(std::ranges::begin(rg), std::ranges::end(rg))))
   {
-    assign(std::begin(rg), std::end(rg));
+    assign(std::ranges::begin(rg), std::ranges::end(rg));
   }
 
   //
