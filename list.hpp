@@ -225,9 +225,9 @@ public:
   }
 
   auto& operator=(std::ranges::input_range auto&& rg)
-    noexcept(noexcept(assign(std::forward<decltype(rg)>(rg))))
+    noexcept(noexcept(assign_range(std::forward<decltype(rg)>(rg))))
   {
-    assign(std::forward<decltype(rg)>(rg)); return *this;
+    assign_range(std::forward<decltype(rg)>(rg)); return *this;
   }
 
   //
@@ -325,7 +325,7 @@ public:
     assign(l.begin(), l.end());
   }
 
-  void assign(std::ranges::input_range auto&& rg)
+  void assign_range(std::ranges::input_range auto&& rg)
     noexcept(noexcept(assign(std::begin(rg), std::end(rg))))
   {
     assign(std::begin(rg), std::end(rg));
