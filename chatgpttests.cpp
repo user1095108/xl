@@ -611,6 +611,39 @@ void test1() {
   }
 
   {
+  // Empty list
+  xl::list<int> emptyList;
+  assert(emptyList.size() == 0);
+  assert(emptyList.empty());
+  // List with one element
+  xl::list<int> list1 = {42};
+  assert(list1.size() == 1);
+  assert(list1.front() == 42);
+  // List with multiple elements
+  xl::list<int> list2 = {1, 2, 3, 4, 5};
+  assert(list2.size() == 5);
+  assert(list2.front() == 1);
+  assert(list2.back() == 5);
+  // Modifying the list
+  list2.push_back(6);
+  assert(list2.size() == 6);
+  assert(list2.front() == 1);
+  assert(list2.back() == 6);
+  // Iterating over the list
+  int sum = 0;
+  for (const auto& element : list2) {
+  sum += element;
+  }
+  assert(sum == 21);
+  // Erasing an element
+  list2.erase(list2.begin());
+  assert(list2.size() == 5);
+  assert(list2.front() == 2);
+  // Checking container properties
+  assert(list2.empty() == false);
+  }
+
+  {
   // Create two lists
   xl::list<int> list1 = {1, 2, 3, 4, 5};
   xl::list<int> list2 = {10, 20, 30};
