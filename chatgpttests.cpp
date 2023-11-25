@@ -763,6 +763,24 @@ void test1() {
   lst.insert_range(it, vec);
   assert((lst == xl::list<int>{4, 5, 6, 4, 5, 6, 1, 2, 3, 4, 5, 6}));
   }
+
+  {
+  xl::list<int> list1 = {1, 2, 3, 4, 5};
+  std::vector<int> const vector1 = {6, 7, 8, 9, 10};
+
+  // Use assign_range() to replace elements in list1 with elements from vector1
+  list1.assign_range(vector1);
+
+  // Check the results using assert()
+  assert(list1.size() == vector1.size());
+  auto list_it = list1.begin();
+  auto vector_it = vector1.begin();
+  while (list_it != list1.end()) {
+      assert(*list_it == *vector_it);
+      ++list_it;
+      ++vector_it;
+  }
+  }
 }
 
 void test2()
