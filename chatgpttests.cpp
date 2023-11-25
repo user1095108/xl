@@ -814,6 +814,31 @@ void test1() {
       ++vector_it;
   }
   }
+
+  {
+  xl::list<int> myList = {1, 2, 3};
+  xl::list<int> appendList = {4, 5, 6};
+  xl::list<int> prependList = {7, 8, 9};
+  xl::list<int> insertList = {10, 11, 12};
+  xl::list<int> assignList = {13, 14, 15};
+
+  // Testing std::list::append_range
+  myList.append_range(appendList);
+  assert(myList == xl::list<int>({1, 2, 3, 4, 5, 6}));
+
+  // Testing std::list::prepend_range
+  myList.prepend_range(prependList);
+  assert(myList == xl::list<int>({7, 8, 9, 1, 2, 3, 4, 5, 6}));
+
+  // Testing std::list::insert_range
+  auto insertPos = std::find(myList.begin(), myList.end(), 1);
+  myList.insert_range(insertPos, insertList);
+  assert(myList == xl::list<int>({7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6}));
+
+  // Testing std::list::assign_range
+  myList.assign_range(assignList);
+  assert(myList == xl::list<int>({13, 14, 15}));
+  }
 }
 
 void test2()
