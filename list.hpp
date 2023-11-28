@@ -665,7 +665,7 @@ public:
   {
     if (!empty())
     { // bottom-up merge sort
-      auto const next([](auto i, size_type n) noexcept
+      static constinit auto const next([](auto i, size_type n) noexcept
         {
           for (; n && i.n_; --n, ++i);
           return i;
