@@ -100,8 +100,8 @@ private:
       i = j;
     }
 
-    static void merge(iterator& b, iterator const& m, decltype(b) e,
-      auto&& c) noexcept(noexcept(c(*b, *b)))
+    static void merge(const_iterator& b, const_iterator const& m,
+      decltype(b) e, auto c) noexcept(noexcept(c(*b, *b)))
     {
       auto i(b), j(m), ni(c(*i, *j) ? i++ : j++);
 
@@ -609,8 +609,9 @@ public:
   //
   template <class Comp = std::less<value_type>>
   void merge(auto&& o, Comp cmp = Comp())
-    noexcept(noexcept(node::merge(std::declval<iterator&>(),
-      std::declval<iterator const&>(), std::declval<iterator&>(), cmp)))
+    noexcept(noexcept(node::merge(std::declval<const_iterator&>(),
+      std::declval<const_iterator const&>(), std::declval<const_iterator&>(),
+      cmp)))
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
     if (empty())
@@ -622,7 +623,7 @@ public:
       l_->l_ ^= node::conv(o.f_); // link this and o
       o.f_->l_ ^= node::conv(l_);
 
-      auto b(begin()), e(o.end()), m(o.begin());
+      auto b(cbegin()), e(o.cend()), m(o.cbegin());
       m.p_ = l_; // fix iterator
 
       node::merge(b, m, e, cmp);
@@ -673,7 +674,7 @@ public:
 
       size_type bsize(1);
 
-      for (auto i(begin());; i = begin(), bsize *= 2)
+      for (auto i(cbegin());; i = cbegin(), bsize *= 2)
       {
         for (;;)
         {
