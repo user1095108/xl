@@ -673,7 +673,7 @@ public:
 
       size_type bsize(1);
 
-      for (auto i(begin());; bsize *= 2, i = begin())
+      for (auto i(begin());; i = begin(), bsize *= 2)
       {
         for (;;)
         {
