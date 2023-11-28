@@ -118,7 +118,6 @@ private:
       if (e.n_) e.n_->l_ ^= conv(e.p_, ni.n_); // ni - e
       (e.p_ = ni.n_)->l_ ^= conv(e.n_); // ni - e
     }
-
   };
 
 private:
@@ -678,7 +677,7 @@ public:
       {
         for (;;)
         {
-          if (auto const m(next(i, bsize)); end() == m)
+          if (auto const m(next(i, bsize)); !m.n_)
           {
             break;
           }
@@ -689,15 +688,13 @@ public:
             node::merge(i, m, j, cmp);
 
             if (!i.p_) { f_ = i.n_; }
-            if (!j.n_) { l_ = j.p_; if (!i.p_) goto exit_loop; else break; }
+            if (!j.n_) { l_ = j.p_; if (!i.p_) return; else break; }
 
             //
             i = j;
           }
         }
       }
-
-      exit_loop:;
     }
   }
 
