@@ -81,13 +81,13 @@ private:
 
     static auto next(auto* n, decltype(n) p, size_type i) noexcept
     {
-      for (; i--; assign(n, p)(n->link(p), n));
+      for (; i; --i, assign(n, p)(n->link(p), n));
       return n;
     }
 
     static auto next(auto i, size_type n) noexcept
     {
-      for (; n--; ++i);
+      for (; n; --n, ++i);
       return i;
     }
 
@@ -119,20 +119,6 @@ private:
       (e.p_ = ni.n_)->l_ ^= conv(e.n_); // ni - e
     }
 
-    static void sort(iterator& b, decltype(b) e, size_type const sz,
-      auto&& c) noexcept(noexcept(c(*b, *b)))
-    { // merge sort
-      if (sz > 1)
-      {
-        auto const hsz(sz / 2);
-        auto m(node::next(b, hsz));
-
-        sort(b, m, hsz, std::forward<decltype(c)>(c));
-        sort(m, e, sz - hsz, std::forward<decltype(c)>(c));
-
-        merge(b, m, e, std::forward<decltype(c)>(c));
-      }
-    }
   };
 
 private:
@@ -675,13 +661,44 @@ public:
 
   //
   template <class Comp = std::less<value_type>>
-  void sort(Comp cmp = Comp())
-    noexcept(noexcept(node::sort(
-      std::declval<iterator&>(), std::declval<iterator&>(), size(), cmp)))
+  void sort(Comp cmp = Comp()) noexcept(noexcept(cmp(*begin(), *begin())))
   {
-    auto b(begin()), e(end());
-    node::sort(b, e, size(), cmp);
-    node::assign(f_, l_)(b.n_, e.p_);
+    if (!empty())
+    { // bottom-up merge sort
+      auto const next([](auto i, size_type n) noexcept
+        {
+          for (; n && i.n(); --n, ++i);
+          return i;
+        }
+      );
+
+      size_type bsize(1);
+
+      for (auto i(begin());; bsize *= 2, i = begin())
+      {
+        for (;;)
+        {
+          if (auto const m(next(i, bsize)); end() == m)
+          {
+            break;
+          }
+          else
+          {
+            auto j(next(m, bsize));
+
+            node::merge(i, m, j, cmp);
+
+            if (!i.p_) { f_ = i.n_; }
+            if (!j.n_) { l_ = j.p_; if (!i.p_) goto exit_loop; else break; }
+
+            //
+            i = j;
+          }
+        }
+      }
+
+      exit_loop:;
+    }
   }
 
   void splice(const_iterator const i, auto&& o, const_iterator const b,
