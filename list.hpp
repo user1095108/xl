@@ -327,8 +327,7 @@ public:
   iterator emplace(const_iterator const i, auto&& ...a)
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
-  {
-    // i.p_, q, i.n_
+  { // i.p_, q, i.n_
     auto const q(new node{std::forward<decltype(a)>(a)...});
     q->l_ = node::conv(i.n_, i.p_);
 
@@ -348,8 +347,7 @@ public:
   iterator emplace_back(auto&& ...a)
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
-  {
-    // l q
+  { // l q
     auto const l(l_), q(new node{std::forward<decltype(a)>(a)...});
     q->l_ = node::conv(l);
 
@@ -368,8 +366,7 @@ public:
   iterator emplace_front(auto&& ...a)
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
-  {
-    // q f
+  { // q f
     auto const f(f_), q(new node{std::forward<decltype(a)>(a)...});
     q->l_ = node::conv(f);
 
