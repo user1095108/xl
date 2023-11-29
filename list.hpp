@@ -223,7 +223,7 @@ public:
   size_type size() const noexcept
   {
     auto i(cbegin()), j(cend());
-    size_type sz1(i != j), sz2{};
+    size_type sz1(!empty()), sz2{};
 
     for (; (i.n_ != j.p_) && (i.n_ != (++sz2, --j).p_); ++sz1, ++i);
 
