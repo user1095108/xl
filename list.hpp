@@ -224,10 +224,8 @@ public:
   {
     size_type sz1{}, sz2{};
 
-    if (auto i(cbegin()), j(cend()); i != j)
-    {
-      for (; ((++sz1, ++i) != j) && (i != (++sz2, --j)););
-    }
+    for (auto i(cbegin()), j(cend());
+      (i != j) && (i != (++sz2, --j)); ++sz1, ++i);
 
     return sz1 + sz2;
   }
