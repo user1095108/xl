@@ -222,12 +222,14 @@ public:
 
   size_type size() const noexcept
   {
-    size_type sz{};
+    size_type sz1{}, sz2{};
 
-    for (decltype(f_) n(f_), p{}; n;
-      ++sz, node::assign(n, p)(n->link(p), n));
+    if (auto i(cbegin()), j(cend()); i != j)
+    {
+      for (; ((++sz1, ++i) != j) && (i != (++sz2, --j)););
+    }
 
-    return sz;
+    return sz1 + sz2;
   }
 
   // iterators
@@ -665,7 +667,7 @@ public:
   {
     if (!empty())
     { // bottom-up merge sort
-      static constinit auto const next([](auto i, size_type n) noexcept
+      auto const next([](auto i, size_type n) noexcept
         {
           for (; n && i.n_; --n, ++i);
           return i;
