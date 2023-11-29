@@ -384,10 +384,9 @@ public:
   //
   iterator erase(const_iterator const i)
     noexcept(noexcept(delete f_))
-  {
+  { // i.p_, i.n_, nxt
     auto const nxt(i.n_->link(i.p_));
 
-    // i.p_, i.n_, nxt
     nxt ? nxt->l_ ^= node::conv(i.n_, i.p_) : bool(l_ = i.p_);
     i.p_ ? i.p_->l_ ^= node::conv(i.n_, nxt) : bool(f_ = nxt);
 
@@ -425,9 +424,9 @@ public:
       (emplace(i, std::forward<decltype(b)>(b)), ...);})
   {
     auto const r(emplace(i, std::forward<decltype(a)>(a)));
-    i.p_ = r.n(); // fix iterator
+    i.p_ = r.n_; // fix iterator
 
-    ((i.p_ = emplace(i, std::forward<decltype(b)>(b)).n()), ...);
+    ((i.p_ = emplace(i, std::forward<decltype(b)>(b)).n_), ...);
 
     return r;
   }
@@ -446,15 +445,15 @@ public:
     if (count) [[likely]]
     {
       auto const r(emplace(i, v));
-      i.p_ = r.n(); // the parent node of i.n() changes
+      i.p_ = r.n_; // the parent node of i.n() changes
 
-      while (--count) i.p_ = emplace(i, v).n();
+      while (--count) i.p_ = emplace(i, v).n_;
 
       return r;
     }
     else [[unlikely]]
     {
-      return {i.n(), i.p()};
+      return {i.n_, i.p_};
     }
   }
 
@@ -476,7 +475,7 @@ public:
     else [[likely]]
     {
       auto const r(emplace(i, *j));
-      i.p_ = r.n();
+      i.p_ = r.n_;
 
       std::for_each(
         ++j,
@@ -484,7 +483,7 @@ public:
         [&](auto&& v)
           noexcept(noexcept(emplace(i, std::forward<decltype(v)>(v))))
         { // the parent node of i.n() changes
-          i.p_ = emplace(i, std::forward<decltype(v)>(v)).n();
+          i.p_ = emplace(i, std::forward<decltype(v)>(v)).n_;
         }
       );
 
@@ -575,7 +574,7 @@ public:
   {
     size_type r{};
 
-    for (auto i(cbegin()); i.n(); pred(*i) ? ++r, i = erase(i) : ++i);
+    for (auto i(cbegin()); i.n_; pred(*i) ? ++r, i = erase(i) : ++i);
 
     return r;
   }
