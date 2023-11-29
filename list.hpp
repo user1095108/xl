@@ -223,11 +223,11 @@ public:
   size_type size() const noexcept
   {
     size_type sz1{}, sz2{};
+    auto i(cbegin()), j(cend());
 
-    for (auto i(cbegin()), j(cend());
-      (i != j) && (i != (++sz2, --j)); ++sz1, ++i);
+    for (; (i.n_ != j.p_) && (i.n_ != (++sz2, --j).p_); ++sz1, ++i);
 
-    return sz1 + sz2;
+    return (i != j) + sz1 + sz2;
   }
 
   // iterators
