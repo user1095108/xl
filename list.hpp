@@ -79,12 +79,6 @@ private:
       return (node*)(std::uintptr_t(n) ^ l_);
     }
 
-    static auto next(auto* n, decltype(n) p, size_type i) noexcept
-    {
-      for (; i; --i, assign(n, p)(n->link(p), n));
-      return n;
-    }
-
     static auto next(auto i, size_type n) noexcept
     {
       for (; n; --n, ++i);
@@ -266,12 +260,12 @@ public:
   //
   auto& operator[](size_type const i) noexcept
   {
-    return node::next(f_, {}, i)->v_;
+    return *node::next(begin(), i);
   }
 
-  auto const& operator[](size_type const i) const noexcept
+  auto& operator[](size_type const i) const noexcept
   {
-    return node::next(f_, {}, i)->v_;
+    return *node::next(cbegin(), i);
   }
 
   auto& at(size_type const i) noexcept { return (*this)[i]; }
