@@ -263,9 +263,9 @@ public:
     return *node::next(begin(), i);
   }
 
-  auto& operator[](size_type const i) const noexcept
+  auto const& operator[](size_type const i) const noexcept
   {
-    return *node::next(cbegin(), i);
+    return *node::next(begin(), i);
   }
 
   auto& at(size_type const i) noexcept { return (*this)[i]; }
