@@ -94,7 +94,7 @@ private:
       i = j;
     }
 
-    static void merge(const_iterator& b, const_iterator const& m,
+    static void merge(const_iterator& b, const_iterator const m,
       decltype(b) e, auto c) noexcept(noexcept(c(*b, *b)))
     {
       auto i(b), j(m), ni(c(*i, *j) ? i++ : j++);
@@ -601,7 +601,7 @@ public:
   template <class Comp = std::less<value_type>>
   void merge(auto&& o, Comp cmp = Comp())
     noexcept(noexcept(node::merge(std::declval<const_iterator&>(),
-      std::declval<const_iterator const&>(), std::declval<const_iterator&>(),
+      std::declval<const_iterator>(), std::declval<const_iterator&>(),
       cmp)))
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
