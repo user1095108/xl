@@ -950,6 +950,99 @@ void test1() {
   ++it;
   assert(*it == 50);
   }
+
+  {
+  xl::list<int> lst;
+
+  // Test push_back
+  lst.push_back(10);
+  lst.push_back(20);
+  lst.push_back(30);
+  assert(lst.size() == 3);
+  assert(lst.back() == 30);
+
+  // Test push_front
+  lst.push_front(5);
+  assert(lst.size() == 4);
+  assert(lst.front() == 5);
+
+  // Test pop_back
+  lst.pop_back();
+  assert(lst.size() == 3);
+  assert(lst.back() == 20);
+
+  // Test pop_front
+  lst.pop_front();
+  assert(lst.size() == 2);
+  assert(lst.front() == 10);
+
+  // Test insert
+  auto it = lst.begin();
+  lst.insert(it, 15);
+  assert(lst.size() == 3);
+  assert(lst.front() == 15);
+
+  // Test erase
+  it = lst.begin();
+  lst.erase(it);
+  assert(lst.size() == 2);
+  assert(lst.front() == 10);
+
+  // Test clear
+  lst.clear();
+  assert(lst.empty());
+
+  // Test resize
+  lst.resize(5, 100);
+  assert(lst.size() == 5);
+  assert(lst.back() == 100);
+
+  // Test assign
+  lst.assign(3, 200);
+  assert(lst.size() == 3);
+  assert(lst.front() == 200);
+
+  // Test splice
+  xl::list<int> lst2 = {1, 2, 3};
+  it = lst.begin();
+  lst.splice(it, lst2);
+  assert(lst.size() == 6);
+  assert(lst.front() == 1);
+  assert(lst2.empty());
+
+  // Test remove
+  lst.remove(1);
+  assert(lst.size() == 5);
+  assert(lst.front() == 2);
+
+  // Test remove_if
+  lst.remove_if([](int i){ return i > 2; });
+  assert(lst.size() == 1);
+  assert(lst.back() == 2);
+
+  // Test unique
+  lst.push_back(2);
+  lst.unique();
+  assert(lst.size() == 1);
+  assert(lst.back() == 2);
+
+  // Test merge
+  xl::list<int> lst3 = {1, 3};
+  lst.merge(lst3);
+  assert(lst.size() == 3);
+  assert(lst.front() == 1);
+  assert(lst3.empty());
+
+  // Test sort
+  lst.sort();
+  assert(lst.front() == 1);
+  assert(lst.back() == 3);
+
+  // Test reverse
+  lst.reverse();
+  assert(lst.front() == 3);
+  assert(lst.back() == 1);
+  }
 }
 
 void test2()
