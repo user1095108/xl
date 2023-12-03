@@ -822,22 +822,133 @@ void test1() {
   xl::list<int> insertList = {10, 11, 12};
   xl::list<int> assignList = {13, 14, 15};
 
-  // Testing std::list::append_range
+  // Testing xl::list::append_range
   myList.append_range(appendList);
   assert(myList == xl::list<int>({1, 2, 3, 4, 5, 6}));
 
-  // Testing std::list::prepend_range
+  // Testing xl::list::prepend_range
   myList.prepend_range(prependList);
   assert(myList == xl::list<int>({7, 8, 9, 1, 2, 3, 4, 5, 6}));
 
-  // Testing std::list::insert_range
+  // Testing xl::list::insert_range
   auto insertPos = std::find(myList.begin(), myList.end(), 1);
   myList.insert_range(insertPos, insertList);
   assert(myList == xl::list<int>({7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6}));
 
-  // Testing std::list::assign_range
+  // Testing xl::list::assign_range
   myList.assign_range(assignList);
   assert(myList == xl::list<int>({13, 14, 15}));
+  }
+
+  {
+  // Test 1: Create a list
+  xl::list<int> list1;
+  assert(list1.empty());
+
+  // Test 2: Add elements to the list
+  list1.push_back(10);
+  list1.push_back(20);
+  list1.push_back(30);
+  assert(list1.size() == 3);
+
+  // Test 3: Remove elements from the list
+  list1.pop_front();
+  assert(list1.size() == 2);
+
+  // Test 4: Check the elements in the list
+  auto it = list1.begin();
+  assert(*it == 20);
+  ++it;
+  assert(*it == 30);
+
+  // Test 5: Clear the list
+  list1.clear();
+  assert(list1.empty());
+
+  // Test 6: Add elements to the list using push_front
+  list1.push_front(10);
+  list1.push_front(20);
+  list1.push_front(30);
+  assert(list1.size() == 3);
+
+  // Test 7: Remove elements from the list using pop_back
+  list1.pop_back();
+  assert(list1.size() == 2);
+
+  // Test 8: Check the elements in the list
+  it = list1.begin();
+  assert(*it == 30);
+  ++it;
+  assert(*it == 20);
+
+  // Test 9: Create a list with initializer list
+  xl::list<int> list2 = {10, 20, 30, 40, 50};
+  assert(list2.size() == 5);
+
+  // Test 10: Remove elements from the list using erase
+  list2.erase(list2.begin());
+  assert(list2.size() == 4);
+
+  // Test 11: Check the elements in the list
+  it = list2.begin();
+  assert(*it == 20);
+
+  // Test 12: Insert elements into the list using insert
+  list2.insert(list2.begin(), 10);
+  assert(list2.size() == 5);
+
+  // Test 13: Check the elements in the list
+  it = list2.begin();
+  assert(*it == 10);
+
+  // Test 14: Create a list with a custom allocator
+  xl::list<int> list3;
+
+  // Test 15: Add elements to the list using emplace
+  list3.emplace_back(10);
+  list3.emplace_back(20);
+  list3.emplace_back(30);
+  assert(list3.size() == 3);
+
+  // Test 16: Check the elements in the list
+  it = list3.begin();
+  assert(*it == 10);
+  ++it;
+  assert(*it == 20);
+  ++it;
+  assert(*it == 30);
+
+  // Test 17: Create a list with a custom allocator and initializer list
+  xl::list<int> list4{10, 20, 30, 40, 50};
+  assert(list4.size() == 5);
+
+  // Test 18: Check the elements in the list
+  it = list4.begin();
+  assert(*it == 10);
+  ++it;
+  assert(*it == 20);
+  ++it;
+  assert(*it == 30);
+  ++it;
+  assert(*it == 40);
+  ++it;
+  assert(*it == 50);
+
+  // Test 19: Create a list with a custom allocator and initializer list
+  xl::list<int> list5(list4);
+  assert(list5.size() == 5);
+
+  // Test 20: Check the elements in the list
+  it = list5.begin();
+  assert(*it == 10);
+  ++it;
+  assert(*it == 20);
+  ++it;
+  assert(*it == 30);
+  ++it;
+  assert(*it == 40);
+  ++it;
+  assert(*it == 50);
   }
 }
 
