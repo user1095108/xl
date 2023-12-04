@@ -97,13 +97,6 @@ private:
       if (e.n_) e.n_->l_ ^= conv(e.p_, ni.n_); // ni - e
       (e.p_ = ni.n_)->l_ ^= conv(e.n_); // ni - e
     }
-
-    //
-    static auto next(auto i, size_type n) noexcept
-    {
-      for (; n; --n, ++i);
-      return i;
-    }
   };
 
 private:
@@ -252,12 +245,12 @@ public:
   //
   auto& operator[](size_type const i) noexcept
   {
-    return *node::next(begin(), i);
+    return *xl::next(begin(), i);
   }
 
   auto const& operator[](size_type const i) const noexcept
   {
-    return *node::next(begin(), i);
+    return *xl::next(begin(), i);
   }
 
   auto& at(size_type const i) noexcept { return (*this)[i]; }
