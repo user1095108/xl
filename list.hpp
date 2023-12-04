@@ -56,16 +56,6 @@ private:
     }
 
     //
-    static constexpr auto assign(auto& ...a) noexcept
-    { // assign idiom
-      return [&](auto const ...v) noexcept { ((a = v), ...); };
-    }
-
-    static constexpr auto conv(auto const ...n) noexcept
-    {
-      return (std::uintptr_t(n) ^ ...);
-    }
-
     static void destroy(const_iterator i) noexcept(noexcept(delete i.n_))
     {
       while (i.n_) delete i++.n_;
@@ -77,12 +67,6 @@ private:
     auto link(auto const n) const noexcept
     {
       return (node*)(std::uintptr_t(n) ^ l_);
-    }
-
-    static auto next(auto i, size_type n) noexcept
-    {
-      for (; n; --n, ++i);
-      return i;
     }
 
     //
@@ -112,6 +96,13 @@ private:
       // relink ni and e
       if (e.n_) e.n_->l_ ^= conv(e.p_, ni.n_); // ni - e
       (e.p_ = ni.n_)->l_ ^= conv(e.n_); // ni - e
+    }
+
+    //
+    static auto next(auto i, size_type n) noexcept
+    {
+      for (; n; --n, ++i);
+      return i;
     }
   };
 
@@ -324,10 +315,10 @@ public:
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   { // i.p_, q, i.n_
     auto const q(new node{std::forward<decltype(a)>(a)...});
-    q->l_ = node::conv(i.n_, i.p_);
+    q->l_ = conv(i.n_, i.p_);
 
-    i.n_ ? i.n_->l_ ^= node::conv(q, i.p_) : bool(l_ = q);
-    i.p_ ? i.p_->l_ ^= node::conv(q, i.n_) : bool(f_ = q);
+    i.n_ ? i.n_->l_ ^= conv(q, i.p_) : bool(l_ = q);
+    i.p_ ? i.p_->l_ ^= conv(q, i.n_) : bool(f_ = q);
 
     return {q, i.p_}; // return iterator to created node
   }
@@ -344,9 +335,9 @@ public:
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   { // l q
     auto const l(l_), q(new node{std::forward<decltype(a)>(a)...});
-    q->l_ = node::conv(l);
+    q->l_ = conv(l);
 
-    l ? l->l_ ^= node::conv(q) : bool(f_ = q);
+    l ? l->l_ ^= conv(q) : bool(f_ = q);
 
     return {l_ = q, l}; // return iterator to created node
   }
@@ -363,9 +354,9 @@ public:
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   { // q f
     auto const f(f_), q(new node{std::forward<decltype(a)>(a)...});
-    q->l_ = node::conv(f);
+    q->l_ = conv(f);
 
-    f ? f->l_ ^= node::conv(q) : bool(l_ = q);
+    f ? f->l_ ^= conv(q) : bool(l_ = q);
 
     return {f_ = q, {}}; // return iterator to created node
   }
@@ -382,8 +373,8 @@ public:
   { // i.p_, i.n_, nxt
     auto const nxt(i.n_->link(i.p_));
 
-    nxt ? nxt->l_ ^= node::conv(i.n_, i.p_) : bool(l_ = i.p_);
-    i.p_ ? i.p_->l_ ^= node::conv(i.n_, nxt) : bool(f_ = nxt);
+    nxt ? nxt->l_ ^= conv(i.n_, i.p_) : bool(l_ = i.p_);
+    i.p_ ? i.p_->l_ ^= conv(i.n_, nxt) : bool(f_ = nxt);
 
     delete i.n_;
 
@@ -521,7 +512,7 @@ public:
   {
     auto const l(l_->link());
 
-    l ? l->l_ ^= node::conv(l_) : bool(f_ = {});
+    l ? l->l_ ^= conv(l_) : bool(f_ = {});
 
     delete l_; l_ = l;
   }
@@ -530,7 +521,7 @@ public:
   {
     auto const f(f_->link());
 
-    f ? f->l_ ^= node::conv(f_) : bool(l_ = {});
+    f ? f->l_ ^= conv(f_) : bool(l_ = {});
 
     delete f_; f_ = f;
   }
@@ -596,7 +587,7 @@ public:
   }
 
   //
-  void reverse() noexcept { node::assign(f_, l_)(l_, f_); } // swap
+  void reverse() noexcept { xl::assign(f_, l_)(l_, f_); } // swap
 
   //
   template <class Comp = std::less<value_type>>
@@ -612,14 +603,14 @@ public:
     }
     else if (!o.empty())
     {
-      l_->l_ ^= node::conv(o.f_); // link this and o
-      o.f_->l_ ^= node::conv(l_);
+      l_->l_ ^= conv(o.f_); // link this and o
+      o.f_->l_ ^= conv(l_);
 
       auto b(cbegin()), e(o.cend()), m(o.cbegin());
       m.p_ = l_; // fix iterator
 
       node::merge(b, m, e, cmp);
-      node::assign(f_, l_)(b.n_, e.p_);
+      xl::assign(f_, l_)(b.n_, e.p_);
     }
 
     o.f_ = o.l_ = {}; // reset o
@@ -694,32 +685,32 @@ public:
   {
     if (b != e)
     { // relink i, b, e
-      i.n_ ? i.n_->l_ ^= node::conv(i.p_, e.p_) : bool(l_ = e.p_);
-      i.p_ ? i.p_->l_ ^= node::conv(i.n_, b.n_) : bool(f_ = b.n_);
+      i.n_ ? i.n_->l_ ^= conv(i.p_, e.p_) : bool(l_ = e.p_);
+      i.p_ ? i.p_->l_ ^= conv(i.n_, b.n_) : bool(f_ = b.n_);
 
       //
-      b.n_->l_ ^= node::conv(b.p_, i.p_);
-      b.p_ ? b.p_->l_ ^= node::conv(b.n_, e.n_) : bool(o.f_ = e.n_);
+      b.n_->l_ ^= conv(b.p_, i.p_);
+      b.p_ ? b.p_->l_ ^= conv(b.n_, e.n_) : bool(o.f_ = e.n_);
 
       //
-      e.n_ ? e.n_->l_ ^= node::conv(e.p_, b.p_) : bool(o.l_ = b.p_);
-      e.p_->l_ ^= node::conv(e.n_, i.n_);
+      e.n_ ? e.n_->l_ ^= conv(e.p_, b.p_) : bool(o.l_ = b.p_);
+      e.p_->l_ ^= conv(e.n_, i.n_);
     }
   }
 
   void splice(const_iterator const i, auto&& o,
     const_iterator const b) noexcept
   {
-    i.n_ ? i.n_->l_ ^= node::conv(i.p_, b.n_) : bool(l_ = b.n_);
-    i.p_ ? i.p_->l_ ^= node::conv(i.n_, b.n_) : bool(f_ = b.n_);
+    i.n_ ? i.n_->l_ ^= conv(i.p_, b.n_) : bool(l_ = b.n_);
+    i.p_ ? i.p_->l_ ^= conv(i.n_, b.n_) : bool(f_ = b.n_);
 
     // i.p_ b.n_ i.n_
     auto const e(b.n_->link(b.p_));
-    b.p_ ? b.p_->l_ ^= node::conv(b.n_, e) : bool(o.f_ = e);
+    b.p_ ? b.p_->l_ ^= conv(b.n_, e) : bool(o.f_ = e);
 
     // b.p_ b.n_ e
-    e ? e->l_ ^= node::conv(b.n_, b.p_) : bool(o.l_ = b.p_);
-    b.n_->l_ = node::conv(i.p_, i.n_);
+    e ? e->l_ ^= conv(b.n_, b.p_) : bool(o.l_ = b.p_);
+    b.n_->l_ = conv(i.p_, i.n_);
   }
 
   void splice(const_iterator const i, auto&& o) noexcept
@@ -730,7 +721,7 @@ public:
   //
   void swap(list& o) noexcept
   { // swap state
-    node::assign(f_, l_, o.f_, o.l_)(o.f_, o.l_, f_, l_);
+    xl::assign(f_, l_, o.f_, o.l_)(o.f_, o.l_, f_, l_);
   }
 
   //
