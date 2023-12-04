@@ -18,7 +18,7 @@ constexpr auto conv(auto const ...n) noexcept
   return (std::uintptr_t(n) ^ ...);
 }
 
-constexpr auto next(auto i, size_type n) noexcept
+constexpr auto next(auto i, auto n) noexcept
 {
   for (; n; --n, ++i);
   return i;
