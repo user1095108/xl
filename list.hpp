@@ -66,9 +66,9 @@ private:
       return (std::uintptr_t(n) ^ ...);
     }
 
-    static void destroy(node* n) noexcept(noexcept(delete n))
+    static void destroy(const_iterator i) noexcept(noexcept(delete i.n_))
     {
-      for (decltype(n) p{}; n; assign(n, p)(n->link(p), n), delete p);
+      while (i.n_) delete i++.n_;
     }
 
     //
@@ -178,7 +178,7 @@ public:
   {
   }
 
-  ~list() noexcept(noexcept(node::destroy(f_))) { node::destroy(f_); }
+  ~list() noexcept(noexcept(node::destroy({}))) { node::destroy(cbegin()); }
 
   //
   auto& operator=(list const& o)
@@ -188,9 +188,9 @@ public:
     assign(o.begin(), o.end()); return *this;
   }
 
-  auto& operator=(list&& o) noexcept(noexcept(node::destroy(f_)))
+  auto& operator=(list&& o) noexcept(noexcept(node::destroy({})))
   {
-    node::destroy(f_); // we are not necessarily empty
+    node::destroy(cbegin()); // we are not necessarily empty
 
     f_ = o.f_; l_ = o.l_;
     o.f_ = o.l_ = {};
@@ -312,9 +312,9 @@ public:
   }
 
   //
-  void clear() noexcept(noexcept(node::destroy(f_)))
+  void clear() noexcept(noexcept(node::destroy({})))
   {
-    node::destroy(f_); f_ = l_ = {};
+    node::destroy(cbegin()); f_ = l_ = {};
   }
 
   //
