@@ -18,15 +18,13 @@ constexpr auto conv(auto const ...n) noexcept
   return (std::uintptr_t(n) ^ ...);
 }
 
-template <typename T> requires(!std::is_reference_v<T>) class list;
-
 template <typename T>
 class listiterator
 {
   using iterator_t = listiterator<std::remove_const_t<T>>;
   friend listiterator<T const>;
 
-  friend class list<typename T::value_type>;
+  template <typename U> requires(!std::is_reference_v<U>) friend class list;
 
   using node_t = std::remove_const_t<T>;
   node_t* n_, *p_;
