@@ -86,17 +86,18 @@ private:
     }
 
     //
-    static void link_node(auto& i, auto&& j) noexcept
-    { // i  j
-      i.n_->l_ = conv(i.p_, j.n_); // set-up link to j
-      j.n_->l_ = conv(j.p_ = i.n_); // change parent of j to i
-
-      i = j;
-    }
-
     static void merge(const_iterator& b, const_iterator const m,
       decltype(b) e, auto c) noexcept(noexcept(c(*b, *b)))
     {
+      auto const link_node([](auto& i, auto&& j) noexcept
+        { // i  j
+          i.n_->l_ = conv(i.p_, j.n_); // set-up link to j
+          j.n_->l_ = conv(j.p_ = i.n_); // change parent of j to i
+
+          i = j;
+        }
+      );
+
       auto i(b), j(m), ni(c(*i, *j) ? i++ : j++);
 
       // relink b and ni
