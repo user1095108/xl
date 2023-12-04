@@ -740,7 +740,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 inline auto erase_if(list<T>& c, auto pred)
-  noexcept(noexcept(c.erase(c.cbegin()), pred(*c.cbegin())))
+  noexcept(noexcept(c.erase({}), pred(*c.cbegin())))
   requires(requires{pred(*c.cbegin());})
 {
   typename std::remove_reference_t<decltype(c)>::size_type r{};
