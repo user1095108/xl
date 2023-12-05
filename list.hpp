@@ -554,7 +554,7 @@ public:
   {
     size_type r{};
 
-    for (auto i(cbegin()); i.n_; pred(*i) ? ++r, i = erase(i) : ++i);
+    for (auto i(cbegin()); i; pred(*i) ? ++r, i = erase(i) : ++i);
 
     return r;
   }
