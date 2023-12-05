@@ -8,20 +8,25 @@
 namespace xl
 {
 
-constexpr auto assign(auto& ...a) noexcept
-{ // assign idiom
-  return [&](auto const ...v) noexcept { ((a = v), ...); };
-}
-
 constexpr auto conv(auto const ...n) noexcept
 {
   return (std::uintptr_t(n) ^ ...);
+}
+
+namespace detail
+{
+
+constexpr auto assign(auto& ...a) noexcept
+{ // assign idiom
+  return [&](auto const ...v) noexcept { ((a = v), ...); };
 }
 
 constexpr auto next(auto i, auto n) noexcept
 {
   for (; n; --n, ++i);
   return i;
+}
+
 }
 
 template <typename T>
@@ -79,12 +84,12 @@ public:
   // increment, decrement
   auto& operator++() noexcept
   {
-    assign(n_, p_)(n_->link(p_), n_); return *this;
+    detail::assign(n_, p_)(n_->link(p_), n_); return *this;
   }
 
   auto& operator--() noexcept
   {
-    assign(n_, p_)(p_, p_->link(n_)); return *this;
+    detail::assign(n_, p_)(p_, p_->link(n_)); return *this;
   }
 
   auto operator++(int) noexcept { auto const r(*this); ++*this; return r; }
