@@ -98,8 +98,7 @@ public:
   auto& operator*() const noexcept { return std::add_pointer_t<T>(n_)->v_; }
 
   //
-  auto n() const noexcept { return n_; }
-  auto p() const noexcept { return p_; }
+  explicit operator bool() const noexcept { return n_; }
 };
 
 }
