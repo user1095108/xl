@@ -245,12 +245,12 @@ public:
   //
   auto& operator[](size_type const i) noexcept
   {
-    return *xl::next(begin(), i);
+    return *detail::next(begin(), i);
   }
 
   auto const& operator[](size_type const i) const noexcept
   {
-    return *xl::next(begin(), i);
+    return *detail::next(begin(), i);
   }
 
   auto& at(size_type const i) noexcept { return (*this)[i]; }
@@ -580,7 +580,7 @@ public:
   }
 
   //
-  void reverse() noexcept { xl::assign(f_, l_)(l_, f_); } // swap
+  void reverse() noexcept { detail::assign(f_, l_)(l_, f_); } // swap
 
   //
   template <class Comp = std::less<value_type>>
@@ -603,7 +603,7 @@ public:
       m.p_ = l_; // fix iterator
 
       node::merge(b, m, e, cmp);
-      xl::assign(f_, l_)(b.n_, e.p_);
+      detail::assign(f_, l_)(b.n_, e.p_);
     }
 
     o.f_ = o.l_ = {}; // reset o
@@ -714,7 +714,7 @@ public:
   //
   void swap(list& o) noexcept
   { // swap state
-    xl::assign(f_, l_, o.f_, o.l_)(o.f_, o.l_, f_, l_);
+    detail::assign(f_, l_, o.f_, o.l_)(o.f_, o.l_, f_, l_);
   }
 
   //
