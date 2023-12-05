@@ -425,7 +425,7 @@ public:
     if (count) [[likely]]
     {
       auto const r(emplace(i, v));
-      i.p_ = r.n_; // the parent node of i.n() changes
+      i.p_ = r.n_; // the parent node of i changes
 
       while (--count) i.p_ = emplace(i, v).n_;
 
@@ -450,7 +450,7 @@ public:
   {
     if (j == k) [[unlikely]]
     {
-      return {i.n(), i.p()};
+      return {i.n_, i.p_};
     }
     else [[likely]]
     {
@@ -462,7 +462,7 @@ public:
         k,
         [&](auto&& v)
           noexcept(noexcept(emplace(i, std::forward<decltype(v)>(v))))
-        { // the parent node of i.n() changes
+        { // the parent node of i changes
           i.p_ = emplace(i, std::forward<decltype(v)>(v)).n_;
         }
       );
@@ -641,7 +641,7 @@ public:
   { // bottom-up merge sort
     auto const next([](auto i, size_type n) noexcept
       {
-        for (; n && i.n_; --n, ++i);
+        for (; n && i; --n, ++i);
         return i;
       }
     );
@@ -727,7 +727,7 @@ public:
 
     if (!empty()) [[likely]]
     {
-      for (auto b(cbegin()), a(b++); b.n();)
+      for (auto b(cbegin()), a(b++); b;)
       {
         pred(*a, *b) ? ++r, b = erase(b) : a = b++;
       }
@@ -745,7 +745,7 @@ inline auto erase_if(list<T>& c, auto pred)
 {
   typename std::remove_reference_t<decltype(c)>::size_type r{};
 
-  for (auto i(c.cbegin()); i.n(); pred(*i) ? ++r, i = c.erase(i) : ++i);
+  for (auto i(c.cbegin()); i; pred(*i) ? ++r, i = c.erase(i) : ++i);
 
   return r;
 }
