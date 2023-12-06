@@ -8,17 +8,17 @@
 namespace xl
 {
 
-constexpr auto conv(auto const ...n) noexcept
-{
-  return (std::uintptr_t(n) ^ ...);
-}
-
 namespace detail
 {
 
 constexpr auto assign(auto& ...a) noexcept
 { // assign idiom
   return [&](auto const ...v) noexcept { ((a = v), ...); };
+}
+
+constexpr auto conv(auto const ...n) noexcept
+{
+  return (std::uintptr_t(n) ^ ...);
 }
 
 constexpr auto next(auto i, auto n) noexcept
