@@ -95,8 +95,8 @@ private:
       }
 
       // relink ni and e
-      if (e.n_) e.n_->l_ ^= detail::conv(e.p_, ni.n_); // ni - e
-      (e.p_ = ni.n_)->l_ ^= detail::conv(e.n_); // ni - e
+      if (e.n_) e.n_->l_ ^= detail::conv(e.p_, ni.n_); // ni e
+      (e.p_ = ni.n_)->l_ ^= detail::conv(e.n_); // ni e
     }
   };
 
