@@ -320,6 +320,13 @@ void test1() {
   }
 
   {
+  xl::list l(xl::from_range, std::views::iota(0, 100));
+  assert(100 == l.size());
+  l = std::views::iota(0, 10);
+  assert(10 == l.size());
+  }
+
+  {
   xl::list<int> myList = {1, 2, 3, 4, 5};
   myList.insert(myList.begin(), 0);
   assert(myList.front() == 0);
