@@ -73,25 +73,26 @@ private:
     static void merge(const_iterator& b, const_iterator const m,
       decltype(b) e, auto c) noexcept(noexcept(c(*b, *b)))
     {
-      auto const link_node([](auto& i, auto&& j) noexcept
-        { // i  j
-          i.n_->l_ = detail::conv(i.p_, j.n_); // set-up link to j
-          j.n_->l_ = detail::conv(j.p_ = i.n_); // change parent of j to i
-
-          i = j;
-        }
-      );
-
       auto i(b), j(m), ni(c(*i, *j) ? i++ : j++);
 
       // relink b and ni
       if (b.p_) b.p_->l_ ^= detail::conv(b.n_, ni.n_);
       (b.n_ = ni.n_)->l_ = detail::conv(ni.p_ = b.p_);
 
-      //
-      while ((i != m) && (j != e)) link_node(ni, c(*i, *j) ? i++ : j++);
-      while (i != m) link_node(ni, i++);
-      while (j != e) link_node(ni, j++);
+      {
+        auto const link_node([&](auto&& j) noexcept
+          { // ni j
+            ni.n_->l_ = detail::conv(ni.p_, j.n_); // ni j
+            j.n_->l_ = detail::conv(j.p_ = ni.n_); // ni j
+
+            ni = j;
+          }
+        );
+
+        while ((i != m) && (j != e)) link_node(c(*i, *j) ? i++ : j++);
+        while (i != m) link_node(i++);
+        while (j != e) link_node(j++);
+      }
 
       // relink ni and e
       if (e.n_) e.n_->l_ ^= detail::conv(e.p_, ni.n_); // ni - e
