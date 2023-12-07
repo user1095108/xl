@@ -676,7 +676,7 @@ public:
     const_iterator const e) noexcept
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
-    if (b != e)
+    if (b != e) [[likely]]
     { // relink i, b, e
       i.n_ ? i.n_->l_ ^= detail::conv(i.p_, e.p_) : bool(l_ = e.p_);
       i.p_ ? i.p_->l_ ^= detail::conv(i.n_, b.n_) : bool(f_ = b.n_);
@@ -695,16 +695,19 @@ public:
     const_iterator const b) noexcept
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
-    i.n_ ? i.n_->l_ ^= detail::conv(i.p_, b.n_) : bool(l_ = b.n_);
-    i.p_ ? i.p_->l_ ^= detail::conv(i.n_, b.n_) : bool(f_ = b.n_);
+    if (b) [[likely]]
+    {
+      i.n_ ? i.n_->l_ ^= detail::conv(i.p_, b.n_) : bool(l_ = b.n_);
+      i.p_ ? i.p_->l_ ^= detail::conv(i.n_, b.n_) : bool(f_ = b.n_);
 
-    // i.p_ b.n_ i.n_
-    auto const e(b.n_->link(b.p_));
-    b.p_ ? b.p_->l_ ^= detail::conv(b.n_, e) : bool(o.f_ = e);
+      // i.p_ b.n_ i.n_
+      auto const e(b.n_->link(b.p_));
+      b.p_ ? b.p_->l_ ^= detail::conv(b.n_, e) : bool(o.f_ = e);
 
-    // b.p_ b.n_ e
-    e ? e->l_ ^= detail::conv(b.n_, b.p_) : bool(o.l_ = b.p_);
-    b.n_->l_ = detail::conv(i.p_, i.n_);
+      // b.p_ b.n_ e
+      e ? e->l_ ^= detail::conv(b.n_, b.p_) : bool(o.l_ = b.p_);
+      b.n_->l_ = detail::conv(i.p_, i.n_);
+    }
   }
 
   void splice(const_iterator const i, auto&& o) noexcept
