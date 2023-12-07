@@ -58,7 +58,7 @@ private:
     //
     static void destroy(const_iterator i) noexcept(noexcept(delete i.n_))
     {
-      while (i.n_) delete i++.n_;
+      while (i) delete i++.n_;
     }
 
     //
