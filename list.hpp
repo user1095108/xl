@@ -593,7 +593,7 @@ public:
   {
     if (empty())
     {
-      f_ = o.f_; l_ = o.l_;
+      detail::assign(f_, l_)(o.f_, o.l_);
     }
     else if (!o.empty())
     {
