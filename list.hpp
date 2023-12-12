@@ -732,10 +732,8 @@ public:
 
     if (!empty()) [[likely]]
     {
-      for (auto b(cbegin()), a(b++); b;)
-      {
-        pred(*a, *b) ? ++r, b = erase(b) : a = b++;
-      }
+      for (auto b(cbegin()), a(b++); b;
+        pred(*a, *b) ? ++r, b = erase(b) : a = b++);
     }
 
     return r;
