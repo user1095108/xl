@@ -64,7 +64,7 @@ private:
     //
     auto link() const noexcept { return (node*)(l_); }
 
-    auto link(auto const n) const noexcept
+    auto link(auto* const n) const noexcept
     {
       return (node*)(std::uintptr_t(n) ^ l_);
     }
