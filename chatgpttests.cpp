@@ -1050,6 +1050,26 @@ void test1() {
   assert(lst.front() == 3);
   assert(lst.back() == 1);
   }
+
+  {
+  xl::list<int> lst = {1, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+  lst.erase(std::remove(lst.begin(), lst.end(), 2), lst.end());
+  assert(std::find(lst.begin(), lst.end(), 2) == lst.end());
+
+  lst.erase(std::remove_if(lst.begin(), lst.end(), [](int i){ return i % 2 == 0; }), lst.end());
+  assert(std::find_if(lst.begin(), lst.end(), [](int i){ return i % 2 == 0; }) == lst.end());
+  }
+
+  {
+  xl::list<int> lst = {1, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+  xl::erase(lst, 2);
+  assert(std::ranges::find(lst, 2) == lst.end());
+
+  xl::erase_if(lst, [](int i){ return i % 2 == 0; });
+  assert(std::ranges::find_if(lst, [](int i){ return i % 2 == 0; }) == lst.end());
+  }
 }
 
 void test2()

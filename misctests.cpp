@@ -1,4 +1,6 @@
 #include <iostream>
+#include <numeric>
+#include <string_view>
 #include "list.hpp"
  
 void print(int id, const xl::list<int>& container)
@@ -14,6 +16,14 @@ void print_container(const xl::list<int>& c)
   for (int i : c)
     std::cout << i << ' ';
   std::cout << '\n';
+}
+
+void print_container(std::string_view comment, const xl::list<char>& c)
+{
+    std::cout << comment << "{ ";
+    for (char x : c)
+        std::cout << x << ' ';
+    std::cout << "}\n";
 }
 
 std::ostream& operator<<(std::ostream& ostr, const xl::list<int>& list)
@@ -129,6 +139,18 @@ int main ()
   std::cout << "merged:" << list1 << '\n';
   }
 
+  { // https://en.cppreference.com/w/cpp/container/list/erase2
+  xl::list<char> cnt(10);
+  std::iota(cnt.begin(), cnt.end(), '0');
+  print_container("Initially, cnt = ", cnt);
+
+  xl::erase(cnt, '3');
+  print_container("After erase '3', cnt = ", cnt);
+
+  auto erased = xl::erase_if(cnt, [](char x) { return (x - '0') % 2 == 0; });
+  print_container("After erase all even numbers, cnt = ", cnt);
+  std::cout << "Erased even numbers: " << erased << '\n';
+  }
+
   return 0;
 }
-
