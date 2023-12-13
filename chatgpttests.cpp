@@ -1070,6 +1070,20 @@ void test1() {
   xl::erase_if(lst, [](int i){ return i % 2 == 0; });
   assert(std::ranges::find_if(lst, [](int i){ return i % 2 == 0; }) == lst.end());
   }
+
+  {
+  xl::list<int> myList = {1, 2, 3, 4, 5, 3, 6, 3, 7};
+
+  // Using std::erase() to remove a specific value (e.g., 3) from the list
+  xl::erase(myList, 3);
+
+  // Using std::erase_if() to remove elements that satisfy a specific condition (e.g., value greater than 4)
+  xl::erase_if(myList, [](int value) { return value > 4; });
+
+  // Asserting the expected results
+  assert(std::find(myList.begin(), myList.end(), 3) == myList.end()); // 3 should be removed
+  assert(std::none_of(myList.begin(), myList.end(), [](int value) { return value > 4; })); // No value greater than 4 should remain
+  }
 }
 
 void test2()
