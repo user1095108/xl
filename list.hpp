@@ -177,8 +177,7 @@ public:
   {
     node::destroy(cbegin()); // we are not necessarily empty
 
-    f_ = o.f_; l_ = o.l_;
-    o.f_ = o.l_ = {};
+    detail::assign(f_, l_, o.f_, o.l_)(o.f_, o.l_, nullptr, nullptr);
 
     return *this;
   }
