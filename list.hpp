@@ -144,7 +144,7 @@ public:
     while (c--) emplace_back();
   }
 
-  explicit list(size_type c, auto const& v, multi_t = multi)
+  explicit list(size_type c, auto const& v, int = 0)
     noexcept(noexcept(emplace_back(v)))
     requires(std::is_constructible_v<value_type, decltype(v)>)
   {
@@ -152,8 +152,8 @@ public:
   }
 
   explicit list(size_type const c, value_type const v)
-    noexcept(noexcept(list(c, v, multi))):
-    list(c, v, multi)
+    noexcept(noexcept(list(c, v, 0))):
+    list(c, v, 0)
   {
   }
 
