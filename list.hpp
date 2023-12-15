@@ -562,10 +562,9 @@ public:
     requires(requires{(std::equal_to<>()(*cbegin(), k), ...);})
   {
     return remove_if(
-        [eq(std::equal_to<>()), &k...](auto const& v)
-          noexcept(noexcept((std::declval<std::equal_to<>>()(v, k), ...)))
+        [&k...](auto& a) noexcept(noexcept((std::equal_to<>()(a, k), ...)))
         {
-          return (eq(v, k) || ...);
+          return (std::equal_to<>()(a, k) || ...);
         }
       );
   }
