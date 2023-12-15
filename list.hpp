@@ -739,7 +739,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
-inline auto erase_if(list<T>& c, auto pred)
+inline auto erase_if(list<T>& c, auto&& pred)
   noexcept(noexcept(c.remove_if(std::forward<decltype(pred)>(pred))))
 {
   return c.remove_if(std::forward<decltype(pred)>(pred));
