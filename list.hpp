@@ -175,8 +175,7 @@ public:
 
   auto& operator=(list&& o) noexcept(noexcept(node::destroy({})))
   {
-    node::destroy(cbegin()); // we are not necessarily empty
-
+    node::destroy(cbegin());
     detail::assign(f_, l_, o.f_, o.l_)(o.f_, o.l_, nullptr, nullptr);
 
     return *this;
@@ -202,7 +201,6 @@ public:
   size_type size() const noexcept
   {
     size_type sz1{}, sz2{};
-
     for (auto i(cbegin()), j(cend());
       (i.n_ != j.p_) && (i.n_ != (++sz2, --j).p_); ++sz1, ++i);
 
@@ -369,9 +367,7 @@ public:
     nxt ? nxt->l_ ^= detail::conv(i.n_, i.p_) : bool(l_ = i.p_);
     i.p_ ? i.p_->l_ ^= detail::conv(i.n_, nxt) : bool(f_ = nxt);
 
-    delete i.n_;
-
-    return {nxt, i.p_};
+    delete i.n_; return {nxt, i.p_};
   }
 
   iterator erase(const_iterator a, const_iterator const b)
