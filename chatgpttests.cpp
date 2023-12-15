@@ -1,6 +1,5 @@
 #include <cassert>
 #include <iostream>
-#include <vector>
 #include "list.hpp" // Replace with the actual container header
 
 // Include your testing framework of choice (e.g., Google Test or Catch2)
@@ -787,7 +786,7 @@ void test1() {
   xl::list<int> lst{1, 2, 3};
 
   // Create a vector with elements 4, 5, 6
-  std::vector<int> vec{4, 5, 6};
+  int const vec[]{4, 5, 6};
 
   // Test append_range()
   lst.append_range(vec);
@@ -806,15 +805,15 @@ void test1() {
 
   {
   xl::list<int> list1 = {1, 2, 3, 4, 5};
-  std::vector<int> const vector1 = {6, 7, 8, 9, 10};
+  int const vector1[]{6, 7, 8, 9, 10};
 
   // Use assign_range() to replace elements in list1 with elements from vector1
   list1.assign_range(vector1);
 
   // Check the results using assert()
-  assert(list1.size() == vector1.size());
+  assert(list1.size() == std::size(vector1));
   auto list_it = list1.begin();
-  auto vector_it = vector1.begin();
+  auto vector_it = std::begin(vector1);
   while (list_it != list1.end()) {
       assert(*list_it == *vector_it);
       ++list_it;
