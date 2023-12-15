@@ -487,9 +487,11 @@ public:
   }
 
   auto append_range(std::ranges::input_range auto&& rg)
-    noexcept(noexcept(insert_range(cend(), std::forward<decltype(rg)>(rg))))
+    noexcept(noexcept(std::copy(std::ranges::begin(rg), std::ranges::end(rg),
+      std::back_inserter(*this))))
   {
-    return insert_range(cend(), std::forward<decltype(rg)>(rg));
+    std::copy(std::ranges::begin(rg), std::ranges::end(rg),
+      std::back_inserter(*this));
   }
 
   auto prepend_range(std::ranges::input_range auto&& rg)
