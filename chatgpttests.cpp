@@ -814,11 +814,10 @@ void test1() {
   assert(list1.size() == std::size(vector1));
   auto list_it = list1.begin();
   auto vector_it = std::begin(vector1);
-  while (list_it != list1.end()) {
-      assert(*list_it == *vector_it);
-      ++list_it;
-      ++vector_it;
-  }
+  while (list_it) assert(*list_it++ == *vector_it++);
+
+  list1 = vector1;
+  assert(list1.size() == std::size(vector1));
   }
 
   {
