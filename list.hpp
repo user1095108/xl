@@ -201,6 +201,7 @@ public:
   size_type size() const noexcept
   {
     size_type sz1{}, sz2{};
+
     for (auto i(cbegin()), j(cend());
       (i.n_ != j.p_) && (i.n_ != (++sz2, --j).p_); ++sz1, ++i);
 
@@ -737,28 +738,16 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 inline auto erase_if(list<T>& c, auto pred)
-  noexcept(noexcept(c.erase({}), pred(*c.cbegin())))
-  requires(requires{pred(*c.cbegin());})
+  noexcept(noexcept(c.remove_if(std::forward<decltype(pred)>(pred))))
 {
-  typename std::remove_reference_t<decltype(c)>::size_type r{};
-
-  for (auto i(c.cbegin()); i; pred(*i) ? ++r, i = c.erase(i) : ++i);
-
-  return r;
+  return c.remove_if(std::forward<decltype(pred)>(pred));
 }
 
 template <int = 0, typename T>
 inline auto erase(list<T>& c, auto const& ...k)
-  noexcept(noexcept(c.erase({}), (std::equal_to<>()(*c.cbegin(), k), ...)))
-  requires(requires{(std::equal_to<>()(*c.cbegin(), k), ...);})
+  noexcept(noexcept(c.remove(k...)))
 {
-  return erase_if(
-      c,
-      [&k...](auto& a) noexcept(noexcept((std::equal_to<>()(a, k), ...)))
-      {
-        return (std::equal_to<>()(a, k) || ...);
-      }
-    );
+  return c.remove(k...);
 }
 
 template <typename T>
