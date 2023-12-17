@@ -1084,7 +1084,7 @@ void test1() {
 
   // Asserting the expected results
   assert(std::find(myList.begin(), myList.end(), 3) == myList.end()); // 3 should be removed
-  assert(xl::find(myList, 3) == myList.end()); // 3 should be removed
+  assert(!xl::find(myList, 3)); // 3 should be removed
   assert(std::none_of(myList.begin(), myList.end(), [](int value) { return value > 4; })); // No value greater than 4 should remain
   }
 }
