@@ -553,7 +553,22 @@ public:
   {
     size_type r{};
 
-    for (auto i(cbegin()); i; pred(*i) ? ++r, i = erase(i) : ++i);
+    if (!empty())
+    {
+      auto i(cbegin()), j(--cend());
+
+      while (i != j)
+      {
+        pred(*i) ? ++r, i = erase(i) : ++i;
+
+        if (i == j)
+          break;
+        else
+          pred(*j) ? ++r, j = --erase(j) : --j;
+      }
+
+      if (pred(*i)) ++r, erase(i);
+    }
 
     return r;
   }
@@ -729,7 +744,7 @@ public:
 
     if (!empty()) [[likely]]
     {
-      for (auto b(cbegin()), a(b++); b;
+      for (auto a(cbegin()), b(++cbegin()); b;
         pred(*a, *b) ? ++r, b = erase(b) : a = b++);
     }
 
