@@ -553,7 +553,7 @@ public:
   {
     size_type r{};
 
-    if (!empty())
+    if (!empty()) [[likely]]
     {
       auto i(cbegin()), j(--cend());
 
