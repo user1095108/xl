@@ -775,26 +775,17 @@ inline auto erase(list<T>& c, T const k) noexcept(noexcept(erase<0>(c, k)))
 
 template <typename T>
 inline auto find_if(list<T> const& c, auto pred)
-  noexcept(noexcept(pred(*c.cbegin())))
+  noexcept(noexcept(pred(*c.begin())))
 {
-  if (!c.empty())
+  auto i(c.begin()), j(c.end());
+
+  for (; (i != j) && (i != --j); ++i)
   {
-    auto i(c.begin()), j(--c.end());
-
-    while (i != j)
-    {
-      if (pred(*i)) return i; else ++i;
-
-      if (i == j)
-        break;
-      else
-        if (pred(*j)) return j; else --j;
-    }
-
     if (pred(*i)) return i;
+    if (pred(*j)) return j;
   }
 
-  return c.end();
+  return i && pred(*i) ? i : c.end();
 }
 
 template <int = 0, typename T>
