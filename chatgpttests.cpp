@@ -1360,6 +1360,15 @@ void test2()
   assert(l41.front() == 1);
   assert(l41.back() == 3);
   }
+
+  {
+  // find(), erase()
+  xl::list<int> l42{3, 1, 2};
+  *xl::find(l42, 3) = 1;
+  assert(l42.front() == 1);
+  xl::erase(l42, 3, 2, 1);
+  assert(l42.empty());
+  }
 }
 
 int main() {
