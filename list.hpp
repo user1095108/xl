@@ -557,15 +557,8 @@ public:
     {
       auto i(cbegin()), j(--cend());
 
-      while (i != j)
-      {
-        pred(*i) ? ++r, i = erase(i) : ++i;
-
-        if (i == j)
-          break;
-        else
-          pred(*j) ? ++r, j = --erase(j) : --j;
-      }
+      for (; (i != j) && (i != (pred(*j) ? ++r, j = --erase(j) : --j));
+        pred(*i) ? ++r, i = erase(i) : ++i);
 
       if (pred(*i)) ++r, erase(i);
     }
