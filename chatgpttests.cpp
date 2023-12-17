@@ -1054,9 +1054,11 @@ void test1() {
 
   lst.erase(std::remove(lst.begin(), lst.end(), 2), lst.end());
   assert(std::find(lst.begin(), lst.end(), 2) == lst.end());
+  assert(xl::find(lst, 2) == lst.end());
 
   lst.erase(std::remove_if(lst.begin(), lst.end(), [](int i){ return i % 2 == 0; }), lst.end());
   assert(std::find_if(lst.begin(), lst.end(), [](int i){ return i % 2 == 0; }) == lst.end());
+  assert(xl::find_if(lst, [](int i){ return i % 2 == 0; }) == lst.end());
   }
 
   {
@@ -1080,6 +1082,7 @@ void test1() {
 
   // Asserting the expected results
   assert(std::find(myList.begin(), myList.end(), 3) == myList.end()); // 3 should be removed
+  assert(xl::find(myList, 3) == myList.end()); // 3 should be removed
   assert(std::none_of(myList.begin(), myList.end(), [](int value) { return value > 4; })); // No value greater than 4 should remain
   }
 }
