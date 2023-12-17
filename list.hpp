@@ -772,8 +772,8 @@ inline auto find_if(list<T> const& c, auto pred)
 {
   auto i(c.begin()), j(c.end());
 
-  while ((i != j) && (i != --j))
-    if (pred(*i)) return i; else if (pred(*j)) return j; else ++i;
+  for (; (i != j) && (i != --j); ++i)
+    if (pred(*i)) return i; else if (pred(*j)) return j;
 
   return i && pred(*i) ? i : c.end();
 }
