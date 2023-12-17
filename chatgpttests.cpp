@@ -1066,9 +1066,11 @@ void test1() {
 
   xl::erase(lst, 2);
   assert(std::ranges::find(lst, 2) == lst.end());
+  assert(!xl::find(lst, 2));
 
   xl::erase_if(lst, [](int i){ return i % 2 == 0; });
   assert(std::ranges::find_if(lst, [](int i){ return i % 2 == 0; }) == lst.end());
+  assert(!xl::find_if(lst, [](int i){ return i % 2 == 0; }));
   }
 
   {
