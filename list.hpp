@@ -773,6 +773,51 @@ inline auto erase(list<T>& c, T const k) noexcept(noexcept(erase<0>(c, k)))
   return erase<0>(c, k);
 }
 
+template <typename T>
+inline auto find_if(list<T> const& c, auto pred)
+  noexcept(noexcept(pred(*c.cbegin())))
+{
+  if (!c.empty())
+  {
+    auto i(c.begin()), j(--c.end());
+
+    while (i != j)
+    {
+      if (pred(*i)) return i; else ++i;
+
+      if (i == j)
+        break;
+      else
+        if (pred(*j)) return j; else --j;
+    }
+
+    if (pred(*i)) return i;
+  }
+
+  return c.end();
+}
+
+template <int = 0, typename T>
+inline auto find(list<T> const& c, auto const& ...k)
+  noexcept(noexcept((std::equal_to<>()(*c.cbegin(), k), ...)))
+  requires(requires{(std::equal_to<>()(*c.cbegin(), k), ...);})
+{
+  return find_if(
+      c,
+      [&k...](auto& a) noexcept(noexcept((std::equal_to<>()(a, k), ...)))
+      {
+        return (std::equal_to<>()(a, k) || ...);
+      }
+    );
+}
+
+template <typename T>
+inline auto find(list<T> const& c, T const k)
+  noexcept(noexcept(find<0>(c, k)))
+{
+  return find<0>(c, k);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 template <typename U, typename V>
 inline auto operator==(list<U> const& l, list<V> const& r)
