@@ -41,6 +41,8 @@ public:
   using const_iterator = listiterator<node const>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
+  enum {xl_list_tag};
+
 private:
   struct node
   {
@@ -766,9 +768,9 @@ inline auto erase(list<T>& c, T const k) noexcept(noexcept(erase<0>(c, k)))
   return erase<0>(c, k);
 }
 
-template <typename T>
-inline auto find_if(list<T> const& c, auto pred)
+inline auto find_if(auto&& c, auto pred)
   noexcept(noexcept(pred(*c.begin())))
+  requires(requires{std::remove_cvref_t<decltype(c)>::xl_list_tag;})
 {
   auto i(c.begin()), j(c.end());
 
@@ -778,18 +780,26 @@ inline auto find_if(list<T> const& c, auto pred)
   return i && pred(*i) ? i : c.end();
 }
 
-template <int = 0, typename T>
-inline auto find(list<T> const& c, auto const& ...k)
+template <int = 0>
+inline auto find(auto&& c, auto const& ...k)
   noexcept(noexcept((std::equal_to<>()(*c.cbegin(), k), ...)))
   requires(requires{(std::equal_to<>()(*c.cbegin(), k), ...);})
 {
   return find_if(
-      c,
-      [&k...](auto& a) noexcept(noexcept((std::equal_to<>()(a, k), ...)))
+      std::forward<decltype(c)>(c),
+      [&k...](auto const& a)
+        noexcept(noexcept((std::equal_to<>()(a, k), ...)))
       {
         return (std::equal_to<>()(a, k) || ...);
       }
     );
+}
+
+template <typename T>
+inline auto find(list<T>& c, T const k)
+  noexcept(noexcept(find<0>(c, k)))
+{
+  return find<0>(c, k);
 }
 
 template <typename T>
