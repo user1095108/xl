@@ -559,8 +559,8 @@ public:
     {
       auto i(cbegin());
 
-      for (auto j(--cend());
-        (i != j) && (i != (pred(*j) ? ++r, j = --erase(j) : --j));
+      for (auto j(--cend()); (i != j) &&
+        (i != (pred(*j) ? ++r, j = --erase(j) : --j));
         pred(*i) ? ++r, i = erase(i) : ++i);
 
       if (pred(*i)) ++r, erase(i);
