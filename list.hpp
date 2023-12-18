@@ -775,9 +775,10 @@ inline auto find_if(auto&& c, auto pred)
   auto i(c.begin()), j(c.end());
 
   for (; (i != j) && (i != --j); ++i)
-    if (pred(*i)) return i; else if (pred(*j)) return j;
+    if (pred(std::as_const(*i))) return i;
+    else if (pred(std::as_const(*j))) return j;
 
-  return i && pred(*i) ? i : c.end();
+  return i && pred(std::as_const(*i)) ? i : c.end();
 }
 
 template <int = 0>
