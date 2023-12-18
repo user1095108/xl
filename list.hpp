@@ -773,9 +773,9 @@ inline auto find_if(auto&& c, auto pred)
   noexcept(noexcept(pred(*c.begin())))
   requires(requires{std::remove_cvref_t<decltype(c)>::xl_list_tag;})
 {
-  auto i(c.begin()), j(c.end());
+  auto i(c.begin());
 
-  for (; (i != j) && (i != --j); ++i)
+  for (auto j(c.end()); (i != j) && (i != --j); ++i)
     if (pred(std::as_const(*i))) return i;
     else if (pred(std::as_const(*j))) return j;
 
