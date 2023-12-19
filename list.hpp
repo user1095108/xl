@@ -571,14 +571,13 @@ public:
 
   template <int = 0>
   auto remove(auto const& ...k)
-    noexcept(noexcept(erase(cbegin()),
-      (std::equal_to<>()(*cbegin(), k), ...)))
-    requires(requires{(std::equal_to<>()(*cbegin(), k), ...);})
+    noexcept(noexcept(erase(cbegin()), ((*cbegin() == k), ...)))
+    requires(requires{((*cbegin() == k), ...);})
   {
     return remove_if(
-        [&k...](auto& a) noexcept(noexcept((std::equal_to<>()(a, k), ...)))
+        [&k...](auto& a) noexcept(noexcept(((a == k), ...)))
         {
-          return (std::equal_to<>()(a, k) || ...);
+          return ((a == k) || ...);
         }
       );
   }
@@ -781,15 +780,14 @@ inline auto find_if(auto&& c, auto pred)
 
 template <int = 0>
 inline auto find(auto&& c, auto const& ...k)
-  noexcept(noexcept((std::equal_to<>()(*c.cbegin(), k), ...)))
-  requires(requires{(std::equal_to<>()(*c.cbegin(), k), ...);})
+  noexcept(noexcept(((*c.cbegin() == k), ...)))
+  requires(requires{((*c.cbegin() == k), ...);})
 {
   return find_if(
       std::forward<decltype(c)>(c),
-      [&k...](auto const& a)
-        noexcept(noexcept((std::equal_to<>()(a, k), ...)))
+      [&k...](auto const& a) noexcept(noexcept(((a == k), ...)))
       {
-        return (std::equal_to<>()(a, k) || ...);
+        return ((a == k) || ...);
       }
     );
 }
