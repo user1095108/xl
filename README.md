@@ -7,3 +7,5 @@ As usual with XOR containers, when you erase an iterator, the succeeding iterato
 
 # build instructions
     g++ -std=c++20 -Ofast list.cpp -o l
+# resources
+* [Open Data Structures](https://opendatastructures.org/)
