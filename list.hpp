@@ -562,8 +562,8 @@ public:
     {
       auto i(cbegin());
 
-      for (auto j(cbefore_end());
-        i != j; pred(*j) ? ++r, j = --erase(j) : --j)
+      for (auto j(cbefore_end()); i != j;
+        pred(*j) ? ++r, j = --erase(j) : --j)
         if ((pred(*i) ? ++r, i = erase(i) : ++i) == j) break;
 
       if (pred(*i)) ++r, erase(i);
@@ -778,8 +778,8 @@ inline auto find_if(auto&& c, auto pred)
 
     for (auto j(c.before_end()); i != j; ++i)
       if (pred(std::as_const(*i))) return i;
-      else if (i == --j) return c.end();
       else if (pred(std::as_const(*j))) return j;
+      else if (i == --j) break;
 
     if (pred(std::as_const(*i))) return i;
   }
