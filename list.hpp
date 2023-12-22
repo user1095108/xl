@@ -205,7 +205,7 @@ public:
     size_type sz(!empty());
 
     for (auto i(cbegin()), j(cend()); i.n_ != j.p_; ++sz, ++i)
-      if (++sz, --j; i.n_ == j.p_) break;
+      if (++sz; i.n_ == (--j).p_) break;
 
     return sz;
   }
@@ -555,13 +555,12 @@ public:
   {
     size_type r{};
 
-    if (!empty()) [[likely]]
+    if (!empty())
     {
       auto i(cbegin());
 
-      for (auto j(--cend()); (i != j) &&
-        (i != (pred(*j) ? ++r, j = --erase(j) : --j));
-        pred(*i) ? ++r, i = erase(i) : ++i);
+      for (auto j(--cend()); i != j; pred(*j) ? ++r, j = --erase(j) : --j)
+        if ((pred(*i) ? ++r, i = erase(i) : ++i) == j) break;
 
       if (pred(*i)) ++r, erase(i);
     }
