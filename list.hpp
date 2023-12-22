@@ -213,13 +213,16 @@ public:
   // iterators
   iterator begin() noexcept { return {f_, {}}; }
   iterator end() noexcept { return {{}, l_}; }
+  iterator before_end() noexcept { return {l_, l_->node::link()}; }
 
   // const iterators
   const_iterator begin() const noexcept { return {f_, {}}; }
   const_iterator end() const noexcept { return {{}, l_}; }
+  const_iterator before_end() const noexcept { return {l_,l_->node::link()}; }
 
   const_iterator cbegin() const noexcept { return {f_, {}}; }
   const_iterator cend() const noexcept { return {{}, l_}; }
+  const_iterator cbefore_end() const noexcept { return {l_,l_->node::link()};}
 
   // reverse iterators
   reverse_iterator rbegin() noexcept
@@ -559,7 +562,8 @@ public:
     {
       auto i(cbegin());
 
-      for (auto j(--cend()); i != j; pred(*j) ? ++r, j = --erase(j) : --j)
+      for (auto j(cbefore_end());
+        i != j; pred(*j) ? ++r, j = --erase(j) : --j)
         if ((pred(*i) ? ++r, i = erase(i) : ++i) == j) break;
 
       if (pred(*i)) ++r, erase(i);
@@ -772,7 +776,7 @@ inline auto find_if(auto&& c, auto pred)
   {
     auto i(c.begin());
 
-    for (auto j(--c.end()); i != j; ++i)
+    for (auto j(c.before_end()); i != j; ++i)
       if (pred(std::as_const(*i))) return i;
       else if (i == --j) return c.end();
       else if (pred(std::as_const(*j))) return j;
