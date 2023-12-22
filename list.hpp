@@ -202,12 +202,12 @@ public:
 
   size_type size() const noexcept
   {
-    size_type sz{};
+    size_type sz(!empty());
 
-    for (auto i(cbegin()), j(cend());
-      (i.n_ != j.p_) && ((++sz, i).n_ != (--j).p_); ++sz, ++i);
+    for (auto i(cbegin()), j(cend()); i.n_ != j.p_;
+      ++sz, i.n_ != (--j).p_ ? ++sz, ++i : i);
 
-    return sz + !empty();
+    return sz;
   }
 
   // iterators
