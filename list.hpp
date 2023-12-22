@@ -558,7 +558,7 @@ public:
   {
     size_type r{};
 
-    if (!empty())
+    if (!empty()) [[likely]]
     {
       auto i(cbegin());
 
@@ -772,7 +772,7 @@ inline auto find_if(auto&& c, auto pred)
   noexcept(noexcept(pred(*c.begin())))
   requires(requires{std::remove_cvref_t<decltype(c)>::xl_list_tag;})
 {
-  if (!c.empty())
+  if (!c.empty()) [[likely]]
   {
     auto i(c.begin());
 
