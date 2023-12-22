@@ -562,9 +562,9 @@ public:
     {
       auto i(cbegin());
 
-      for (auto j(cbefore_end()); i != j;
-        pred(*j) ? ++r, j = --erase(j) : --j)
+      for (auto j(cbefore_end()); i != j;)
         if ((pred(*i) ? ++r, i = erase(i) : ++i) == j) break;
+        else pred(*j) ? ++r, j = --erase(j) : --j;
 
       if (pred(*i)) ++r, erase(i);
     }
