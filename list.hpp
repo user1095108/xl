@@ -768,14 +768,19 @@ inline auto find_if(auto&& c, auto pred)
   noexcept(noexcept(pred(*c.begin())))
   requires(requires{std::remove_cvref_t<decltype(c)>::xl_list_tag;})
 {
-  auto i(c.begin());
+  if (!c.empty())
+  {
+    auto i(c.begin());
 
-  for (auto j(c.end()); i != j; ++i)
+    for (auto j(--c.end()); i != j; ++i)
+      if (pred(std::as_const(*i))) return i;
+      else if (i == --j) return c.end();
+      else if (pred(std::as_const(*j))) return j;
+
     if (pred(std::as_const(*i))) return i;
-    else if (i == --j) return c.end();
-    else if (pred(std::as_const(*j))) return j;
+  }
 
-  return i && pred(std::as_const(*i)) ? i : c.end();
+  return c.end();
 }
 
 template <int = 0>
