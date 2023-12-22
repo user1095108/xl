@@ -211,18 +211,18 @@ public:
   }
 
   // iterators
+  iterator before_end() noexcept { return {l_, l_->node::link()}; }
   iterator begin() noexcept { return {f_, {}}; }
   iterator end() noexcept { return {{}, l_}; }
-  iterator before_end() noexcept { return {l_, l_->node::link()}; }
 
   // const iterators
+  const_iterator before_end() const noexcept { return {l_,l_->node::link()}; }
   const_iterator begin() const noexcept { return {f_, {}}; }
   const_iterator end() const noexcept { return {{}, l_}; }
-  const_iterator before_end() const noexcept { return {l_,l_->node::link()}; }
 
+  const_iterator cbefore_end() const noexcept { return {l_,l_->node::link()};}
   const_iterator cbegin() const noexcept { return {f_, {}}; }
   const_iterator cend() const noexcept { return {{}, l_}; }
-  const_iterator cbefore_end() const noexcept { return {l_,l_->node::link()};}
 
   // reverse iterators
   reverse_iterator rbegin() noexcept
