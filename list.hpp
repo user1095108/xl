@@ -776,10 +776,10 @@ inline auto find_if(auto&& c, auto pred)
   {
     auto i(c.begin());
 
-    for (auto j(c.before_end()); i != j; ++i)
+    for (auto j(c.before_end()); i != j; --j)
       if (pred(std::as_const(*i))) return i;
       else if (pred(std::as_const(*j))) return j;
-      else if (i == --j) break;
+      else if (++i == j) break;
 
     if (pred(std::as_const(*i))) return i;
   }
