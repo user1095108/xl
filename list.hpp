@@ -204,7 +204,7 @@ public:
   {
     size_type sz(!empty());
 
-    for (auto i(cbegin()), j(cend()); i.n_ != j.p_; ++sz, --j)
+    for (auto i(begin()), j(end()); i.n_ != j.p_; ++sz, --j)
       if (++sz, ++i; i.n_ == j.p_) break;
 
     return sz;
