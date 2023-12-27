@@ -72,6 +72,9 @@ public:
   {
   }
 
+  // conversion to bool
+  explicit operator bool() const noexcept { return n_; }
+
   // assignment
   listiterator& operator=(listiterator const&) = default;
   listiterator& operator=(listiterator&&) = default;
@@ -102,9 +105,6 @@ public:
   // member access
   auto operator->() const noexcept { return &std::add_pointer_t<T>(n_)->v_; }
   auto& operator*() const noexcept { return std::add_pointer_t<T>(n_)->v_; }
-
-  //
-  explicit operator bool() const noexcept { return n_; }
 };
 
 }
