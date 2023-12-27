@@ -33,6 +33,26 @@ std::ostream& operator<<(std::ostream& ostr, const xl::list<int>& list)
 
 int main ()
 {
+  { // https://en.cppreference.com/w/cpp/container/list
+  // Create a list containing integers
+  xl::list<int> l = {7, 5, 16, 8};
+
+  // Add an integer to the front of the list
+  l.push_front(25);
+  // Add an integer to the back of the list
+  l.push_back(13);
+
+  // Insert an integer before 16 by searching
+  if (auto it = xl::find(l, 16))
+    l.insert(it, 42);
+
+  // Print out the list
+  std::cout << "l = { ";
+  for (int n : l)
+      std::cout << n << ", ";
+  std::cout << "};\n";
+  }
+
   { // https://en.cppreference.com/w/cpp/container/list/insert
   xl::list<int> c1(3, 100);
   print(1, c1);
