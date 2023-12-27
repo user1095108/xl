@@ -1054,11 +1054,11 @@ void test1() {
 
   lst.erase(std::remove(lst.begin(), lst.end(), 2), lst.end());
   assert(std::find(lst.begin(), lst.end(), 2) == lst.end());
-  assert(xl::find(lst, 2) == lst.end());
+  assert(!xl::find(lst, 2));
 
   lst.erase(std::remove_if(lst.begin(), lst.end(), [](int i){ return i % 2 == 0; }), lst.end());
   assert(std::find_if(lst.begin(), lst.end(), [](int i){ return i % 2 == 0; }) == lst.end());
-  assert(xl::find_if(lst, [](int i){ return i % 2 == 0; }) == lst.end());
+  assert(!xl::find_if(lst, [](int i){ return i % 2 == 0; }));
   }
 
   {
