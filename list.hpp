@@ -302,7 +302,7 @@ public:
   //
   void clear() noexcept(noexcept(node::destroy({})))
   {
-    node::destroy(cbegin()); f_ = l_ = {};
+    node::destroy(cbegin()); detail::assign(f_, l_)(nullptr, nullptr);
   }
 
   //
