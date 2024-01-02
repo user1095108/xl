@@ -143,14 +143,14 @@ public:
     noexcept(noexcept(emplace_back()))
     requires(std::is_default_constructible_v<value_type>)
   {
-    while (c--) emplace_back();
+    while (c) --c, emplace_back();
   }
 
   explicit list(size_type c, auto const& v, int = 0)
     noexcept(noexcept(emplace_back(v)))
     requires(std::is_constructible_v<value_type, decltype(v)>)
   {
-    while (c--) emplace_back(v);
+    while (c) --c, emplace_back(v);
   }
 
   explicit list(size_type const c, value_type const v)
@@ -268,11 +268,11 @@ public:
 
   //
   template <int = 0>
-  void assign(size_type count, auto const& v)
+  void assign(size_type c, auto const& v)
     noexcept(noexcept(clear(), emplace_back(v)))
     requires(std::is_constructible_v<value_type, decltype(v)>)
   {
-    clear(); while (count--) emplace_back(v);
+    clear(); while (c) --c, emplace_back(v);
   }
 
   void assign(size_type const count, value_type const v)
