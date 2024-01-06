@@ -64,11 +64,10 @@ private:
     }
 
     //
-    auto link() const noexcept { return (node*)(l_); }
-
-    auto link(auto* const n) const noexcept
+    auto link(auto* const ...n) const noexcept requires(sizeof...(n) <= 1)
     {
-      return (node*)(std::uintptr_t(n) ^ l_);
+      if constexpr(sizeof...(n)) return (node*)(
+        std::uintptr_t((n, ...)) ^ l_); else return (node*)(l_);
     }
 
     //
