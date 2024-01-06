@@ -64,7 +64,7 @@ private:
     }
 
     //
-    auto link(auto* const ...n) const noexcept requires(sizeof...(n) <= 1)
+    auto link(auto* const ...n) const noexcept requires(sizeof...(n) < 2)
     {
       if constexpr(sizeof...(n)) return (node*)(
         std::uintptr_t((n, ...)) ^ l_); else return (node*)(l_);
