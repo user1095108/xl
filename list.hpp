@@ -210,18 +210,21 @@ public:
   }
 
   // iterators
-  iterator before_end() noexcept { return {l_, l_->node::link()}; }
+  iterator after_begin() noexcept { return {f_->link(), f_}; }
+  iterator before_end() noexcept { return {l_, l_->link()}; }
   iterator begin() noexcept { return {f_, {}}; }
   iterator end() noexcept { return {{}, l_}; }
 
   // const iterators
-  const_iterator before_end() const noexcept { return {l_,l_->node::link()}; }
+  const_iterator after_begin() const noexcept { return {f_->link(), f_}; }
+  const_iterator before_end() const noexcept { return {l_, l_->link()}; }
   const_iterator begin() const noexcept { return {f_, {}}; }
   const_iterator end() const noexcept { return {{}, l_}; }
 
-  const_iterator cbefore_end() const noexcept { return {l_,l_->node::link()};}
-  const_iterator cbegin() const noexcept { return {f_, {}}; }
-  const_iterator cend() const noexcept { return {{}, l_}; }
+  auto cafter_begin() const noexcept { return after_begin(); }
+  auto cbefore_end() const noexcept { return before_end(); }
+  auto cbegin() const noexcept { return begin(); }
+  auto cend() const noexcept { return end(); }
 
   // reverse iterators
   reverse_iterator rbegin() noexcept
@@ -235,15 +238,18 @@ public:
   }
 
   // const reverse iterators
-  const_reverse_iterator crbegin() const noexcept
+  const_reverse_iterator rbegin() const noexcept
   {
     return const_reverse_iterator(const_iterator({}, l_));
   }
 
-  const_reverse_iterator crend() const noexcept
+  const_reverse_iterator rend() const noexcept
   {
     return const_reverse_iterator(const_iterator(f_, {}));
   }
+
+  auto crbegin() const noexcept { return rbegin(); }
+  auto crend() const noexcept { return rend(); }
 
   //
   auto& operator[](size_type const i) noexcept
