@@ -1087,6 +1087,62 @@ void test1() {
   assert(!xl::find(myList, 3)); // 3 should be removed
   assert(std::none_of(myList.begin(), myList.end(), [](int value) { return value > 4; })); // No value greater than 4 should remain
   }
+
+  {
+  xl::list<int> list1;
+
+  // Test 1: Check if list is empty.
+  assert(list1.empty());
+
+  // Test 2: Add elements to the list using push_back() and check the size.
+  list1.push_back(1);
+  list1.push_back(2);
+  list1.push_back(3);
+  assert(list1.size() == 3);
+
+  // Test 3: Access elements using front() and back() and check the values.
+  assert(list1.front() == 1);
+  assert(list1.back() == 3);
+
+  // Test 4: Add elements using insert() and check the size.
+  list1.insert(list1.begin(), 0);
+  list1.insert(list1.end(), 4);
+  assert(list1.size() == 5);
+
+  // Test 5: Remove elements using pop_back() and check the size.
+  list1.pop_back();
+  assert(list1.size() == 4);
+
+  // Test 6: Remove elements using erase() and check the size.
+  list1.erase(list1.begin());
+  assert(list1.size() == 3);
+
+  // Test 7: Check if elements are in the correct order using iterator.
+  xl::list<int>::iterator it = list1.begin();
+  assert(*it == 1);
+  it++;
+  assert(*it == 2);
+  it++;
+  assert(*it == 3);
+
+  // Test 8: Check if elements are in the correct order using range-based for loop.
+  for (int i : list1)
+  {
+    assert(i == 1 || i == 2 || i == 3);
+  }
+
+  // Test 9: Check if elements are in the correct order using reverse iterator.
+  xl::list<int>::reverse_iterator rit = list1.rbegin();
+  assert(*rit == 3);
+  rit++;
+  assert(*rit == 2);
+  rit++;
+  assert(*rit == 1);
+
+  // Test 10: Clear the list and check if it is empty.
+  list1.clear();
+  assert(list1.empty());
+  }
 }
 
 void test2()
