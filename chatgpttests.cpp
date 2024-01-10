@@ -1119,11 +1119,9 @@ void test1() {
 
   // Test 7: Check if elements are in the correct order using iterator.
   xl::list<int>::iterator it = list1.begin();
-  assert(*it == 1);
-  it++;
-  assert(*it == 2);
-  it++;
-  assert(*it == 3);
+  assert(*it++ == 1);
+  assert(*it++ == 2);
+  assert(*it++ == 3);
 
   // Test 8: Check if elements are in the correct order using range-based for loop.
   for (int i : list1)
