@@ -1141,6 +1141,117 @@ void test1() {
   list1.clear();
   assert(list1.empty());
   }
+
+  {
+  // Test default constructor
+  xl::list<int> list1;
+  assert(list1.empty());
+  assert(list1.size() == 0);
+
+  // Test constructor with initializers
+  xl::list<int> list2{1, 2, 3, 4, 5};
+  assert(!list2.empty());
+  assert(list2.size() == 5);
+  assert(list2.front() == 1);
+  assert(list2.back() == 5);
+
+  // Test copy constructor
+  xl::list<int> list3(list2);
+  assert(!list3.empty());
+  assert(list3.size() == 5);
+  assert(list3.front() == 1);
+  assert(list3.back() == 5);
+
+  // Test move constructor
+  xl::list<int> list4(std::move(list2));
+  assert(list2.empty());
+  assert(list2.size() == 0);
+  assert(!list4.empty());
+  assert(list4.size() == 5);
+  assert(list4.front() == 1);
+  assert(list4.back() == 5);
+
+  // Test assignment operator
+  list2 = list3;
+  assert(!list2.empty());
+  assert(list2.size() == 5);
+  assert(list2.front() == 1);
+  assert(list2.back() == 5);
+
+  // Test move assignment operator
+  list2 = std::move(list3);
+  assert(list3.empty());
+  assert(list3.size() == 0);
+  assert(!list2.empty());
+  assert(list2.size() == 5);
+  assert(list2.front() == 1);
+  assert(list2.back() == 5);
+
+  // Test push_front
+  list2.push_front(0);
+  assert(!list2.empty());
+  assert(list2.size() == 6);
+  assert(list2.front() == 0);
+  assert(list2.back() == 5);
+
+  // Test push_back
+  list2.push_back(6);
+  assert(!list2.empty());
+  assert(list2.size() == 7);
+  assert(list2.front() == 0);
+  assert(list2.back() == 6);
+
+  // Test pop_front
+  list2.pop_front();
+  assert(!list2.empty());
+  assert(list2.size() == 6);
+  assert(list2.front() == 1);
+  assert(list2.back() == 6);
+
+  // Test pop_back
+  list2.pop_back();
+  assert(!list2.empty());
+  assert(list2.size() == 5);
+  assert(list2.front() == 1);
+  assert(list2.back() == 5);
+
+  // Test insert
+  list2.insert(list2.begin(), 0);
+  assert(!list2.empty());
+  assert(list2.size() == 6);
+  assert(list2.front() == 0);
+  assert(list2.back() == 5);
+
+  // Test erase
+  list2.erase(list2.begin());
+  assert(!list2.empty());
+  assert(list2.size() == 5);
+  assert(list2.front() == 1);
+  assert(list2.back() == 5);
+
+  // Test clear
+  list2.clear();
+  assert(list2.empty());
+  assert(list2.size() == 0);
+
+  // Test swap
+  xl::list<int> list5{1, 2, 3};
+  list2.swap(list5);
+  assert(!list2.empty());
+  assert(list2.size() == 3);
+  assert(list2.front() == 1);
+  assert(list2.back() == 3);
+  assert(list5.empty());
+  assert(list5.size() == 0);
+
+  // Test relational operators
+  assert(list2 > list3);
+  assert(list2 >= list3);
+  assert(list3 < list2);
+  assert(list3 <= list2);
+  assert(list2 == list2);
+  assert(list2 != list3);
+  }
 }
 
 void test2()
