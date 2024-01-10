@@ -1251,6 +1251,53 @@ void test1() {
   assert(list3 <= list2);
   assert(list2 == list2);
   assert(list2 != list3);
+
+  // Test reverse
+  xl::list<int> list9 = {13, 14, 15, 16, 17};
+  list9.reverse();
+  assert(!list9.empty());
+  assert(list9.size() == 5);
+  assert(list9.front() == 17);
+  assert(list9.back() == 13);
+
+  // Test sort
+  xl::list<int> list10 = {18, 15, 20, 12, 19};
+  list10.sort();
+  assert(!list10.empty());
+  assert(list10.size() == 5);
+  assert(list10.front() == 12);
+  assert(list10.back() == 20);
+
+  // Test merge
+  xl::list<int> list11 = {21, 23, 25};
+  xl::list<int> list12 = {22, 24, 26};
+  list11.merge(list12);
+  assert(!list11.empty());
+  assert(list11.size() == 6);
+  assert(list11.front() == 21);
+  assert(list11.back() == 26);
+
+  // Test splice
+  xl::list<int> list13 = {27, 28, 29};
+  xl::list<int> list14 = {30, 31, 32};
+  list14.splice(list14.begin(), list13);
+  assert(!list14.empty());
+  assert(list14.size() == 6);
+  assert(list14.front() == 27);
+  assert(list14.back() == 32);
+
+  // Test unique
+  xl::list<int> list15 = {33, 34, 34, 35, 35, 36};
+  list15.unique();
+  assert(!list15.empty());
+  assert(list15.size() == 4);
+  assert(list15.front() == 33);
+  assert(list15.back() == 36);
+
+  // Test reverse iterator
+  xl::list<int> list16 = {37, 38, 39, 40, 41};
+  for (auto it = list16.rbegin(); it != list16.rend(); ++it)
+    assert(*it > 0);
   }
 }
 
