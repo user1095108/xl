@@ -497,15 +497,14 @@ public:
     noexcept(noexcept(std::copy(std::ranges::begin(rg), std::ranges::end(rg),
       std::back_inserter(*this))))
   {
-    std::copy(std::ranges::begin(rg), std::ranges::end(rg),
-      std::back_inserter(*this));
+    std::ranges::copy(rg, std::back_inserter(*this));
   }
 
   void prepend_range(std::ranges::input_range auto&& rg)
     noexcept(noexcept(std::copy(std::ranges::rbegin(rg), std::ranges::rend(rg),
       std::front_inserter(*this))))
   {
-    std::copy(std::ranges::rbegin(rg), std::ranges::rend(rg),
+    std::ranges::copy(std::ranges::views::reverse(rg),
       std::front_inserter(*this));
   }
 
