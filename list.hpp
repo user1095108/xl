@@ -620,7 +620,7 @@ public:
       detail::assign(f_, l_)(b.n_, e.p_);
     }
 
-    o.f_ = o.l_ = {}; // reset o
+    detail::assign(o.f_, o.l_)(nullptr, nullptr); // reset o
   }
 
   //
