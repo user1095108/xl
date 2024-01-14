@@ -659,7 +659,7 @@ public:
       auto const sort([&](auto& sort, auto& i, decltype(i) j)
         noexcept(noexcept(cmp(*cbegin(), *cbegin()))) -> void
         {
-          if ((i != j) && (std::next(i) != j))
+          if (i != j)
           {
             auto m(i);
 
@@ -667,7 +667,7 @@ public:
 
             //
             sort(sort, i, m);
-            sort(sort, m, j);
+            if (i != m) sort(sort, m, j);
 
             //
             node::merge(i, m, j, cmp);
