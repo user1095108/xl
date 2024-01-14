@@ -659,19 +659,16 @@ public:
       auto const sort([&](auto& sort, auto& i, decltype(i) j)
         noexcept(noexcept(cmp(*cbegin(), *cbegin()))) -> void
         {
-          if (i != j)
-          {
-            auto m(i);
+          auto m(i);
 
-            for (auto n(j); m != n; ++m) if (m == --n) break;
+          for (auto n(j); m != n; ++m) if (m == --n) break;
 
-            if (i == m) return;
+          if ((i == m) || (i == j)) return;
 
-            sort(sort, i, m);
-            sort(sort, m, j);
+          sort(sort, i, m);
+          sort(sort, m, j);
 
-            node::merge(i, m, j, cmp);
-          }
+          node::merge(i, m, j, cmp);
         }
       );
 
