@@ -663,7 +663,7 @@ public:
 
           for (auto n(j); m != n; ++m) if (m == --n) break;
 
-          if ((i == m) || (i == j)) return;
+          if (i == m) return;
 
           sort(sort, i, m);
           sort(sort, m, j);
