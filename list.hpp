@@ -651,7 +651,38 @@ public:
 
   //
   template <class Comp = std::less<value_type>>
-  void sort(Comp cmp = Comp()) noexcept(noexcept(cmp(*begin(), *begin())))
+  void sort(Comp cmp = Comp()) noexcept(noexcept(cmp(*cbegin(), *cbegin())))
+  { // classic merge sort
+    auto b(cbegin()), e(cend());
+
+    {
+      auto const sort([&](auto& sort, auto& i, decltype(i) j)
+        noexcept(noexcept(cmp(*cbegin(), *cbegin()))) -> void
+        {
+          if ((i != j) && (std::next(i) != j))
+          {
+            auto m(i);
+
+            for (auto n(j); m != n; ++m) if (m == --n) break;
+
+            //
+            sort(sort, i, m);
+            sort(sort, m, j);
+
+            //
+            node::merge(i, m, j, cmp);
+          }
+        }
+      );
+
+      sort(sort, b, e);
+    }
+
+    detail::assign(f_, l_)(b.n_, e.p_);
+  }
+
+  template <class Comp = std::less<value_type>>
+  void sort2(Comp cmp = Comp()) noexcept(noexcept(cmp(*begin(), *begin())))
   { // bottom-up merge sort
     auto const next([](auto i, size_type n) noexcept
       {
