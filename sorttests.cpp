@@ -20,25 +20,24 @@ int main()
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> std_sort_time = end - start;
 
-  std::cout << "std::sort time: " << std_sort_time.count() << " seconds" << std::endl;
-
   // Measure the time it takes to sort the vector using your own sort implementation
   start = std::chrono::high_resolution_clock::now();
   l2.sort();
   end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> xl_sort_time = end - start;
-
-  // Print the results
-  std::cout << "xl::sort time: " << xl_sort_time.count() << " seconds" << std::endl;
-  assert(std::equal(l1.begin(), l1.end(), l2.begin(), l2.end()));
+  std::chrono::duration<double> const xl_sort_time = end - start;
 
   start = std::chrono::high_resolution_clock::now();
   l3.sort2();
   end = std::chrono::high_resolution_clock::now();
-  xl_sort_time = end - start;
+  std::chrono::duration<double> const xl_sort_time2 = end - start;
 
-  std::cout << "xl::sort2 time: " << xl_sort_time.count() << " seconds" << std::endl;
+  // Print the results
+  std::cout << "std::sort time: " << std_sort_time.count() << " seconds" << std::endl;
+  std::cout << "xl::sort time: " << xl_sort_time.count() << " seconds" << std::endl;
+  std::cout << "xl::sort2 time: " << xl_sort_time2.count() << " seconds" << std::endl;
+
   assert(std::equal(l1.begin(), l1.end(), l3.begin(), l3.end()));
+  assert(std::equal(l1.begin(), l1.end(), l2.begin(), l2.end()));
 
   return 0;
 }
