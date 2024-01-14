@@ -665,11 +665,11 @@ public:
 
             for (auto n(j); m != n; ++m) if (m == --n) break;
 
-            //
-            sort(sort, i, m);
-            if (i != m) sort(sort, m, j);
+            if (i == m) return;
 
-            //
+            sort(sort, i, m);
+            sort(sort, m, j);
+
             node::merge(i, m, j, cmp);
           }
         }
