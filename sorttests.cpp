@@ -9,7 +9,7 @@
 
 int main()
 {
-  std::list<int> l1(100000);
+  std::list<int> l1(1000000);
   std::iota(l1.rbegin(), l1.rend(), 0);
   xl::list l2(xl::from_range, l1);
   xl::list l3(xl::from_range, l1);
