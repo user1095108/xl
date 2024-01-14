@@ -72,7 +72,7 @@ private:
 
     //
     static void merge(const_iterator& b, const_iterator const m,
-      decltype(b) e, auto c) noexcept(noexcept(c(*b, *b)))
+      decltype(b) e, auto&& c) noexcept(noexcept(c(*b, *b)))
     {
       auto i(b), j(m), ni(c(*i, *j) ? i++ : j++);
 
@@ -663,12 +663,13 @@ public:
 
           for (auto n(j); m != n; ++m) if (m == --n) break;
 
-          if (i == m) return;
+          if (i != m)
+          {
+            sort(sort, i, m);
+            sort(sort, m, j);
 
-          sort(sort, i, m);
-          sort(sort, m, j);
-
-          node::merge(i, m, j, cmp);
+            node::merge(i, m, j, cmp);
+          }
         }
       );
 
