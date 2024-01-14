@@ -657,7 +657,7 @@ public:
 
     {
       auto const sort([&](auto& sort, auto& i, decltype(i) j)
-        noexcept(noexcept(cmp(*cbegin(), *cbegin()))) -> void
+        noexcept(noexcept(cmp(*b, *b))) -> void
         {
           auto m(i);
 
