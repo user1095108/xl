@@ -663,13 +663,12 @@ public:
 
           for (auto n(j); m != n; ++m) if (m == --n) break;
 
-          if (i != m)
-          {
-            s(s, i, m);
-            s(s, m, j);
+          if (i == m) return;
 
-            node::merge(i, m, j, cmp);
-          }
+          s(s, i, m);
+          s(s, m, j);
+
+          node::merge(i, m, j, cmp);
         }
       );
 
