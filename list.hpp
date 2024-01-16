@@ -114,10 +114,9 @@ public:
   {
   }
 
-  list(list&& o) noexcept:
-    f_(o.f_), l_(o.l_)
+  list(list&& o) noexcept
   { // we are empty, so no need to clear()
-    detail::assign(o.f_, o.l_)(nullptr, nullptr);
+    detail::assign(f_, l_, o.f_, o.l_)(o.f_, o.l_, nullptr, nullptr);
   }
 
   list(multi_t, auto&& ...a)
