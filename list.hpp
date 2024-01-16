@@ -91,13 +91,21 @@ private:
         );
 
         while ((i != m) && (j != e)) link_node(c(*i, *j) ? i++ : j++);
-        while (i != m) link_node(i++);
-        while (j != e) link_node(j++);
       }
 
-      // relink ni and e
-      if (e.n_) e.n_->l_ ^= detail::conv(e.p_, ni.n_); // ni e
-      (e.p_ = ni.n_)->l_ ^= detail::conv(e.n_); // ni e
+      if (i == m)
+      {
+        j.n_->l_ ^= detail::conv(j.p_, ni.n_);
+        ni.n_->l_ ^= detail::conv(j.n_);
+      }
+      else // if (j == e)
+      {
+        i.n_->l_ ^= detail::conv(i.p_, ni.n_);
+        ni.n_->l_ ^= detail::conv(i.n_);
+
+        if (e.n_) e.n_->l_ ^= detail::conv(e.p_, m.p_);
+        (e.p_ = m.p_)->l_ ^= detail::conv(m.n_, e.n_);
+      }
     }
   };
 
