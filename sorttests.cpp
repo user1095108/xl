@@ -27,7 +27,7 @@ int main()
   std::chrono::duration<double> const xl_sort_time = end - start;
 
   start = std::chrono::high_resolution_clock::now();
-  l3.sort2();
+  l3.sort<1>();
   end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> const xl_sort_time2 = end - start;
 
