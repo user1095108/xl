@@ -770,7 +770,7 @@ public:
     if (!empty()) [[likely]]
     {
       for (auto a(cbegin()), b(cafter_begin()); b;
-        pred(*a, *b) ? ++r, b = erase(b) : a = b++);
+        pred(*a, *b) ? ++r, b = erase(b) : (a = b, ++b));
     }
 
     return r;
