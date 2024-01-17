@@ -663,31 +663,29 @@ public:
   { // classic merge sort
     auto b(cbegin()), e(cend());
 
+    struct S
     {
-      struct S
+      Cmp& cmp_;
+
+      S(Cmp& cmp) noexcept: cmp_(cmp) { }
+
+      void operator()(const_iterator& i, decltype(i) j) const
+        noexcept(noexcept(node::merge(i, i, j, cmp_)))
       {
-        Cmp& cmp_;
+        auto m(i);
 
-        S(Cmp& cmp) noexcept: cmp_(cmp) { }
+        for (auto n(j); m != n; ++m) if (m == --n) break;
 
-        void operator()(const_iterator& i, decltype(i) j) const
-          noexcept(noexcept(node::merge(i, i, j, cmp_)))
-        {
-          auto m(i);
+        if (i == m) return;
 
-          for (auto n(j); m != n; ++m) if (m == --n) break;
+        operator()(i, m);
+        operator()(m, j);
 
-          if (i == m) return;
+        node::merge(i, m, j, cmp_);
+      }
+    };
 
-          operator()(i, m);
-          operator()(m, j);
-
-          node::merge(i, m, j, cmp_);
-        }
-      } s(cmp);
-
-      s(b, e);
-    }
+    (S(cmp))(b, e);
 
     detail::assign(f_, l_)(b.n_, e.p_);
   }
