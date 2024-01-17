@@ -667,8 +667,6 @@ public:
     {
       Cmp& cmp_;
 
-      S(Cmp& cmp) noexcept: cmp_(cmp) { }
-
       void operator()(const_iterator& i, decltype(i) j) const
         noexcept(noexcept(node::merge(i, i, j, cmp_)))
       {
@@ -685,7 +683,7 @@ public:
       }
     };
 
-    (S(cmp))(b, e);
+    S{cmp}(b, e);
 
     detail::assign(f_, l_)(b.n_, e.p_);
   }
