@@ -666,12 +666,9 @@ public:
     {
       struct S
       {
-        Cmp cmp_;
+        Cmp& cmp_;
 
-        S(Cmp&& c) noexcept(noexcept(Cmp(std::move(c)))):
-          cmp_(std::move(c))
-        {
-        }
+        S(Cmp& cmp) noexcept: cmp_(cmp) { }
 
         void operator()(const_iterator& i, decltype(i) j)
           noexcept(noexcept(node::merge(i, i, j, cmp_)))
@@ -687,7 +684,7 @@ public:
 
           node::merge(i, m, j, cmp_);
         }
-      } s(std::move(cmp));
+      } s(cmp);
 
       s(b, e);
     }
