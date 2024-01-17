@@ -621,6 +621,7 @@ public:
       m.p_ = l_; // fix iterator
 
       node::merge(b, m, e, cmp);
+
       detail::assign(f_, l_)(b.n_, e.p_);
     }
 
