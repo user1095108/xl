@@ -670,7 +670,7 @@ public:
 
         S(Cmp& cmp) noexcept: cmp_(cmp) { }
 
-        void operator()(const_iterator& i, decltype(i) j)
+        void operator()(const_iterator& i, decltype(i) j) const
           noexcept(noexcept(node::merge(i, i, j, cmp_)))
         {
           auto m(i);
