@@ -106,7 +106,7 @@ private:
     }
 
     static void sort(const_iterator& i, decltype(i) j, auto&& cmp)
-      noexcept(noexcept(node::merge(i, i, j, cmp)))
+      noexcept(noexcept(merge(i, i, j, cmp)))
     {
       auto m(i);
 
