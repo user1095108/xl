@@ -104,6 +104,21 @@ private:
         )
       );
     }
+
+    static void sort(auto& i, decltype(i) j, auto&& cmp)
+      noexcept(noexcept(node::merge(i, i, j, cmp)))
+    {
+      auto m(i);
+
+      for (auto n(j); m != n; ++m) if (m == --n) break;
+
+      if (i == m) return;
+
+      sort(i, m, cmp);
+      sort(m, j, cmp);
+
+      merge(i, m, j, cmp);
+    }
   };
 
 private:
@@ -656,32 +671,13 @@ public:
 
   //
   template <int I = 0, class Comp = std::less<value_type>>
-  void sort(Comp cmp = Comp()) noexcept(noexcept(node::merge(
-    std::declval<const_iterator&>(), std::declval<const_iterator>(),
-    std::declval<const_iterator&>(), cmp)))
+  void sort(Comp cmp = Comp()) noexcept(noexcept(node::sort(
+    std::declval<const_iterator&>(), std::declval<const_iterator&>(), cmp)))
     requires(!I)
   { // classic merge sort
     auto b(cbegin()), e(cend());
 
-    {
-      auto const sort([&](auto& s, auto& i, decltype(i) j)
-        noexcept(noexcept(node::merge(i, i, j, cmp))) -> void
-        {
-          auto m(i);
-
-          for (auto n(j); m != n; ++m) if (m == --n) break;
-
-          if (i == m) return;
-
-          s(s, i, m);
-          s(s, m, j);
-
-          node::merge(i, m, j, cmp);
-        }
-      );
-
-      sort(sort, b, e);
-    }
+    node::sort(b, e, cmp);
 
     detail::assign(f_, l_)(b.n_, e.p_);
   }
