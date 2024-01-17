@@ -656,7 +656,7 @@ public:
 
   //
   template <int I = 0, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
+  void sort(Cmp cmp = Cmp()) noexcept(noexcept(node::merge(
     std::declval<const_iterator&>(), std::declval<const_iterator>(),
     std::declval<const_iterator&>(), cmp)))
     requires(!I)
