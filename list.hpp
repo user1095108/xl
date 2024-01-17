@@ -80,17 +80,15 @@ private:
       if (b.p_) b.p_->l_ ^= detail::conv(b.n_, ni.n_);
       (b.n_ = ni.n_)->l_ = detail::conv(ni.p_ = b.p_);
 
+      while ((i != m) && (j != e))
       {
-        auto const link_node([&](auto&& j) noexcept
-          { // ni j
-            ni.n_->l_ = detail::conv(ni.p_, j.n_); // ni j
-            j.n_->l_ = detail::conv(j.p_ = ni.n_); // ni j
+        [&](auto&& j) noexcept
+        { // ni j
+          ni.n_->l_ = detail::conv(ni.p_, j.n_); // ni j
+          j.n_->l_ = detail::conv(j.p_ = ni.n_); // ni j
 
-            ni = j;
-          }
-        );
-
-        while ((i != m) && (j != e)) link_node(c(*i, *j) ? i++ : j++);
+          ni = j;
+        }(c(*i, *j) ? i++ : j++);
       }
 
       [&](auto&& j) noexcept
