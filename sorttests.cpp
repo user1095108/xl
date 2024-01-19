@@ -18,7 +18,7 @@ int main()
   auto start = std::chrono::high_resolution_clock::now();
   l1.sort();
   auto end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> std_sort_time = end - start;
+  std::chrono::duration<double> const std_sort_time = end - start;
 
   // Measure the time it takes to sort the vector using your own sort implementation
   start = std::chrono::high_resolution_clock::now();
