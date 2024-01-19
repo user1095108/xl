@@ -14,10 +14,12 @@ int main()
   xl::list l2(xl::from_range, l1);
   xl::list l3(xl::from_range, l1);
 
+  decltype(std::chrono::high_resolution_clock::now()) start, end;
+
   // Measure the time it takes to sort the vector using std::sort
-  auto start = std::chrono::high_resolution_clock::now();
+  start = std::chrono::high_resolution_clock::now();
   l1.sort();
-  auto end = std::chrono::high_resolution_clock::now();
+  end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> const std_sort_time = end - start;
 
   // Measure the time it takes to sort the vector using your own sort implementation
