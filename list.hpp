@@ -84,23 +84,22 @@ private:
       {
         [&](auto&& j) noexcept
         { // ni j
-          ni.n_->l_ = detail::conv(ni.p_, j.n_); // ni j
-          j.n_->l_ = detail::conv(j.p_ = ni.n_); // ni j
+          j.n_->l_ = detail::conv(j.p_ = ni.n_);
+          ni.n_->l_ = detail::conv(ni.p_, j.n_);
 
           ni = j;
         }(c(*i, *j) ? i++ : j++);
       }
 
       [&](auto&& j) noexcept
-      {
+      { // ni j
         j.n_->l_ ^= detail::conv(j.p_, ni.n_);
         ni.n_->l_ ^= detail::conv(j.n_);
       }(
         i == m ? j :
         (
           e.n_ ? e.n_->l_ ^= detail::conv(e.p_, m.p_) : 0,
-          (e.p_ = m.p_)->l_ ^= detail::conv(m.n_, e.n_),
-          i
+          (e.p_ = m.p_)->l_ ^= detail::conv(m.n_, e.n_), i
         )
       );
     }
