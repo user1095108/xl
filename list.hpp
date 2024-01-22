@@ -690,7 +690,7 @@ public:
   void sort(Cmp cmp = Cmp()) noexcept(noexcept(cmp(*cbegin(), *cbegin())))
     requires(1 == I)
   { // bottom-up merge sort
-    auto const next([](auto i, size_type n) noexcept
+    auto const next([](const_iterator i, size_type n) noexcept
       {
         for (; n && i; --n, ++i);
         return i;
