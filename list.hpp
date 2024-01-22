@@ -77,8 +77,11 @@ private:
       auto i(b), j(m), ni(c(*i, *j) ? i++ : j++);
 
       // relink b and ni
-      if (b.p_) b.p_->l_ ^= detail::conv(b.n_, ni.n_);
-      (b.n_ = ni.n_)->l_ = detail::conv(ni.p_ = b.p_);
+      if (i != ni)
+      {
+        if (b.p_) b.p_->l_ ^= detail::conv(b.n_, ni.n_);
+        (b.n_ = ni.n_)->l_ = detail::conv(ni.p_ = b.p_);
+      }
 
       while ((i != m) && (j != e))
       {
