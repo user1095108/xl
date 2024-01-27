@@ -76,8 +76,8 @@ private:
     {
       auto i(b), j(m);
 
-      c(*i, *j) ? ++i : (i.p_ ? i.p_->l_ ^= detail::conv(i.n_, j.n_) : 0,
-        (b.n_ = j.n_)->l_ = detail::conv(i.p_), ++j);
+      c(*i, *j) ? ++i : (++j, i.p_ ? i.p_->l_ ^= detail::conv(i.n_, j.p_) : 0,
+        (b.n_ = j.p_)->l_ = detail::conv(i.p_), j);
 
       auto ni(b);
 

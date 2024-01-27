@@ -466,40 +466,30 @@ void test1() {
   // Test 5: Merge two lists with different elements
   list1.clear();
   list2.clear();
-  list1.push_back(1);
-  list1.push_back(2);
-  list2.push_back(3);
-  list2.push_back(4);
-  list2.push_back(5);
-  list1.merge(std::move(list2));
-  assert(list1.size() == 5);
+  list1.push_back(1, 2, 3, 4, 5);
+  list1.merge(list2);
   assert(list1.front() == 1);
   assert(list1.back() == 5);
+  assert(list1.size() == 5);
 
   // Test 6: Merge two lists with the same elements
   list1.clear();
   list2.clear();
-  list1.push_back(1);
-  list1.push_back(2);
-  list2.push_back(1);
-  list2.push_back(2);
-  list1.merge(std::move(list2));
-  assert(list1.size() == 4);
+  list1.push_back(1, 2);
+  list2.push_back(1, 2);
+  list1.merge(list2);
   assert(list1.front() == 1);
   assert(list1.back() == 2);
+  assert(list1.size() == 4);
 
   // Test 7: Merge two lists with different sizes and elements
   list1.clear();
   list2.clear();
-  list1.push_back(1);
-  list1.push_back(2);
-  list2.push_back(3);
-  list2.push_back(4);
-  list2.push_back(5);
-  list1.merge(std::move(list2));
-  assert(list1.size() == 5);
+  list1.push_back(1, 2, 3, 4, 5);
+  list1.merge(list2);
   assert(list1.front() == 1);
   assert(list1.back() == 5);
+  assert(list1.size() == 5);
 
   // Test 8: Merge two lists with the same size and elements
   list1.clear();
@@ -508,26 +498,22 @@ void test1() {
   list1.push_back(2);
   list2.push_back(1);
   list2.push_back(2);
-  list1.merge(std::move(list2));
-  assert(list1.size() == 4);
+  list1.merge(list2);
   assert(list1.front() == 1);
   assert(list1.back() == 2);
+  assert(list1.size() == 4);
 
   // Test 9: Merge two lists with different sizes and elements, and check the order
   list1.clear();
   list2.clear();
-  list1.push_back(1);
-  list1.push_back(2);
-  list2.push_back(3);
-  list2.push_back(4);
-  list2.push_back(5);
-  list1.merge(std::move(list2));
-  assert(list1.size() == 5);
+  list1.push_back(1,2, 3, 4, 5);
+  list1.merge(list2);
   assert(list1.front() == 1);
   assert(list1.back() == 5);
   assert(list1.at(1) == 2);
   assert(list1.at(2) == 3);
   assert(list1.at(3) == 4);
+  assert(list1.size() == 5);
 
   // Test 10: Merge two lists with the same size and elements, and check the order
   list1.clear();
