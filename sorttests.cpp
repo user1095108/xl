@@ -9,25 +9,25 @@
 
 int main()
 {
-  std::list<int> l1(100000);
-  std::iota(l1.rbegin(), l1.rend(), 0);
-  xl::list l2(xl::from_range, l1);
-  xl::list l3(xl::from_range, l1);
-
   decltype(std::chrono::high_resolution_clock::now()) start, end;
 
   // Measure the time it takes to sort the vector using std::sort
+  std::list<int> l1(100000);
+  std::iota(l1.rbegin(), l1.rend(), 0);
+
   start = std::chrono::high_resolution_clock::now();
   l1.sort();
   end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> const std_sort_time = end - start;
 
   // Measure the time it takes to sort the vector using your own sort implementation
+  xl::list l2(xl::from_range, l1);
   start = std::chrono::high_resolution_clock::now();
   l2.sort();
   end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> const xl_sort_time = end - start;
 
+  xl::list l3(xl::from_range, l1);
   start = std::chrono::high_resolution_clock::now();
   l3.sort<1>();
   end = std::chrono::high_resolution_clock::now();
