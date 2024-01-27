@@ -75,8 +75,8 @@ private:
       decltype(b) e, auto&& c) noexcept(noexcept(c(*b, *b)))
     {
       auto i(b), j(m), ni(c(*i, *j) ? i++ :
-        (++j, b.p_ ? b.p_->l_ ^= detail::conv(b.n_, m.n_) : 0,
-        (b.n_ = m.n_)->l_ = detail::conv(b.p_), b));
+        (++j, i.p_ ? i.p_->l_ ^= detail::conv(i.n_, j.p_) : 0,
+        (b.n_ = j.p_)->l_ = detail::conv(i.p_), i));
 
       while ((i != m) && (j != e))
       {
