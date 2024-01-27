@@ -74,9 +74,12 @@ private:
     static void merge(const_iterator& b, const_iterator const m,
       decltype(b) e, auto&& c) noexcept(noexcept(c(*b, *b)))
     {
-      auto i(b), j(m), ni(c(*i, *j) ? i++ :
-        (++j, i.p_ ? i.p_->l_ ^= detail::conv(i.n_, j.p_) : 0,
-        (b.n_ = j.p_)->l_ = detail::conv(i.p_), b));
+      auto i(b), j(m);
+
+      c(*i, *j) ? ++i : (i.p_ ? i.p_->l_ ^= detail::conv(i.n_, j.n_) : 0,
+        (b.n_ = j.n_)->l_ = detail::conv(i.p_), ++j);
+
+      auto ni(b);
 
       while ((i != m) && (j != e))
       {
