@@ -653,14 +653,14 @@ public:
 
   //
   template <int I = 0, class Cmp = std::less<value_type>>
-  void sort(Cmp cmp = Cmp()) noexcept(noexcept(node::merge(
+  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
     std::declval<const_iterator&>(), std::declval<const_iterator>(),
     std::declval<const_iterator&>(), cmp)))
     requires(!I)
   { // classic merge sort
     struct S
     {
-      Cmp& cmp_;
+      Cmp cmp_;
 
       void operator()(const_iterator& i, decltype(i) j) const
         noexcept(noexcept(node::merge(i, i, j, cmp_)))
@@ -679,7 +679,7 @@ public:
     };
 
     auto b(cbegin()), e(cend());
-    S{cmp}(b, e);
+    S{std::forward<Cmp>(cmp)}(b, e);
 
     detail::assign(f_, l_)(b.n_, e.p_);
   }
