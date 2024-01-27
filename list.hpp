@@ -599,7 +599,7 @@ public:
 
   //
   template <class Cmp = std::less<value_type>>
-  void merge(auto&& o, Cmp cmp = Cmp())
+  void merge(auto&& o, Cmp&& cmp = Cmp())
     noexcept(noexcept(node::merge(std::declval<const_iterator&>(),
       std::declval<const_iterator>(), std::declval<const_iterator&>(),
       cmp)))
