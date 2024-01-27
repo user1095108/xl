@@ -92,7 +92,7 @@ private:
       [&](auto&& j) noexcept
       { // ni j
         j.n_->l_ ^= detail::conv(j.p_, ni.n_);
-        ni.n_->l_ ^= detail::conv(j.n_);
+        ni.n_->l_ = detail::conv(ni.p_, j.n_);
       }(
         i == m ? j :
         (
