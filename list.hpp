@@ -660,7 +660,7 @@ public:
   { // classic merge sort
     struct S
     {
-      Cmp cmp_;
+      std::remove_cvref_t<Cmp> cmp_;
 
       void operator()(const_iterator& i, decltype(i) j) const
         noexcept(noexcept(node::merge(i, i, j, cmp_)))
