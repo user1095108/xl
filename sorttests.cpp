@@ -21,17 +21,17 @@ int main()
   start = std::chrono::high_resolution_clock::now();
   l1.sort();
   end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> const std_sort_time = end - start;
+  std::chrono::duration<double> const std_sort_time(end - start);
 
   start = std::chrono::high_resolution_clock::now();
   l2.sort();
   end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> const xl_sort_time = end - start;
+  std::chrono::duration<double> const xl_sort_time(end - start);
 
   start = std::chrono::high_resolution_clock::now();
   l3.sort<1>();
   end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> const xl_sort_time2 = end - start;
+  std::chrono::duration<double> const xl_sort_time2(end - start);
 
   // Print the results
   std::cout << "std::sort time: " << std_sort_time.count() << " seconds" << std::endl;
