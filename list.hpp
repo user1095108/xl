@@ -680,7 +680,6 @@ public:
 
     auto b(cbegin()), e(cend());
     S{cmp}(b, e);
-
     detail::assign(f_, l_)(b.n_, e.p_);
   }
 
