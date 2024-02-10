@@ -103,7 +103,11 @@ public:
   bool operator==(listiterator const& o) const noexcept { return n_ == o.n_; }
 
   // member access
-  auto operator->() const noexcept { return &std::add_pointer_t<T>(n_)->v_; }
+  auto operator->() const noexcept
+  {
+    return std::addressof(std::add_pointer_t<T>(n_)->v_);
+  }
+
   auto& operator*() const noexcept { return std::add_pointer_t<T>(n_)->v_; }
 };
 
