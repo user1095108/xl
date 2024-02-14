@@ -666,16 +666,20 @@ public:
         size_type const sz) const
         noexcept(noexcept(node::merge(i, i, j, cmp_)))
       {
-        if (auto const hsz(sz / 2); hsz)
+        if (sz <= 1) return;
+
+        auto m(i);
+
         {
-          auto m(i);
+          auto const hsz(sz / 2);
+
           for (auto n(hsz); n; --n, ++m);
 
           operator()(i, m, hsz);
           operator()(m, j, sz - hsz);
-
-          node::merge(i, m, j, cmp_);
         }
+
+        node::merge(i, m, j, cmp_);
       }
     };
 
