@@ -664,6 +664,8 @@ public:
       size_type sz1{}, sz2{};
       for (auto n(e); m != n; ++sz1, ++m) if (++sz2, m == --n) break;
 
+      if (sz1 + sz2 <= 1) return;
+
       struct S
       {
         Cmp& cmp_;
