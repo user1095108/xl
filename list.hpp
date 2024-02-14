@@ -688,7 +688,7 @@ public:
     {
       size_type sz1{}, sz2{};
       for (auto n(e); m != n; ++sz1, ++m) if (++sz2, m == --n) break;
-      { S s{cmp}; s(b, m, sz1); s(m, e, sz2); }
+      S const s{cmp}; s(b, m, sz1); s(m, e, sz2);
     }
 
     node::merge(b, m, e, cmp);
