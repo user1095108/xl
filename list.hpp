@@ -668,7 +668,8 @@ public:
       {
         if (auto const hsz(sz / 2); hsz)
         {
-          auto m(detail::next(i, hsz));
+          auto m(i);
+          for (auto n(hsz); n; --n, ++m);
 
           operator()(i, m, hsz);
           operator()(m, j, sz - hsz);
