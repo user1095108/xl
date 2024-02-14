@@ -673,7 +673,7 @@ public:
         {
           auto const hsz(sz / 2);
 
-          { auto n(hsz); do --n, ++m; while (n); }
+          { auto n(hsz); do ++m; while (--n); }
 
           operator()(i, m, hsz);
           operator()(m, j, sz - hsz);
