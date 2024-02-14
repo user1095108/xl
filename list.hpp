@@ -653,7 +653,7 @@ public:
 
   //
   template <int I = 0, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
+  void sort(Cmp cmp = Cmp()) noexcept(noexcept(node::merge(
     std::declval<const_iterator&>(), std::declval<const_iterator>(),
     std::declval<const_iterator&>(), cmp)))
     requires(!I)
@@ -696,7 +696,7 @@ public:
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(cmp(*cbegin(), *cbegin())))
+  void sort(Cmp cmp = Cmp()) noexcept(noexcept(cmp(*cbegin(), *cbegin())))
     requires(1 == I)
   { // bottom-up merge sort
     auto const next([](const_iterator i, size_type n) noexcept
@@ -733,7 +733,7 @@ public:
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(cmp(*cbegin(), *cbegin())))
+  void sort(Cmp cmp = Cmp()) noexcept(noexcept(cmp(*cbegin(), *cbegin())))
     requires(2 == I)
   {
     struct S
