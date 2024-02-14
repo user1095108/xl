@@ -658,37 +658,36 @@ public:
     std::declval<const_iterator&>(), cmp)))
     requires(!I)
   { // classic merge sort
-    struct S
-    {
-      Cmp& cmp_;
-
-      void operator()(const_iterator& i, decltype(i) j,
-        size_type const sz) const
-        noexcept(noexcept(node::merge(i, i, j, cmp_)))
-      {
-        if (sz <= 1) return;
-
-        auto m(i);
-
-        {
-          auto const hsz(sz / 2);
-
-          { auto n(hsz); do ++m; while (--n); }
-
-          operator()(i, m, hsz);
-          operator()(m, j, sz - hsz);
-        }
-
-        node::merge(i, m, j, cmp_);
-      }
-    };
-
     auto b(cbegin()), m(b), e(cend());
 
     {
       size_type sz1{}, sz2{};
       for (auto n(e); m != n; ++sz1, ++m) if (++sz2, m == --n) break;
-      S const s{cmp}; s(b, m, sz1); s(m, e, sz2);
+
+      struct S
+      {
+        Cmp& cmp_;
+
+        void operator()(const_iterator& i, decltype(i) j,
+          size_type const sz) const
+          noexcept(noexcept(node::merge(i, i, j, cmp_)))
+        {
+          if (sz <= 1) return;
+
+          auto m(i);
+
+          {
+            auto const hsz(sz / 2);
+
+            { auto n(hsz); do ++m; while (--n); }
+
+            operator()(i, m, hsz);
+            operator()(m, j, sz - hsz);
+          }
+
+          node::merge(i, m, j, cmp_);
+        }
+      } const s{cmp}; s(b, m, sz1); s(m, e, sz2);
     }
 
     node::merge(b, m, e, cmp);
