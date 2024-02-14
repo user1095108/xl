@@ -662,24 +662,24 @@ public:
     {
       Cmp& cmp_;
 
-      void operator()(const_iterator& i, decltype(i) j) const
+      void operator()(const_iterator& i, decltype(i) j,
+        size_type const sz) const
         noexcept(noexcept(node::merge(i, i, j, cmp_)))
       {
-        auto m(i);
+        if (auto const hsz(sz / 2); hsz)
+        {
+          auto m(detail::next(i, hsz));
 
-        for (auto n(j); m != n; ++m) if (m == --n) break;
+          operator()(i, m, hsz);
+          operator()(m, j, sz - hsz);
 
-        if (i == m) return;
-
-        operator()(i, m);
-        operator()(m, j);
-
-        node::merge(i, m, j, cmp_);
+          node::merge(i, m, j, cmp_);
+        }
       }
     };
 
     auto b(cbegin()), e(cend());
-    S{cmp}(b, e);
+    S{cmp}(b, e, size());
     detail::assign(f_, l_)(b.n_, e.p_);
   }
 
@@ -718,6 +718,35 @@ public:
         }
       }
     }
+  }
+
+  template <int I, class Cmp = std::less<value_type>>
+  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(cmp(*cbegin(), *cbegin())))
+    requires(2 == I)
+  {
+    struct S
+    {
+      Cmp& cmp_;
+
+      void operator()(const_iterator& i, decltype(i) j) const
+        noexcept(noexcept(node::merge(i, i, j, cmp_)))
+      {
+        auto m(i);
+
+        for (auto n(j); m != n; ++m) if (m == --n) break;
+
+        if (i == m) return;
+
+        operator()(i, m);
+        operator()(m, j);
+
+        node::merge(i, m, j, cmp_);
+      }
+    };
+
+    auto b(cbegin()), e(cend());
+    S{cmp}(b, e);
+    detail::assign(f_, l_)(b.n_, e.p_);
   }
 
   void splice(const_iterator const i, auto&& o, const_iterator const b,
