@@ -683,7 +683,7 @@ public:
       }
     };
 
-    auto b(cbegin()), e(cend()), m(b);
+    auto b(cbegin()), m(b), e(cend());
 
     {
       size_type sz1{}, sz2{};
