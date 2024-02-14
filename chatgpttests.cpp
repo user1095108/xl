@@ -316,6 +316,7 @@ void test1() {
   }
 
   assert(1 == palindrome.size());
+  palindrome.sort();
   }
 
   {
@@ -835,6 +836,7 @@ void test1() {
   // Test 1: Create a list
   xl::list<int> list1;
   assert(list1.empty());
+  list1.sort();
 
   // Test 2: Add elements to the list
   list1.push_back(10);
