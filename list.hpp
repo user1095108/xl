@@ -683,8 +683,15 @@ public:
       }
     };
 
-    auto b(cbegin()), e(cend());
-    S{cmp}(b, e, size());
+    auto b(cbegin()), e(cend()), m(b);
+
+    {
+      size_type sz1{}, sz2{};
+      for (auto n(e); m != n; ++sz1, ++m) if (++sz2, m == --n) break;
+      { S s{cmp}; s(b, m, sz1); s(m, e, sz2); }
+    }
+
+    node::merge(b, m, e, cmp);
     detail::assign(f_, l_)(b.n_, e.p_);
   }
 
