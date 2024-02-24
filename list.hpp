@@ -88,7 +88,7 @@ private:
         ni = k;
       }
 
-      auto&& k(i == m ? j :
+      auto const& k(i == m ? j :
         (e.n_ ? e.n_->l_ ^= detail::conv(e.p_, m.p_) : 0,
         (e.p_ = m.p_)->l_ ^= detail::conv(m.n_, e.n_), i));
 
