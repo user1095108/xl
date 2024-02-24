@@ -80,26 +80,20 @@ private:
 
       while ((i != m) && (j != e))
       {
-        [&](auto&& j) noexcept
-        { // ni j
-          j.n_->l_ = detail::conv(j.p_ = ni.n_);
-          ni.n_->l_ = detail::conv(ni.p_, j.n_);
+        auto&& k(c(*i, *j) ? i++ : j++);
 
-          ni = j;
-        }(c(*i, *j) ? i++ : j++);
+        k.n_->l_ = detail::conv(k.p_ = ni.n_); // ni k
+        ni.n_->l_ = detail::conv(ni.p_, k.n_);
+
+        ni = k;
       }
 
-      [&](auto&& j) noexcept
-      { // ni j
-        j.n_->l_ ^= detail::conv(j.p_, ni.n_);
-        ni.n_->l_ = detail::conv(ni.p_, j.n_);
-      }(
-        i == m ? j :
-        (
-          e.n_ ? e.n_->l_ ^= detail::conv(e.p_, m.p_) : 0,
-          (e.p_ = m.p_)->l_ ^= detail::conv(m.n_, e.n_), i
-        )
-      );
+      auto&& k(i == m ? j :
+        (e.n_ ? e.n_->l_ ^= detail::conv(e.p_, m.p_) : 0,
+        (e.p_ = m.p_)->l_ ^= detail::conv(m.n_, e.n_), i));
+
+      k.n_->l_ ^= detail::conv(k.p_, ni.n_); // ni k
+      ni.n_->l_ = detail::conv(ni.p_, k.n_);
     }
   };
 
