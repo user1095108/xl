@@ -78,9 +78,9 @@ private:
         i.p_ ? i.p_->l_ ^= detail::conv(i.n_, j.p_) : 0,
         (b.n_ = j.p_)->l_ = detail::conv(i.p_), j), b));
 
-      while ((i != m) && (j != e))
+      for (const_iterator k; (i != m) && (j != e);)
       {
-        auto k(c(*i, *j) ? i++ : j++);
+        c(*i, *j) ? k = i, ++i : (k = j, ++j);
 
         k.n_->l_ = detail::conv(k.p_ = ni.n_); // ni k
         ni.n_->l_ = detail::conv(ni.p_, k.n_);
