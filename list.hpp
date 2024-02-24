@@ -80,7 +80,7 @@ private:
 
       while ((i != m) && (j != e))
       {
-        auto&& k(c(*i, *j) ? i++ : j++);
+        auto k(c(*i, *j) ? i++ : j++);
 
         k.n_->l_ = detail::conv(k.p_ = ni.n_); // ni k
         ni.n_->l_ = detail::conv(ni.p_, k.n_);
