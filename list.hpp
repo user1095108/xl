@@ -199,7 +199,7 @@ public:
     size_type sz(!empty());
 
     for (auto i(begin()), j(end()); i.n_ != j.p_; ++sz, --j)
-      if (++sz; (++i).n_ == j.p_) break;
+      if (++sz, (++i).n_ == j.p_) break;
 
     return sz;
   }
