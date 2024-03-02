@@ -694,35 +694,25 @@ public:
   void sort(Cmp cmp = Cmp()) noexcept(noexcept(cmp(*cbegin(), *cbegin())))
     requires(1 == I)
   { // bottom-up merge sort
-    auto const next([](const_iterator i, size_type n) noexcept
-      {
-        for (; n && i; --n, ++i);
-        return i;
-      }
-    );
-
     size_type bsize(1);
 
     for (auto i(cbegin());; i = cbegin(), bsize *= 2)
     {
       for (;;)
       {
-        if (auto const m(next(i, bsize)); !m.n_)
+        if (auto const m(detail::next2(i, bsize)); m)
         {
-          if (!i.p_) return; else break;
-        }
-        else
-        {
-          auto j(next(m, bsize));
+          auto j(detail::next2(m, bsize));
 
           node::merge(i, m, j, cmp);
 
           if (!i.p_) { f_ = i.n_; }
-          if (!j.n_) { l_ = j.p_; if (!i.p_) return; else break; }
+          if (!j.n_) { l_ = j.p_; if (i.p_) break; else return; }
 
           //
           i = j;
         }
+        else if (i.p_) break; else return;
       }
     }
   }

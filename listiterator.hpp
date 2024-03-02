@@ -28,6 +28,12 @@ constexpr auto next(auto i, auto n) noexcept
   return i;
 }
 
+constexpr auto next2(auto i, auto n) noexcept
+{
+  for (; n && i; --n, ++i);
+  return i;
+}
+
 }
 
 template <typename T>
