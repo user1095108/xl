@@ -700,19 +700,21 @@ public:
     {
       for (;;)
       {
-        if (auto const m(detail::next2(i, bsize)); m)
+        if (auto const m(detail::next2(i, bsize)); m) [[likely]]
         {
           auto j(detail::next2(m, bsize));
 
           node::merge(i, m, j, cmp);
 
           if (!i.p_) { f_ = i.n_; }
-          if (!j.n_) { l_ = j.p_; if (i.p_) break; else return; }
+          if (!j.n_) { l_ = j.p_;
+            if (i.p_) [[likely]] break; else [[unlikely]] return; }
 
           //
           i = j;
         }
-        else if (i.p_) break; else return;
+        else [[unlikely]]
+          if (i.p_) [[likely]] break; else [[unlikely]] return;
       }
     }
   }
