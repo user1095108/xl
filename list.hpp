@@ -660,7 +660,7 @@ public:
 
       if (!sz1) return;
 
-      struct S
+      struct
       {
         Cmp& cmp_;
 
