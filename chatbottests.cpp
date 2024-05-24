@@ -1289,61 +1289,61 @@ void test1() {
   }
 
   {
-   // Test operator[]
-   xl::list l1{1, 2, 3};
-   assert(l1[0] == 1);
-   assert(l1[1] == 2);
-   assert(l1[2] == 3);
+  // Test operator[]
+  xl::list l1{1, 2, 3};
+  assert(l1[0] == 1);
+  assert(l1[1] == 2);
+  assert(l1[2] == 3);
   }
 
   {
-   // Test erase with multiple elements
-   xl::list<int> l2{1, 2, 3, 4, 5};
-   auto it = l2.begin();
-   l2.erase(std::next(it, 2));
-   l2.erase(it);
-   assert(l2.size() == 3);
-   assert(l2.front() == 2);
-   assert(l2.back() == 5);
+  // Test erase with multiple elements
+  xl::list<int> l2{1, 2, 3, 4, 5};
+  auto it = l2.begin();
+  l2.erase(std::next(it, 2));
+  l2.erase(it);
+  assert(l2.size() == 3);
+  assert(l2.front() == 2);
+  assert(l2.back() == 5);
   }
 
   {
-   // Test clear with a non-empty list
-   xl::list<int> l3{1, 2, 3, 4, 5};
-   l3.clear();
-   assert(l3.empty());
-   assert(l3.size() == 0);
+  // Test clear with a non-empty list
+  xl::list<int> l3{1, 2, 3, 4, 5};
+  l3.clear();
+  assert(l3.empty());
+  assert(l3.size() == 0);
   }
 
   {
-   // Test insert with a non-existing iterator
-   xl::list<int> l4{1, 2, 3};
-   auto it = l4.begin();
-   ++it; // Move to the second element
-   l4.insert(l4.end(), 4); // Insert 4 at the end of the list
-   assert(l4.size() == 4);
-   assert(*it == 2);
+  // Test insert with a non-existing iterator
+  xl::list<int> l4{1, 2, 3};
+  auto it = l4.begin();
+  ++it; // Move to the second element
+  l4.insert(l4.end(), 4); // Insert 4 at the end of the list
+  assert(l4.size() == 4);
+  assert(*it == 2);
   }
 
   {
-   // Test sort with a non-empty list
-   xl::list<int> l5{18, 15, 20, 12, 19};
-   l5.sort();
-   assert(!l5.empty());
-   assert(l5.size() == 5);
-   assert(l5.front() == 12);
-   assert(l5.back() == 20);
+  // Test sort with a non-empty list
+  xl::list<int> l5{18, 15, 20, 12, 19};
+  l5.sort();
+  assert(!l5.empty());
+  assert(l5.size() == 5);
+  assert(l5.front() == 12);
+  assert(l5.back() == 20);
   }
 
   {
-   // Test merge with two non-empty lists
-   xl::list<int> l6{21, 23, 25};
-   xl::list<int> l7{22, 24, 26};
-   l6.merge(l7);
-   assert(!l6.empty());
-   assert(l6.size() == 6);
-   assert(l6.front() == 21);
-   assert(l6.back() == 26);
+  // Test merge with two non-empty lists
+  xl::list<int> l6{21, 23, 25};
+  xl::list<int> l7{22, 24, 26};
+  l6.merge(l7);
+  assert(!l6.empty());
+  assert(l6.size() == 6);
+  assert(l6.front() == 21);
+  assert(l6.back() == 26);
   }
 
   {
@@ -1358,11 +1358,78 @@ void test1() {
   }
 
   {
-   // Test unique with a non-empty list
-   xl::list<int> l10 = {33, 34, 34, 35, 35, 36};
-   l10.unique();
-   assert(!l10.empty());
-   assert(l10.size() == 4);
+  // Test unique with a non-empty list
+  xl::list<int> l10 = {33, 34, 34, 35, 35, 36};
+  l10.unique();
+  assert(!l10.empty());
+  assert(l10.size() == 4);
+  }
+
+  {
+  xl::list<int> lst1 = {1, 2, 3};
+  xl::list<int> lst2;
+  lst1.splice(lst1.begin(), lst2);
+  assert(lst1.size() == 3);
+  assert(lst2.empty());
+  }
+
+  {
+  xl::list<int> lst1 = {1, 2, 2, 3};
+  xl::list<int> lst2 = {2, 4, 5};
+  lst1.merge(lst2);
+  assert(lst1.size() == 7);
+  assert(lst1.front() == 1);
+  assert(lst1.back() == 5);
+  }
+
+  {
+  xl::list<int> lst;
+  lst.unique();
+  assert(lst.empty());
+  }
+
+  {
+  xl::list<int> lst = {5};
+  lst.sort();
+  assert(lst.size() == 1);
+  assert(lst.front() == 5);
+  }
+
+  {
+  xl::list<int> lst;
+  lst.reverse();
+  assert(lst.empty());
+  }
+
+  {
+  xl::list<int> lst = {1, 2, 3};
+  auto it = lst.end();
+  lst.insert(it, 4);
+  assert(lst.size() == 4);
+  assert(lst.back() == 4);
+  }
+
+  {
+  xl::list<int> lst;
+  lst.assign(5, 100);
+  assert(lst.size() == 5);
+  assert(lst.front() == 100);
+  }
+
+  {
+  // Test case 8: Merging an empty list into a non-empty list with duplicates
+  xl::list<int> list11 = {1, 2, 3};
+  xl::list<int> list12 = {2, 3, 4};
+  list11.merge(list12);
+  assert(list11 == xl::list<int>({1, 2, 2, 3, 3, 4}) && list12.empty());
+  }
+
+  {
+  // Test case 9: Merging an empty list into a non-empty list with a custom comparator
+  xl::list<int> list13 = {5, 3, 1};
+  xl::list<int> list14;
+  list13.merge(list14, [](int a, int b) { return a > b; });
+  assert(list13 == xl::list<int>({5, 3, 1}) && list14.empty());
   }
 }
 
