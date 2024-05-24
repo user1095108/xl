@@ -1431,6 +1431,59 @@ void test1() {
   list13.merge(list14, [](int a, int b) { return a > b; });
   assert(list13 == xl::list<int>({5, 3, 1}) && list14.empty());
   }
+
+  {
+  xl::list<int> list1{1, 2, 3, 4, 5};
+  xl::list<int> list2{6, 7, 8, 9, 10};
+
+  list1.merge(list2);
+
+  assert(list1.size() == 10);
+  assert(list2.empty());
+  }
+
+  {
+  xl::list<int> list1{1, 2, 3, 4, 5};
+  xl::list<int> list2{6, 7, 8, 9, 10};
+
+  auto it1 = list2.begin();
+  auto it2 = it1;
+  std::advance(it2, 3); // range [6, 7, 8]
+
+  list1.splice(list1.begin(), list2, it1, it2);
+
+  assert(list1.size() == 8);
+  assert(list2.size() == 2);
+  assert(list1.front() == 6);
+  }
+
+  {
+  xl::list<int> list1{1, 2, 3, 4, 5};
+
+  list1.remove(3);
+
+  assert(list1.size() == 4);
+  assert(list1.front() == 1);
+  assert(list1.back() == 5);
+  }
+
+  {
+  xl::list<int> list1{1, 2, 3};
+
+  list1.resize(5, 100);
+
+  assert(list1.size() == 5);
+  assert(list1.back() == 100);
+  }
+
+  {
+  xl::list<int> list1;
+
+  list1.assign(3, 200);
+
+  assert(list1.size() == 3);
+  assert(list1.front() == 200);
+  }
 }
 
 void test2()
