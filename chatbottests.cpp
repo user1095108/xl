@@ -1484,6 +1484,13 @@ void test1() {
   assert(list1.size() == 3);
   assert(list1.front() == 200);
   }
+
+  {
+  xl::list lst{1, 2, 3, 4, 5};
+  std::ranges::reverse(lst);
+
+  assert((lst == xl::list<int>{5, 4, 3, 2, 1}));
+  }
 }
 
 void test2()
