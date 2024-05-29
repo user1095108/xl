@@ -1489,7 +1489,7 @@ void test1() {
   xl::list lst{1, 2, 3, 4, 5};
   std::ranges::reverse(lst);
 
-  assert((lst == xl::list<int>{5, 4, 3, 2, 1}));
+  assert((lst == xl::list{5, 4, 3, 2, 1}));
   }
 }
 
