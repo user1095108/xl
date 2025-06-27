@@ -1775,10 +1775,326 @@ void test2()
   }
 }
 
+void test3()
+{
+  // Test emplace and emplace_back
+  {
+    xl::list<std::pair<int, int>> lst;
+    lst.emplace_back(1, 2);
+    lst.emplace_front(3, 4);
+    auto it = lst.begin();
+    ++it;
+    it = lst.emplace(it, 5, 6);
+
+    assert(lst.size() == 3);
+    assert(lst.front() == std::make_pair(3, 4));
+    assert(lst.back() == std::make_pair(1, 2));
+    assert(*it == std::make_pair(5, 6));
+  }
+
+  // Test assign with initializer list
+  {
+    xl::list<int> lst = {1, 2, 3};
+    lst.assign({4, 5, 6, 7});
+    assert(lst.size() == 4);
+    assert(lst.front() == 4);
+    assert(lst.back() == 7);
+  }
+
+  // Test swap between empty and non-empty lists
+  {
+    xl::list<int> lst1 = {1, 2, 3};
+    xl::list<int> lst2;
+    lst1.swap(lst2);
+    assert(lst1.empty());
+    assert(lst2.size() == 3);
+  }
+
+  // Test custom sort comparator
+  {
+    xl::list<int> lst = {3, 1, 4, 2, 5};
+    lst.sort(std::greater<int>());
+    assert((lst == xl::list<int>{5, 4, 3, 2, 1}));
+  }
+
+  // Test double reverse
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5};
+    lst.reverse();
+    lst.reverse();
+    assert((lst == xl::list<int>{1, 2, 3, 4, 5}));
+  }
+
+  // Test remove non-existing element
+  {
+    xl::list<int> lst = {1, 2, 3};
+    lst.remove(42);
+    assert(lst.size() == 3);
+  }
+
+  // Test self-splice
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5};
+    auto it = lst.begin();
+    std::advance(it, 2);
+    lst.splice(lst.begin(), lst, it, lst.end());
+    assert((lst == xl::list<int>{3, 4, 5, 1, 2}));
+  }
+
+  // Test unique with non-consecutive duplicates
+  {
+    xl::list<int> lst = {1, 2, 1, 3, 3, 2, 4};
+    lst.sort();
+    lst.unique();
+    assert((lst == xl::list<int>{1, 2, 3, 4}));
+  }
+
+  // Test merge with partially overlapping ranges
+  {
+    xl::list<int> lst1 = {1, 3, 5};
+    xl::list<int> lst2 = {2, 3, 4, 6};
+    lst1.merge(lst2);
+    assert((lst1 == xl::list<int>{1, 2, 3, 3, 4, 5, 6}));
+    assert(lst2.empty());
+  }
+
+  // Test exception safety in push_back
+  {
+    struct TestException : std::exception {};
+    struct Thrower {
+      Thrower() = default;
+      Thrower(int) { throw TestException(); }
+    };
+
+    xl::list<Thrower> lst;
+    lst.push_back(Thrower{});  // Should succeed
+
+    try {
+      lst.push_back(42);  // Should throw
+      assert(false && "Exception not thrown");
+    } catch (const TestException&) {
+      assert(lst.size() == 1);
+    }
+  }
+
+  // Test const iterators
+  {
+    const xl::list<int> lst = {1, 2, 3};
+    int sum = 0;
+    for (auto it = lst.cbegin(); it != lst.cend(); ++it) {
+      sum += *it;
+    }
+    assert(sum == 6);
+  }
+
+  // Test very large lists
+  {
+    xl::list<size_t> large_list;
+    const size_t count = 100000;
+    for (size_t i = 0; i < count; ++i) {
+      large_list.push_back(i);
+    }
+    assert(large_list.size() == count);
+    assert(large_list.front() == 0);
+    assert(large_list.back() == count - 1);
+
+    // Test iterator traversal
+    size_t sum = 0;
+    for (auto it = large_list.begin(); it != large_list.end(); ++it) {
+      sum += *it;
+    }
+    assert(sum == (count - 1) * count / 2);
+  }
+
+  // Test move semantics with large data
+  {
+    struct LargeData {
+      std::array<int, 1024> buffer;
+      LargeData(int val) { buffer.fill(val); }
+    };
+
+    xl::list<LargeData> source;
+    source.emplace_back(1);
+    source.emplace_back(2);
+
+    xl::list<LargeData> dest = std::move(source);
+    assert(source.empty());
+    assert(dest.size() == 2);
+    assert(dest.front().buffer[0] == 1);
+    assert(dest.back().buffer[0] == 2);
+  }
+
+  // Test exception safety in complex operations
+  {
+    struct ThrowOnCopy {
+      int value;
+      ThrowOnCopy(int v) : value(v) {}
+      ThrowOnCopy(const ThrowOnCopy& other) : value(other.value) {
+        if (value == 42) throw std::runtime_error("Copy failed");
+      }
+    };
+
+    xl::list<ThrowOnCopy> lst;
+    lst.emplace_back(1);
+    lst.emplace_back(2);
+
+    try {
+      // This insert should throw
+      lst.insert(lst.begin(), ThrowOnCopy(42));
+      assert(false && "Exception not thrown");
+    } catch (const std::runtime_error&) {
+      assert(lst.size() == 2);
+      assert(lst.front().value == 1);
+    }
+  }
+
+  // Test stateful comparators
+  {
+    struct StatefulComparator {
+      int threshold;
+      bool operator()(int a, int b) const {
+        return (a > threshold) < (b > threshold);
+      }
+    };
+
+    StatefulComparator comp{5};
+    xl::list<int> lst = {10, 2, 8, 1, 6, 12};
+    lst.sort(comp);
+
+    // Should be grouped: values <=5 first, then >5
+    auto it = lst.begin();
+    while (*it <= 5) ++it;
+    while (it != lst.end()) {
+      assert(*it > 5);
+      ++it;
+    }
+  }
+
+  // Test splice with same list
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5};
+    auto it = lst.begin();
+    std::advance(it, 2);  // Pointing to 3
+    lst.splice(lst.end(), lst, it);
+    assert((lst == xl::list<int>{1, 2, 4, 5, 3}));
+
+    lst.splice(lst.begin(), lst, std::prev(lst.end()));
+    assert((lst == xl::list<int>{3, 1, 2, 4, 5}));
+  }
+
+  // Test merge with unstable elements
+  {
+    struct Value {
+      int priority;
+      int id;
+      bool operator<(const Value& other) const {
+        return priority < other.priority;
+      }
+    };
+
+    xl::list<Value> list1 = {{1, 101}, {3, 103}, {5, 105}};
+    xl::list<Value> list2 = {{2, 202}, {4, 204}, {6, 206}};
+
+    list1.merge(list2);
+    int last_priority = 0;
+    for (const auto& val : list1) {
+      assert(val.priority > last_priority);
+      last_priority = val.priority;
+    }
+    assert(list2.empty());
+  }
+
+  // Test performance of sort
+  {
+    xl::list<int> perf_list;
+    const int count = 10000;
+    for (int i = count; i > 0; --i) {
+      perf_list.push_back(i);
+    }
+
+    perf_list.sort();
+    assert(perf_list.front() == 1);
+    assert(perf_list.back() == count);
+
+    // Verify sorted order
+    int expected = 1;
+    for (const auto& val : perf_list) {
+      assert(val == expected++);
+    }
+  }
+
+  // Test heterogeneous comparisons
+  {
+    xl::list<int> lst1 = {1, 2, 3};
+    xl::list<long> lst2 = {1, 2, 3};
+    xl::list<int> lst3 = {1, 2, 4};
+
+    assert(lst1 == lst2);
+    assert(lst1 != lst3);
+    assert(lst1 < lst3);
+    assert(lst3 > lst1);
+  }
+
+  // Test emplace at different positions
+  {
+    xl::list<std::string> lst = {"world"};
+    lst.emplace(lst.begin(), "hello");
+    lst.emplace(lst.end(), "!");
+
+    assert(lst.size() == 3);
+    assert(lst.front() == "hello");
+    assert(lst.back() == "!");
+
+    auto it = lst.begin();
+    ++it;
+    it = lst.emplace(it, "there");
+    assert(*it == "there");
+    assert((lst == xl::list<std::string>{"hello", "there", "world", "!"}));
+  }
+
+  // Test initializer list assignment
+  {
+    xl::list<int> lst;
+    lst = {1, 2, 3, 4, 5};
+    assert(lst.size() == 5);
+    assert(lst.back() == 5);
+
+    lst.assign({6, 7, 8});
+    assert(lst.size() == 3);
+    assert(lst.front() == 6);
+  }
+
+  // Test reverse iterators
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5};
+    int sum = 0;
+    for (auto rit = lst.rbegin(); rit != lst.rend(); ++rit) {
+      sum = sum * 10 + *rit;
+    }
+    assert(sum == 54321);
+  }
+
+  // Test swap performance
+  {
+    xl::list<int> listA;
+    xl::list<int> listB;
+    const int count = 100000;
+
+    for (int i = 0; i < count; ++i) {
+      listA.push_back(i);
+      listB.push_back(i * 2);
+    }
+
+    assert(listA.front() == 0);
+    assert(listB.front() == 0);
+  }
+}
+
 int main() {
   // Run the test suite
   test1();
   test2();
+  test3();
 
   std::cout << "All tests passed!" << std::endl;
 
