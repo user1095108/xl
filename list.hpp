@@ -105,9 +105,9 @@ public:
 
   list(list const& o)
     noexcept(noexcept(list(o.begin(), o.end())))
-    requires(std::is_copy_constructible_v<value_type>):
-    list(o.begin(), o.end())
+    requires(std::is_copy_constructible_v<value_type>)
   {
+    if (this != &o) assign(o.begin(), o.end());
   }
 
   list(list&& o) noexcept
@@ -165,8 +165,8 @@ public:
   auto& operator=(list const& o)
     noexcept(noexcept(assign(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>)
-  { // self-assign neglected
-    assign(o.begin(), o.end()); return *this;
+  {
+    if (this != &o) assign(o.begin(), o.end()); return *this;
   }
 
   auto& operator=(list&& o) noexcept(noexcept(node::destroy({})))
