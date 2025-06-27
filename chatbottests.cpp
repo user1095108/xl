@@ -2085,6 +2085,8 @@ void test3()
       listB.push_back(i * 2);
     }
 
+    listA.swap(listB);
+
     assert(listA.front() == 0);
     assert(listB.front() == 0);
   }
