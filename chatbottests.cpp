@@ -2290,7 +2290,7 @@ void test3()
 
     // Test iterator validity after splice
     xl::list<int> lst2 = {20, 30};
-    lst.splice(std::next(it4), lst2);
+    lst.splice(it3 = std::next(it4), lst2);
     assert(*it3 == 3);  // Should remain valid
     assert(lst.size() == 7);
   }
