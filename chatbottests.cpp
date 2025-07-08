@@ -2277,17 +2277,17 @@ void test3()
     auto it1 = lst.begin();
     auto it2 = std::next(it1);
     auto it3 = std::next(it2);
-    
+
     // Test iterator validity after erase
     it3 = lst.erase(it2);
     assert(*it1 == 1);
     assert(*it3 == 3);  // Valid, returned by erase()
-    
+
     // Test iterator validity after insert
     auto it4 = lst.insert(it3, 10);
     assert(*it3 == 3);  // Can be dereferenced, but is invalid
     assert(*it4 == 10);
-    
+
     // Test iterator validity after splice
     xl::list<int> lst2 = {20, 30};
     lst.splice(std::next(it4), lst2);
@@ -2308,7 +2308,7 @@ void test3()
 
     xl::list<std::string> words = {"Banana", "apple", "Carrot", "date"};
     words.sort(case_insensitive);
-    
+
     assert((words == xl::list<std::string>{"apple", "Banana", "Carrot", "date"}));
   }
 
@@ -2317,14 +2317,14 @@ void test3()
     xl::list<int> b = {4, 5, 6};
     auto it = a.begin();
     std::advance(it, 2);  // Points to 3
-    
+
     // Test splicing between different lists
     b.splice(b.begin(), a, a.begin(), it);
     assert(a.size() == 1);
     assert(a.front() == 3);
     assert(b.size() == 5);
     assert(b.front() == 1);
-    
+
     // Test merging different lists
     a = {3, 5, 7};
     b = {2, 4, 6};
@@ -2336,20 +2336,20 @@ void test3()
   {
     constexpr size_t N = 100'000;
     xl::list<size_t> large;
-    
+
     // Test forward filling
     for (size_t i = 0; i < N; ++i) {
         large.push_back(i);
     }
     assert(large.size() == N);
-    
+
     // Test reverse filling
     xl::list<size_t> reversed;
     for (auto it = large.rbegin(); it != large.rend(); ++it) {
         reversed.push_back(*it);
     }
     assert(reversed.front() == N - 1);
-    
+
     // Test sorting performance
     large.sort();
     assert(large.front() == 0);
@@ -2361,13 +2361,13 @@ void test3()
     auto it = lst.begin();
     std::advance(it, 3);
     assert(*it == 4);
-    
+
     std::advance(it, -2);
     assert(*it == 2);
-    
+
     auto rit = std::make_reverse_iterator(it);
     assert(*rit == 1);
-    
+
     std::advance(rit, -2);
     assert(*rit == 3);
   }
@@ -2377,14 +2377,14 @@ void test3()
     xl::list<std::unique_ptr<int>> ptr_list;
     ptr_list.push_back(std::make_unique<int>(42));
     ptr_list.emplace_back(new int(100));
-    
+
     assert(**ptr_list.begin() == 42);
-    
+
     // Test move assignment
     xl::list<std::unique_ptr<int>> moved_list = std::move(ptr_list);
     assert(ptr_list.empty());
     assert(moved_list.size() == 2);
-    
+
     // Test move construction
     xl::list<std::unique_ptr<int>> new_list(std::move(moved_list));
     assert(moved_list.empty());
@@ -2402,7 +2402,7 @@ void test3()
     xl::list<int> single_list(&single, &single + 1);
     assert(single_list.size() == 1);
     assert(single_list.front() == 42);
-    
+
     // Test input iterator range
     std::istringstream iss("1 2 3 4");
     std::istream_iterator<int> iit(iss), eos;
@@ -2416,7 +2416,7 @@ void test3()
     xl::list<int> b = {1, 2, 3};
     xl::list<int> c = {1, 2, 4};
     xl::list<int> d = {1, 2};
-    
+
     assert(a == b);
     assert(a != c);
     assert(a != d);
