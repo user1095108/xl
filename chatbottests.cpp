@@ -1,5 +1,8 @@
 #include <cassert>
 #include <iostream>
+#include <memory>
+#include <sstream>
+#include <vector>
 #include "list.hpp" // Replace with the actual container header
 
 // Include your testing framework of choice (e.g., Google Test or Catch2)
@@ -2089,6 +2092,339 @@ void test3()
 
     assert(listA.front() == 0);
     assert(listB.front() == 0);
+  }
+{
+    xl::list<std::string> lst;
+    lst.push_back("hello");
+    lst.push_back("world");
+    assert(lst.size() == 2);
+    assert(lst.front() == "hello");
+    assert(lst.back() == "world");
+
+    // Test move construction
+    xl::list<std::string> lst2 = std::move(lst);
+    assert(lst.empty());
+    assert(lst2.size() == 2);
+    assert(lst2.front() == "hello");
+    assert(lst2.back() == "world");
+
+    // Test move assignment
+    lst = std::move(lst2);
+    assert(lst2.empty());
+    assert(lst.size() == 2);
+    assert(lst.front() == "hello");
+    assert(lst.back() == "world");
+
+    // Test copy construction
+    xl::list<std::string> lst3 = lst;
+    assert(lst3.size() == 2);
+    assert(lst3.front() == "hello");
+    assert(lst.size() == 2); // Original list should remain unchanged
+
+    // Test copy assignment
+    xl::list<std::string> lst4;
+    lst4 = lst;
+    assert(lst4.size() == 2);
+    assert(lst4.front() == "hello");
+
+    // Test swap
+    lst3.swap(lst4);
+    assert(lst3.size() == 2);
+    assert(lst4.size() == 2);
+  }
+
+  // Test iterator invalidation rules
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5};
+    auto it = lst.begin();
+    ++it; // Points to 2
+    auto it2 = std::next(it); // Points to 3
+
+    // Erase element at 'it' (value 2)
+    lst.erase(it);
+    // it2 should still be valid (pointing to 3)
+    assert(*it2 == 3);
+
+    // Insert should not invalidate iterators
+    auto it3 = lst.begin(); // Points to 1
+    lst.insert(std::next(it3), 10);
+    assert(*it3 == 1); // it3 still valid
+    assert(*it2 == 3); // it2 still valid
+  }
+
+  // Test resource management with custom destructor
+  {
+    static int counter = 0;
+    struct Counted {
+      Counted() { ++counter; }
+      Counted(const Counted&) { ++counter; }
+      ~Counted() { --counter; }
+    };
+
+    {
+      xl::list<Counted> lst;
+      lst.push_back(Counted());
+      lst.push_back(Counted());
+      assert(counter == 2);
+    }
+    assert(counter == 0);
+
+    {
+      xl::list<Counted> lst;
+      lst.push_back(Counted());
+      lst.push_back(Counted());
+      xl::list<Counted> lst2 = std::move(lst);
+      assert(counter == 2);
+    }
+    assert(counter == 0);
+  }
+
+  // Test emplace with multiple arguments
+  {
+    struct Person {
+      std::string name;
+      int age;
+      Person(std::string n, int a) : name(std::move(n)), age(a) {}
+    };
+
+    xl::list<Person> lst;
+    lst.emplace_back("Alice", 30);
+    lst.emplace_front("Bob", 25);
+    auto it = lst.begin();
+    ++it;
+    it = lst.emplace(it, "Charlie", 40);
+
+    assert(lst.size() == 3);
+    assert(lst.front().name == "Bob");
+    assert(lst.back().name == "Alice");
+    assert(it->name == "Charlie");
+    assert(it->age == 40);
+  }
+
+  // Test reverse iterators
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5};
+    int sum = 0;
+    for (auto rit = lst.rbegin(); rit != lst.rend(); ++rit) {
+      sum = sum * 10 + *rit;
+    }
+    assert(sum == 54321);
+  }
+
+  // Test edge cases for single-element list
+  {
+    xl::list<int> lst;
+    lst.push_back(42);
+    
+    // Test operations on single-element list
+    assert(!lst.empty());
+    assert(lst.size() == 1);
+    assert(lst.front() == 42);
+    assert(lst.back() == 42);
+    
+    lst.pop_front();
+    assert(lst.empty());
+    
+    lst.push_front(100);
+    lst.pop_back();
+    assert(lst.empty());
+    
+    lst.push_back(200);
+    lst.erase(lst.begin());
+    assert(lst.empty());
+  }
+
+  // Test self-assignment
+  {
+    xl::list<int> lst = {1, 2, 3};
+    lst = lst; // Should handle self-assignment gracefully
+    assert(lst.size() == 3);
+    assert(lst.front() == 1);
+    assert(lst.back() == 3);
+  }
+
+  // Test comparison operators
+  {
+    xl::list<int> lst1 = {1, 2, 3};
+    xl::list<int> lst2 = {1, 2, 3};
+    xl::list<int> lst3 = {4, 5, 6};
+    xl::list<int> lst4 = {1, 2};
+
+    assert(lst1 == lst2);
+    assert(lst1 != lst3);
+    assert(lst1 != lst4);
+    assert(lst4 < lst1);
+    assert(lst3 > lst1);
+    assert(lst1 <= lst2);
+    assert(lst1 >= lst2);
+  }
+
+  // Test initializer list assignment
+  {
+    xl::list<int> lst;
+    lst = {1, 2, 3, 4, 5};
+    assert(lst.size() == 5);
+    assert(lst.back() == 5);
+
+    lst.assign({6, 7, 8});
+    assert(lst.size() == 3);
+    assert(lst.front() == 6);
+  }
+
+  // test iterator validity
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5};
+    auto it1 = lst.begin();
+    auto it2 = std::next(it1);
+    auto it3 = std::next(it2);
+    
+    // Test iterator validity after erase
+    it3 = lst.erase(it2);
+    assert(*it1 == 1);
+    assert(*it3 == 3);  // Valid, returned by erase()
+    
+    // Test iterator validity after insert
+    auto it4 = lst.insert(it3, 10);
+    assert(*it3 == 3);  // Can be dereferenced, but is invalid
+    assert(*it4 == 10);
+    
+    // Test iterator validity after splice
+    xl::list<int> lst2 = {20, 30};
+    lst.splice(std::next(it4), lst2);
+    assert(*it3 == 3);  // Should remain valid
+    assert(lst.size() == 7);
+  }
+
+  {
+    // Case-insensitive string comparison
+    auto case_insensitive = [](const std::string& a, const std::string& b) {
+        return std::lexicographical_compare(
+            a.begin(), a.end(), b.begin(), b.end(),
+            [](char c1, char c2) {
+                return std::tolower(c1) < std::tolower(c2);
+            }
+        );
+    };
+
+    xl::list<std::string> words = {"Banana", "apple", "Carrot", "date"};
+    words.sort(case_insensitive);
+    
+    assert((words == xl::list<std::string>{"apple", "Banana", "Carrot", "date"}));
+  }
+
+  {
+    xl::list<int> a = {1, 2, 3};
+    xl::list<int> b = {4, 5, 6};
+    auto it = a.begin();
+    std::advance(it, 2);  // Points to 3
+    
+    // Test splicing between different lists
+    b.splice(b.begin(), a, a.begin(), it);
+    assert(a.size() == 1);
+    assert(a.front() == 3);
+    assert(b.size() == 5);
+    assert(b.front() == 1);
+    
+    // Test merging different lists
+    a = {3, 5, 7};
+    b = {2, 4, 6};
+    a.merge(b);
+    assert(b.empty());
+    assert((a == xl::list<int>{2, 3, 4, 5, 6, 7}));
+  }
+
+  {
+    constexpr size_t N = 100'000;
+    xl::list<size_t> large;
+    
+    // Test forward filling
+    for (size_t i = 0; i < N; ++i) {
+        large.push_back(i);
+    }
+    assert(large.size() == N);
+    
+    // Test reverse filling
+    xl::list<size_t> reversed;
+    for (auto it = large.rbegin(); it != large.rend(); ++it) {
+        reversed.push_back(*it);
+    }
+    assert(reversed.front() == N - 1);
+    
+    // Test sorting performance
+    large.sort();
+    assert(large.front() == 0);
+    assert(large.back() == N - 1);
+  }
+
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5};
+    auto it = lst.begin();
+    std::advance(it, 3);
+    assert(*it == 4);
+    
+    std::advance(it, -2);
+    assert(*it == 2);
+    
+    auto rit = std::make_reverse_iterator(it);
+    assert(*rit == 1);
+    
+    std::advance(rit, -2);
+    assert(*rit == 3);
+  }
+
+  {
+    // Test move insertion
+    xl::list<std::unique_ptr<int>> ptr_list;
+    ptr_list.push_back(std::make_unique<int>(42));
+    ptr_list.emplace_back(new int(100));
+    
+    assert(**ptr_list.begin() == 42);
+    
+    // Test move assignment
+    xl::list<std::unique_ptr<int>> moved_list = std::move(ptr_list);
+    assert(ptr_list.empty());
+    assert(moved_list.size() == 2);
+    
+    // Test move construction
+    xl::list<std::unique_ptr<int>> new_list(std::move(moved_list));
+    assert(moved_list.empty());
+    assert(new_list.size() == 2);
+  }
+
+  {
+    // Test empty range
+    std::vector<int> empty_vec;
+    xl::list<int> empty_list(empty_vec.begin(), empty_vec.end());
+    assert(empty_list.empty());
+
+    // Test single-element range
+    int single = 42;
+    xl::list<int> single_list(&single, &single + 1);
+    assert(single_list.size() == 1);
+    assert(single_list.front() == 42);
+    
+    // Test input iterator range
+    std::istringstream iss("1 2 3 4");
+    std::istream_iterator<int> iit(iss), eos;
+    xl::list<int> input_list(iit, eos);
+    assert(input_list.size() == 4);
+    assert(input_list.back() == 4);
+  }
+
+  {
+    xl::list<int> a = {1, 2, 3};
+    xl::list<int> b = {1, 2, 3};
+    xl::list<int> c = {1, 2, 4};
+    xl::list<int> d = {1, 2};
+    
+    assert(a == b);
+    assert(a != c);
+    assert(a != d);
+    assert(d < a);
+    assert(c > a);
+    assert(d <= a);
+    assert(a >= b);
+    assert(c >= a);
   }
 }
 
