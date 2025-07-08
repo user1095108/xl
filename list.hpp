@@ -185,6 +185,7 @@ public:
 
   auto& operator=(std::ranges::input_range auto&& rg)
     noexcept(noexcept(assign_range(std::forward<decltype(rg)>(rg))))
+    requires(!std::is_same_v<std::remove_cvref_t<decltype(rg)>, list>)
   {
     assign_range(std::forward<decltype(rg)>(rg)); return *this;
   }
