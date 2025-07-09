@@ -1844,6 +1844,15 @@ void test3()
     assert((lst == xl::list<int>{3, 4, 5, 1, 2}));
   }
 
+  // Test self-splice
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5};
+    lst.splice(lst.begin(), lst, lst.begin());
+    assert((lst == xl::list<int>{1, 2, 3, 4, 5}));
+    lst.splice(std::next(lst.begin()), lst, lst.begin());
+    assert((lst == xl::list<int>{1, 2, 3, 4, 5}));
+  }
+
   // Test unique with non-consecutive duplicates
   {
     xl::list<int> lst = {1, 2, 1, 3, 3, 2, 4};
