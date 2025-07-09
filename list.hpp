@@ -753,7 +753,7 @@ public:
     const_iterator const e) noexcept
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
-    if (b == e) [[unlikely]] return;
+    if ((b == e) || (i.n_ == e.n_)) [[unlikely]] return;
 
     // relink i, b, e
     i.n_ ? i.n_->l_ ^= detail::conv(i.p_, e.p_) : bool(l_ = e.p_);
