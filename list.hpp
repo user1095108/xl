@@ -621,22 +621,13 @@ public:
   }
 
   //
-  void resize(size_type const c)
-    noexcept(noexcept(emplace_back(), pop_back()))
-    requires(std::is_default_constructible_v<value_type>)
-  {
-    auto sz(size());
-    for (; c > sz; ++sz, emplace_back());
-    for (; c < sz; --sz, pop_back());
-  }
-
   template <int = 0>
-  void resize(size_type const c, auto const& a)
-    noexcept(noexcept(emplace_back(a), pop_back()))
-    requires(std::is_constructible_v<value_type, decltype(a)>)
+  void resize(size_type const c, auto const& ...a)
+    noexcept(noexcept(emplace_back(a...), pop_back()))
+    requires(sizeof...(a) <= 1)
   {
     auto sz(size());
-    for (; c > sz; ++sz, emplace_back(a));
+    for (; c > sz; ++sz, emplace_back(a...));
     for (; c < sz; --sz, pop_back());
   }
 
