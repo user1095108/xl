@@ -2442,6 +2442,7 @@ void test3()
   {
     int a[10]{};
     xl::list b(a);
+    assert(std::size(a) == b.size());
     assert(!b.front());
     assert(!b.back());
   }
