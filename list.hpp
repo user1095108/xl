@@ -178,8 +178,9 @@ public:
 
   auto& operator=(list&& o) noexcept(noexcept(node::destroy({})))
   {
-    node::destroy(cbegin());
-    detail::assign(f_, l_, o.f_, o.l_)(o.f_, o.l_, nullptr, nullptr);
+    if (this != &o)
+      node::destroy(cbegin()),
+      detail::assign(f_, l_, o.f_, o.l_)(o.f_, o.l_, nullptr, nullptr);
 
     return *this;
   }
