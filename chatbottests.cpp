@@ -2440,9 +2440,8 @@ void test3()
   }
 
   {
-    int a[10]{};
-    xl::list b(a);
-    assert(std::ranges::equal(a, b));
+    int const a[10]{};
+    assert(std::ranges::equal(a, xl::list(a)));
   }
 }
 
