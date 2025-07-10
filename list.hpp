@@ -105,9 +105,9 @@ public:
 
   list(list const& o)
     noexcept(noexcept(list(o.begin(), o.end())))
-    requires(std::is_copy_constructible_v<value_type>)
+    requires(std::is_copy_constructible_v<value_type>):
+    list(o.begin(), o.end())
   {
-    if (this != &o) { assign(o.begin(), o.end()); }
   }
 
   list(list&& o) noexcept
@@ -150,6 +150,13 @@ public:
   explicit list(size_type const c, value_type const v)
     noexcept(noexcept(list(c, v, 0))):
     list(c, v, 0)
+  {
+  }
+
+  list(std::ranges::input_range auto&& rg)
+    noexcept(noexcept(list(std::ranges::begin(rg), std::ranges::end(rg))))
+    requires(!std::is_same_v<std::remove_cvref_t<decltype(rg)>, list>):
+    list(std::ranges::begin(rg), std::ranges::end(rg))
   {
   }
 
@@ -899,7 +906,10 @@ template <class It>
 list(It, It) -> list<typename std::iterator_traits<It>::value_type>;
 
 template <std::ranges::input_range R>
-list(from_range_t, R&& rg) -> list<std::ranges::range_value_t<R>>;
+list(R&&) -> list<std::ranges::range_value_t<R>>;
+
+template <std::ranges::input_range R>
+list(from_range_t, R&&) -> list<std::ranges::range_value_t<R>>;
 
 }
 

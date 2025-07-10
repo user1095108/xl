@@ -2438,6 +2438,13 @@ void test3()
     assert(a >= b);
     assert(c >= a);
   }
+
+  {
+    int a[10]{};
+    xl::list b(a);
+    assert(!b.front());
+    assert(!b.back());
+  }
 }
 
 int main() {
