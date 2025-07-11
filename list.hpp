@@ -117,7 +117,7 @@ public:
 
   list(multi_t, auto&& ...a)
     noexcept(noexcept(push_back(std::forward<decltype(a)>(a)...)))
-    requires(sizeof...(a) > 0)
+    requires(!!sizeof...(a))
   {
     push_back(std::forward<decltype(a)>(a)...);
   }
@@ -541,7 +541,7 @@ public:
   template <int = 0>
   void push_back(auto&& ...a)
     noexcept(noexcept((emplace_back(std::forward<decltype(a)>(a)), ...)))
-    requires(sizeof...(a) > 0)
+    requires(!!sizeof...(a))
   {
     (emplace_back(std::forward<decltype(a)>(a)), ...);
   }
@@ -555,7 +555,7 @@ public:
   template <int = 0>
   void push_front(auto&& ...a)
     noexcept(noexcept((emplace_front(std::forward<decltype(a)>(a)), ...)))
-    requires(sizeof...(a) > 0)
+    requires(!!sizeof...(a))
   {
     (emplace_front(std::forward<decltype(a)>(a)), ...);
   }
@@ -864,7 +864,7 @@ inline auto find_if(auto&& c, auto pred)
 template <int = 0>
 inline auto find(auto&& c, auto const& ...k)
   noexcept(noexcept(((*c.cbegin() == k), ...)))
-  requires(requires{((*c.cbegin() == k), ...);})
+  requires(!!sizeof...(k))
 {
   return find_if(
       std::forward<decltype(c)>(c),
