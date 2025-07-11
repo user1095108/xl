@@ -117,6 +117,7 @@ public:
 
   list(multi_t, auto&& ...a)
     noexcept(noexcept(push_back(std::forward<decltype(a)>(a)...)))
+    requires(sizeof...(a) > 0)
   {
     push_back(std::forward<decltype(a)>(a)...);
   }
@@ -402,25 +403,23 @@ public:
 
   //
   template <int = 0>
-  iterator insert(const_iterator const i, auto&& v)
-    noexcept(noexcept(emplace(i, std::forward<decltype(v)>(v))))
-    requires(std::is_constructible_v<value_type, decltype(v)>)
+  iterator insert(const_iterator const i, auto&& a)
+    noexcept(noexcept(emplace(i, std::forward<decltype(a)>(a))))
+    requires(std::is_constructible_v<value_type, decltype(a)>)
   {
-    return emplace(i, std::forward<decltype(v)>(v));
+    return emplace(i, std::forward<decltype(a)>(a));
   }
 
-  auto insert(const_iterator const i, value_type v)
-    noexcept(noexcept(insert<0>(i, std::move(v))))
+  auto insert(const_iterator const i, value_type a)
+    noexcept(noexcept(insert<0>(i, std::move(a))))
   {
-    return insert<0>(i, std::move(v));
+    return insert<0>(i, std::move(a));
   }
 
   template <int = 0>
   iterator insert(multi_t, const_iterator i, auto&& a, auto&& ...b)
     noexcept(noexcept(emplace(i, std::forward<decltype(a)>(a)),
       (emplace(i, std::forward<decltype(b)>(b)), ...)))
-    requires(requires{emplace(i, std::forward<decltype(a)>(a)),
-      (emplace(i, std::forward<decltype(b)>(b)), ...);})
   {
     auto const r(emplace(i, std::forward<decltype(a)>(a)));
     i.p_ = r.n_; // fix iterator
@@ -431,9 +430,9 @@ public:
   }
 
   auto insert(multi_t, const_iterator const i, value_type a)
-    noexcept(noexcept(insert<0>(multi_t{}, i, std::move(a))))
+    noexcept(noexcept(insert<0>(i, std::move(a))))
   {
-    return insert<0>(multi_t{}, i, std::move(a));
+    return insert<0>(i, std::move(a));
   }
 
   template <int = 0>
@@ -540,11 +539,11 @@ public:
 
   //
   template <int = 0>
-  void push_back(auto&& ...v)
-    noexcept(noexcept((emplace_back(std::forward<decltype(v)>(v)), ...)))
-    requires(requires{(emplace_back(std::forward<decltype(v)>(v)), ...);})
+  void push_back(auto&& ...a)
+    noexcept(noexcept((emplace_back(std::forward<decltype(a)>(a)), ...)))
+    requires(sizeof...(a) > 0)
   {
-    (emplace_back(std::forward<decltype(v)>(v)), ...);
+    (emplace_back(std::forward<decltype(a)>(a)), ...);
   }
 
   void push_back(value_type v)
@@ -554,11 +553,11 @@ public:
   }
 
   template <int = 0>
-  void push_front(auto&& ...v)
-    noexcept(noexcept((emplace_front(std::forward<decltype(v)>(v)), ...)))
-    requires(requires{(emplace_front(std::forward<decltype(v)>(v)), ...);})
+  void push_front(auto&& ...a)
+    noexcept(noexcept((emplace_front(std::forward<decltype(a)>(a)), ...)))
+    requires(sizeof...(a) > 0)
   {
-    (emplace_front(std::forward<decltype(v)>(v)), ...);
+    (emplace_front(std::forward<decltype(a)>(a)), ...);
   }
 
   void push_front(value_type v)
