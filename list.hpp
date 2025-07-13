@@ -589,7 +589,7 @@ public:
   template <int = 0>
   auto remove(auto const& ...k)
     noexcept(noexcept(erase(cbegin()), ((*cbegin() == k), ...)))
-    requires(requires{((*cbegin() == k), ...);})
+    requires(!!sizeof...(k))
   {
     return remove_if(
         [&k...](auto& a) noexcept(noexcept(((a == k), ...)))
