@@ -2443,6 +2443,56 @@ void test3()
     int const a[10]{};
     assert(std::ranges::equal(a, xl::list(a)));
   }
+
+  // 1. Copy construction from a temporary
+  {
+    xl::list<int> src = { 7, 8, 9 };
+    auto dst(src);          // copy-ctor
+    assert((dst == xl::list<int>{7, 8, 9}));
+    assert((src == xl::list<int>{7, 8, 9}));   // src unchanged
+  }
+
+  // 2. Move construction from a temporary
+  {
+    xl::list<int> dst(xl::list<int>{1, 2, 3}); // move-ctor from prvalue
+    assert((dst == xl::list<int>{1, 2, 3}));
+  }
+
+  // 3. Copy assignment followed by move assignment
+  {
+    xl::list<int> a = {4, 5};
+    xl::list<int> b = {6, 7, 8};
+
+    a = b;                       // copy-assign
+    assert((a == xl::list<int>{6, 7, 8}));
+    assert((b == xl::list<int>{6, 7, 8}));     // b unchanged
+
+    b = xl::list<int>{9, 10};    // move-assign from prvalue
+    assert((b == xl::list<int>{9, 10}));
+  }
+
+  // 4. Iterator stability after copy/move
+  {
+    xl::list<int> original = {10, 20, 30, 40, 50};
+    auto it = std::next(original.begin(), 2);   // points to 30
+    assert(*it == 30);
+
+    xl::list<int> copy = original;              // deep copy
+    *it = 99;                                   // mutate original
+    assert((original == xl::list<int>{10, 20, 99, 40, 50}));
+    assert((copy   == xl::list<int>{10, 20, 30, 40, 50})); // copy untouched
+
+    xl::list<int> moved = std::move(original);  // move
+    assert(original.empty());                   // NOLINT(bugprone-use-after-move)
+    assert((moved  == xl::list<int>{10, 20, 99, 40, 50}));
+  }
+
+  // 5. Self-assignment guard
+  {
+    xl::list<int> lst = {11, 22, 33};
+    lst = lst;                                  // self-assign
+    assert((lst == xl::list<int>{11, 22, 33}));
+  }
 }
 
 int main() {
