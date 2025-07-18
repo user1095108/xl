@@ -24,12 +24,14 @@ constexpr auto conv(auto const ...n) noexcept
 
 constexpr auto next(auto i, auto n) noexcept
 {
-  for (; n; --n, ++i); return i;
+  for (; n; --n, ++i);
+  return i;
 }
 
 constexpr auto next2(auto i, auto n) noexcept
 {
-  for (; n && i; --n, ++i); return i;
+  for (; n && i; --n, ++i);
+  return i;
 }
 
 }
