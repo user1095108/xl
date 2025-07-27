@@ -155,16 +155,16 @@ public:
   }
 
   list(std::ranges::input_range auto&& rg)
-    noexcept(noexcept(assign_range(std::forward<decltype(rg)>(rg))))
-    requires(!std::is_same_v<std::remove_cvref_t<decltype(rg)>, list>)
+    noexcept(noexcept(list(std::ranges::begin(rg), std::ranges::end(rg))))
+    requires(!std::is_same_v<std::remove_cvref_t<decltype(rg)>, list>):
+    list(std::ranges::begin(rg), std::ranges::end(rg))
   {
-    assign_range(std::forward<decltype(rg)>(rg));
   }
 
   list(from_range_t, std::ranges::input_range auto&& rg)
-    noexcept(noexcept(assign_range(std::forward<decltype(rg)>(rg))))
+    noexcept(noexcept(list(std::ranges::begin(rg), std::ranges::end(rg)))):
+    list(std::ranges::begin(rg), std::ranges::end(rg))
   {
-    assign_range(std::forward<decltype(rg)>(rg));
   }
 
   ~list() noexcept(noexcept(node::destroy({}))) { node::destroy(cbegin()); }
