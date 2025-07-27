@@ -154,7 +154,7 @@ public:
   {
   }
 
-  list(std::ranges::input_range auto&& rg)
+  explicit list(std::ranges::input_range auto&& rg)
     noexcept(noexcept(list(std::ranges::begin(rg), std::ranges::end(rg))))
     requires(!std::is_same_v<std::remove_cvref_t<decltype(rg)>, list>):
     list(std::ranges::begin(rg), std::ranges::end(rg))
