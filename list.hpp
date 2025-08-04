@@ -135,7 +135,7 @@ public:
   }
 
   template <typename V = value_type>
-  explicit list(size_type c, V const& v = {}, int = 0)
+  explicit list(size_type c, V const& v = V{}, int = 0)
     noexcept(noexcept(emplace_back(v)))
   {
     while (c) --c, emplace_back(v);
