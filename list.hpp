@@ -167,7 +167,8 @@ public:
     noexcept(noexcept(assign(o.begin(), o.end())))
     requires(std::is_copy_constructible_v<value_type>)
   {
-    if (this != &o) assign(o.begin(), o.end()); return *this;
+    if (this != &o) assign(o.begin(), o.end());
+    return *this;
   }
 
   auto& operator=(list&& o) noexcept(noexcept(node::destroy({})))
@@ -175,7 +176,6 @@ public:
     if (this != &o)
       node::destroy(cbegin()),
       detail::assign(f_, l_, o.f_, o.l_)(o.f_, o.l_, nullptr, nullptr);
-
     return *this;
   }
 
