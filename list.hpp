@@ -713,11 +713,8 @@ public:
       if (nxtb) nxtb->l_ ^= anbn;
 
       //
-      if (!a.p_) f_ = a.n_;
-      else if (!b.p_) f_ = b.n_;
-
-      if (!nxta) l_ = a.n_;
-      else if (!nxtb) l_ = b.n_;
+      if (!a.p_) f_ = a.n_; else if (!b.p_) f_ = b.n_;
+      if (!nxta) l_ = a.n_; else if (!nxtb) l_ = b.n_;
     }
   }
 
