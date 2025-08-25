@@ -723,7 +723,7 @@ public:
   void sort(Cmp cmp = Cmp()) noexcept(noexcept(node::merge(
     std::declval<const_iterator&>(), std::declval<const_iterator>(),
     std::declval<const_iterator&>(), cmp)))
-    requires(!I)
+    requires(0 == I)
   { // classic merge sort
     auto b(cbegin()), m(b), e(cend());
 
@@ -742,6 +742,14 @@ public:
           noexcept(noexcept(node::merge(i, i, j, cmp_)))
         {
           if (sz <= 1) return;
+          else if (sz == 2)
+          {
+            auto m(std::next(i));
+            if (cmp_(*m, *i)) node::iter_swap(i, m);
+            j.p_ = m.n_; // fix iterator
+
+            return;
+          }
 
           auto m(i);
 
@@ -803,12 +811,13 @@ public:
       void operator()(const_iterator& i, decltype(i) j) const
         noexcept(noexcept(node::merge(i, i, j, cmp_)))
       {
+        if (j.p_ == i.n_) return;
+
         auto m(i);
 
         for (auto n(j); m != n; ++m) if (m == --n) break;
 
-        if (i == m) return;
-        else if ((j.p_ == m.n_) && cmp_(*m, *i))
+        if ((j.p_ == m.n_) && cmp_(*m, *i))
         {
           node::iter_swap(i, m);
           j.p_ = m.n_; // fix iterator
