@@ -23,6 +23,7 @@ template <typename T>
   requires(!std::is_reference_v<T>)
 class list
 {
+private:
   struct node;
 
   friend class listiterator<node>;
@@ -94,6 +95,36 @@ private:
 
       k.n_->l_ ^= detail::conv(k.p_, ni.n_); // ni k
       ni.n_->l_ = detail::conv(ni.p_, k.n_);
+    }
+
+    static void iter_swap(auto& a, decltype(a) b) noexcept
+    {
+      // a.p_ a nxta ... b.p_ b nxtb ... a.p_ a nxta
+      auto nxta(a.n_->link(a.p_));
+      auto nxtb(b.n_->link(b.p_));
+
+      std::swap(a.n_->l_, b.n_->l_);
+      std::swap(a.n_, b.n_);
+
+      auto const anbn(detail::conv(a.n_, b.n_));
+
+      // fix parent
+      if (b.n_ == b.p_)
+      {
+        nxta = b.n_;
+        b.p_ = a.n_;
+      }
+      else if (a.n_ == a.p_)
+      {
+        nxtb = a.n_;
+        a.p_ = b.n_;
+      }
+
+      // fix neighbors
+      if (a.p_) a.p_->l_ ^= anbn;
+      if (b.p_) b.p_->l_ ^= anbn;
+      if (nxta) nxta->l_ ^= anbn;
+      if (nxtb) nxtb->l_ ^= anbn;
     }
   };
 
@@ -550,7 +581,8 @@ public:
     noexcept(noexcept((emplace_front(std::forward<decltype(a)>(a)), ...)))
     requires(!!sizeof...(a))
   {
-    (emplace_front(std::forward<decltype(a)>(a)), ...);
+    auto i(cbegin());
+    (++(i = emplace(i, std::forward<decltype(a)>(a))), ...);
   }
 
   void push_front(value_type v)
@@ -646,6 +678,47 @@ public:
   }
 
   //
+  void iter_swap(auto&& a, decltype(a) b) noexcept
+  {
+    if (a != b)
+    {
+      // a.p_ a nxta ... b.p_ b nxtb ... a.p_ a nxta
+      auto nxta(a.n_->link(a.p_));
+      auto nxtb(b.n_->link(b.p_));
+
+      std::swap(a.n_->l_, b.n_->l_);
+      std::swap(a.n_, b.n_);
+
+      auto const anbn(detail::conv(a.n_, b.n_));
+
+      // fix parent
+      if (b.n_ == b.p_)
+      {
+        nxta = b.n_;
+        b.p_ = a.n_;
+      }
+      else if (a.n_ == a.p_)
+      {
+        nxtb = a.n_;
+        a.p_ = b.n_;
+      }
+
+      // fix neighbors
+      if (a.p_) a.p_->l_ ^= anbn;
+      if (b.p_) b.p_->l_ ^= anbn;
+      if (nxta) nxta->l_ ^= anbn;
+      if (nxtb) nxtb->l_ ^= anbn;
+
+      //
+      if (!a.p_) f_ = a.n_;
+      else if (!b.p_) f_ = b.n_;
+
+      if (!nxta) l_ = a.n_;
+      else if (!nxtb) l_ = b.n_;
+    }
+  }
+
+  //
   template <int I = 0, class Cmp = std::less<value_type>>
   void sort(Cmp cmp = Cmp()) noexcept(noexcept(node::merge(
     std::declval<const_iterator&>(), std::declval<const_iterator>(),
@@ -735,6 +808,13 @@ public:
         for (auto n(j); m != n; ++m) if (m == --n) break;
 
         if (i == m) return;
+        else if ((j.p_ == m.n_) && cmp_(*m, *i))
+        {
+          node::iter_swap(i, m);
+          j.p_ = m.n_; // fix iterator
+
+          return;
+        }
 
         operator()(i, m);
         operator()(m, j);
