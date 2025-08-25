@@ -13,6 +13,10 @@ int main()
 
   xl::erase(l, 1, 1ull, 1ll);
 
+  for (auto& a: l) std::cout << a << " "; std::cout << std::endl;
+  l.iter_swap(l.begin(), std::next(l.begin(), 1));
+  for (auto& a: l) std::cout << a << " "; std::cout << std::endl;
+
   //
   std::cout << "size: " << l.size() << std::endl;
 

@@ -679,6 +679,9 @@ public:
 
   //
   void iter_swap(auto&& a, decltype(a) b) noexcept
+      requires(
+        std::same_as<const_iterator, std::remove_reference_t<decltype(a)>> ||
+        std::same_as<iterator, std::remove_reference_t<decltype(a)>>)
   {
     if (a != b)
     {
