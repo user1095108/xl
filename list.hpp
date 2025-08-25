@@ -747,12 +747,11 @@ public:
           if (sz <= 1) return;
           else if (sz <= 4)
           {
-            /*
             auto m(std::next(i));
             if (cmp_(*m, *i)) node::iter_swap(i, m);
             j.p_ = m.n_; // fix iterator
-            */
 
+            /*
             for (auto m(std::next(i)); m != j; ++m)
             {
               auto mm(m);
@@ -774,6 +773,7 @@ public:
                   mm = n;
               }
             }
+            */
 
             return;
           }
