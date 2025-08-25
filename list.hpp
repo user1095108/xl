@@ -745,35 +745,11 @@ public:
           noexcept(noexcept(node::merge(i, i, j, cmp_)))
         {
           if (sz <= 1) return;
-          else if (sz == 2)
+          else if (2 == sz)
           {
             auto m(std::next(i));
             if (cmp_(*m, *i)) node::iter_swap(i, m);
             j.p_ = m.n_; // fix iterator
-
-            /*
-            for (auto m(std::next(i)); m != j; ++m)
-            {
-              auto mm(m);
-
-              for (auto n(std::prev(m)); cmp_(*mm, *n); --n)
-              {
-                node::iter_swap(mm, n);
-
-                if (n.n_ == j.p_) j.p_ = mm.n_; // fix iterator
-                else if (n == m) m.p_ = n.p_; // fix iterator
-
-                if (i == mm) // i was swapped
-                {
-                  i = n; // fix iterator
-
-                  break;
-                }
-                else
-                  mm = n;
-              }
-            }
-            */
 
             return;
           }
@@ -870,6 +846,40 @@ public:
     detail::assign(f_, l_)(b.n_, e.p_);
   }
 
+  template <int I, class Cmp = std::less<value_type>>
+  void sort(Cmp cmp = Cmp()) noexcept(noexcept(node::merge(
+    std::declval<const_iterator&>(), std::declval<const_iterator>(),
+    std::declval<const_iterator&>(), cmp)))
+    requires(3 == I)
+  {
+    auto i(cbegin()), j(cend());
+
+    for (auto m(std::next(i)); m != j; ++m)
+    {
+      auto mm(m);
+
+      for (auto n(std::prev(m)); cmp(*mm, *n); --n)
+      {
+        node::iter_swap(mm, n);
+
+        if (n.n_ == j.p_) j.p_ = mm.n_; // fix iterator
+        else if (n == m) m.p_ = n.p_; // fix iterator
+
+        if (i == mm) // i was swapped
+        {
+          i = n; // fix iterator
+
+          break;
+        }
+        else
+          mm = n;
+      }
+    }
+
+    detail::assign(f_, l_)(i.n_, j.p_);
+  }
+
+  //
   void splice(const_iterator const i, auto&& o, const_iterator const b,
     const_iterator const e) noexcept
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
