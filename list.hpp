@@ -808,11 +808,17 @@ public:
     {
       for (;;)
       {
-        if (auto const m(detail::next2(i, bsize)); m) [[likely]]
+        if (auto m(detail::next2(i, bsize)); m) [[likely]]
         {
           auto j(detail::next2(m, bsize));
 
-          node::merge(i, m, j, cmp);
+          if ((j.p_ == m.n_) && cmp(*m, *i))
+          {
+            node::iter_swap(i, m);
+            j.p_ = m.n_; // fix iterator
+          }
+          else
+            node::merge(i, m, j, cmp);
 
           if (!i.p_) { f_ = i.n_; }
           if (!j.n_) { l_ = j.p_;
