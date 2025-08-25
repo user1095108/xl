@@ -745,13 +745,14 @@ public:
           noexcept(noexcept(node::merge(i, i, j, cmp_)))
         {
           if (sz <= 1) return;
-          else if (sz == 2)
+          else if (sz <= 4)
           {
+            /*
             auto m(std::next(i));
             if (cmp_(*m, *i)) node::iter_swap(i, m);
             j.p_ = m.n_; // fix iterator
+            */
 
-            /*
             for (auto m(std::next(i)); m != j; ++m)
             {
               auto mm(m);
@@ -760,12 +761,12 @@ public:
               {
                 node::iter_swap(mm, n);
 
-                if (n.n_ == j.p_) j = std::next(mm);
-                else if (n == m) m = n;
+                if (n.n_ == j.p_) j.p_ = mm.n_; // fix iterator
+                else if (n == m) m.p_ = n.p_; // fix iterator
 
-                if (i == mm)
+                if (i == mm) // i was swapped
                 {
-                  i = n;
+                  i = n; // fix iterator
 
                   break;
                 }
@@ -773,7 +774,6 @@ public:
                   mm = n;
               }
             }
-            */
 
             return;
           }
