@@ -685,36 +685,11 @@ public:
   {
     if (a != b)
     {
-      // a.p_ a nxta ... b.p_ b nxtb ... a.p_ a nxta
-      auto nxta(a.n_->link(a.p_));
-      auto nxtb(b.n_->link(b.p_));
-
-      std::swap(a.n_->l_, b.n_->l_);
-      std::swap(a.n_, b.n_);
-
-      auto const anbn(detail::conv(a.n_, b.n_));
-
-      // fix parent
-      if (b.n_ == b.p_)
-      {
-        nxta = b.n_;
-        b.p_ = a.n_;
-      }
-      else if (a.n_ == a.p_)
-      {
-        nxtb = a.n_;
-        a.p_ = b.n_;
-      }
-
-      // fix neighbors
-      if (a.p_) a.p_->l_ ^= anbn;
-      if (b.p_) b.p_->l_ ^= anbn;
-      if (nxta) nxta->l_ ^= anbn;
-      if (nxtb) nxtb->l_ ^= anbn;
+      node::iter_swap(a, b);
 
       //
       if (!a.p_) f_ = a.n_; else if (!b.p_) f_ = b.n_;
-      if (!nxta) l_ = a.n_; else if (!nxtb) l_ = b.n_;
+      if (!std::next(a)) l_ = a.n_; else if (!std::next(b)) l_ = b.n_;
     }
   }
 
