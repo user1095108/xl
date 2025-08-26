@@ -106,8 +106,6 @@ private:
       std::swap(a.n_->l_, b.n_->l_);
       std::swap(a.n_, b.n_);
 
-      auto const anbn(detail::conv(a.n_, b.n_));
-
       // fix parent
       if (b.n_ == b.p_) // ... a b ...
         nxta = b.n_, b.p_ = a.n_;
@@ -115,10 +113,14 @@ private:
         nxtb = a.n_, a.p_ = b.n_;
 
       // fix neighbors
-      if (a.p_) a.p_->l_ ^= anbn;
-      if (b.p_) b.p_->l_ ^= anbn;
-      if (nxta) nxta->l_ ^= anbn;
-      if (nxtb) nxtb->l_ ^= anbn;
+      {
+        auto const anbn(detail::conv(a.n_, b.n_));
+
+        if (a.p_) a.p_->l_ ^= anbn;
+        if (b.p_) b.p_->l_ ^= anbn;
+        if (nxta) nxta->l_ ^= anbn;
+        if (nxtb) nxtb->l_ ^= anbn;
+      }
 
       //
       return std::array<decltype(nxta), 2>{nxta, nxtb};
