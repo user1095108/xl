@@ -758,7 +758,7 @@ public:
         {
           auto j(detail::next2(m, bsize));
 
-          if ((j.p_ == m.n_) && cmp(*m, *i))
+          if ((1 == bsize) && cmp(*m, *i))
           {
             node::iter_swap(i, m);
             j.p_ = m.n_; // fix iterator
