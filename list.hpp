@@ -790,7 +790,7 @@ public:
       void operator()(const_iterator& i, decltype(i) j) const
         noexcept(noexcept(node::merge(i, i, j, cmp_)))
       {
-        if ((i == j) || (j.p_ == i.n_)) return;
+        if ((j.p_ == i.n_) || (i == j)) return;
 
         auto m(i);
 
