@@ -97,7 +97,7 @@ private:
       ni.n_->l_ = detail::conv(ni.p_, k.n_);
     }
 
-    static void iter_swap(auto& a, decltype(a) b) noexcept
+    static auto iter_swap(auto& a, decltype(a) b) noexcept
     {
       // a.p_ a nxta ... b.p_ b nxtb ... a.p_ a nxta
       auto nxta(a.n_->link(a.p_));
@@ -109,22 +109,19 @@ private:
       auto const anbn(detail::conv(a.n_, b.n_));
 
       // fix parent
-      if (b.n_ == b.p_)
-      {
-        nxta = b.n_;
-        b.p_ = a.n_;
-      }
-      else if (a.n_ == a.p_)
-      {
-        nxtb = a.n_;
-        a.p_ = b.n_;
-      }
+      if (b.n_ == b.p_) // ... a b ...
+        nxta = b.n_, b.p_ = a.n_;
+      else if (a.n_ == a.p_) // ... b a ...
+        nxtb = a.n_, a.p_ = b.n_;
 
       // fix neighbors
       if (a.p_) a.p_->l_ ^= anbn;
       if (b.p_) b.p_->l_ ^= anbn;
       if (nxta) nxta->l_ ^= anbn;
       if (nxtb) nxtb->l_ ^= anbn;
+
+      //
+      return std::array<decltype(nxta), 2>{nxta, nxtb};
     }
   };
 
@@ -685,11 +682,11 @@ public:
   {
     if (a != b)
     {
-      node::iter_swap(a, b);
+      auto const [nxta, nxtb](node::iter_swap(a, b));
 
       //
       if (!a.p_) f_ = a.n_; else if (!b.p_) f_ = b.n_;
-      if (!std::next(a)) l_ = a.n_; else if (!std::next(b)) l_ = b.n_;
+      if (!nxta) l_ = a.n_; else if (!nxtb) l_ = b.n_;
     }
   }
 
