@@ -112,8 +112,7 @@ private:
       else if (a.n_ == a.p_) // ... b a ...
         nxtb = a.n_, a.p_ = b.n_;
 
-      // fix neighbors
-      {
+      { // fix neighbors
         auto const anbn(detail::conv(a.n_, b.n_));
 
         if (a.p_) a.p_->l_ ^= anbn;
