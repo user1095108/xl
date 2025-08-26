@@ -822,6 +822,8 @@ public:
   void sort(Cmp cmp = Cmp()) noexcept
     requires(3 == I)
   {
+    if (empty()) return;
+
     auto i(cbegin()), j(cend());
 
     for (auto m(std::next(i)); m != j; ++m)
