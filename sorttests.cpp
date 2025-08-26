@@ -50,5 +50,11 @@ int main()
   assert(std::equal(l1.begin(), l1.end(), l3.begin(), l3.end()));
   assert(std::equal(l1.begin(), l1.end(), l4.begin(), l4.end()));
 
+  l2.clear();
+  l2.sort<0>();
+  l2.sort<1>();
+  l2.sort<2>();
+  l2.sort<3>();
+
   return 0;
 }
