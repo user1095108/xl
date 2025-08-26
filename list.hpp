@@ -826,9 +826,7 @@ public:
 
     for (auto m(std::next(i)); m != j; ++m)
     {
-      auto mm(m);
-
-      for (auto n(std::prev(m)); cmp(*mm, *n); --n)
+      for (auto n(std::prev(m)), mm(m); cmp(*mm, *n); --n)
       {
         node::iter_swap(mm, n);
 
