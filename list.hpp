@@ -97,6 +97,30 @@ private:
       ni.n_->l_ = detail::conv(ni.p_, k.n_);
     }
 
+    static auto insertion_sort(auto& i, decltype(i) j, auto cmp) noexcept
+    {
+      for (auto m(std::next(i)); m != j; ++m)
+      {
+        for (auto n(std::prev(m)), mm(m); cmp(*mm, *n); --n)
+        {
+          node::iter_swap(mm, n);
+
+          if (n.n_ == j.p_) j.p_ = mm.n_; // mm was swapped into n, fix j
+          if (n.n_ == m.p_) m.p_ = mm.n_; // mm was swapped into n, fix m
+          else if (n == m) m = mm; // m was swapped into n, fix m
+
+          if (i == mm) // i was was swapped into mm
+          {
+            i = n; // fix iterator, n is the new i
+
+            break;
+          }
+          else
+            mm = n; // advance mm
+        }
+      }
+    }
+
     static auto iter_swap(auto& a, decltype(a) b) noexcept
     {
       // a.p_ a nxta ... b.p_ b nxtb ... a.p_ a nxta
@@ -757,11 +781,8 @@ public:
         {
           auto j(detail::next2(m, bsize));
 
-          if ((1 == bsize) && cmp(*m, *i))
-          {
-            node::iter_swap(i, m);
-            j.p_ = m.n_; // fix iterator
-          }
+          if (4 == bsize)
+            node::insertion_sort(i, j, cmp);
           else
             node::merge(i, m, j, cmp);
 
@@ -813,38 +834,6 @@ public:
     auto b(cbegin()), e(cend());
     S{cmp}(b, e);
     detail::assign(f_, l_)(b.n_, e.p_);
-  }
-
-  template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp cmp = Cmp()) noexcept
-    requires(3 == I)
-  {
-    if (empty()) return;
-
-    auto i(cbegin()), j(cend());
-
-    for (auto m(std::next(i)); m != j; ++m)
-    {
-      for (auto n(std::prev(m)), mm(m); cmp(*mm, *n); --n)
-      {
-        node::iter_swap(mm, n);
-
-        if (n.n_ == j.p_) j.p_ = mm.n_; // mm was swapped into n, fix j
-        if (n.n_ == m.p_) m.p_ = mm.n_; // mm was swapped into n, fix m
-        else if (n == m) m = mm; // m was swapped into n, fix m
-
-        if (i == mm) // i was was swapped into mm
-        {
-          i = n; // fix iterator, n is the new i
-
-          break;
-        }
-        else
-          mm = n; // advance mm
-      }
-    }
-
-    detail::assign(f_, l_)(i.n_, j.p_);
   }
 
   //
