@@ -781,7 +781,7 @@ public:
         {
           auto j(detail::next2(m, bsize));
 
-          if (4 == bsize)
+          if (4 >= bsize)
             node::insertion_sort(i, j, cmp);
           else
             node::merge(i, m, j, cmp);
