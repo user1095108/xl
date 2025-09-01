@@ -97,7 +97,7 @@ private:
       ni.n_->l_ = detail::conv(ni.p_, k.n_);
     }
 
-    static auto insertion_sort(auto& i, decltype(i) j, auto cmp) noexcept
+    static void insertion_sort(auto& i, decltype(i) j, auto cmp) noexcept
     {
       // if (i == j) return;
 
@@ -119,7 +119,7 @@ private:
       }
     }
 
-    static auto quick_sort(auto&& i, auto&& j, auto&& cmp) noexcept
+    static void quick_sort(auto& i, decltype(i) j, auto cmp) noexcept
     {
       if ((j.p_ == i.n_) || (i == j)) return;
       else if (j.p_ == std::next(i).n_)
