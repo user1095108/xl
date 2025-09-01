@@ -97,7 +97,8 @@ private:
       ni.n_->l_ = detail::conv(ni.p_, k.n_);
     }
 
-    static void insertion_sort(auto& i, decltype(i) j, auto cmp) noexcept
+    static void insertion_sort(auto& i, decltype(i) j, auto cmp)
+      noexcept(noexcept(cmp(*i, *i)))
     {
       // if (i == j) return;
 
@@ -120,11 +121,12 @@ private:
           if (j.p_ == mm.n_) j = m;
         }
         else
-          ++m;
+          ++m; // skip
       }
     }
 
-    static void quick_sort(auto& i, decltype(i) j, auto cmp) noexcept
+    static void quick_sort(auto& i, decltype(i) j, auto cmp)
+      noexcept(noexcept(cmp(*i, *i)))
     {
       if ((j.p_ == i.n_) || (i == j)) return;
       else if (j.p_ == std::next(i).n_)
@@ -827,7 +829,9 @@ public:
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp cmp = Cmp()) noexcept(noexcept(cmp(*cbegin(), *cbegin())))
+  void sort(Cmp cmp = Cmp()) noexcept(noexcept(node::merge(
+    std::declval<const_iterator&>(), std::declval<const_iterator>(),
+    std::declval<const_iterator&>(), cmp)))
     requires(1 == I)
   { // bottom-up merge sort
     size_type bsize(1);
@@ -859,7 +863,9 @@ public:
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp cmp = Cmp()) noexcept(noexcept(cmp(*cbegin(), *cbegin())))
+  void sort(Cmp cmp = Cmp()) noexcept(noexcept(node::merge(
+    std::declval<const_iterator&>(), std::declval<const_iterator>(),
+    std::declval<const_iterator&>(), cmp)))
     requires(2 == I)
   {
     struct S
