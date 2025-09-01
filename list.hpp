@@ -99,26 +99,61 @@ private:
 
     static auto insertion_sort(auto& i, decltype(i) j, auto cmp) noexcept
     {
-      for (auto m(std::next(i)); m != j; ++m)
+      // if (i == j) return;
+
+      for (auto m(std::next(i)); m != j;)
       {
-        for (auto n(std::prev(m)), mm(m); cmp(*mm, *n); --n)
+        auto ip(m);
+
+        // find insertion point
+        for (auto n(std::prev(m)); cmp(*m, *n);)
+          if (ip = n; i == n) break; else --n;
+
+        // splice
+        auto mm(m);
+        m = splice(ip, mm);
+
+        // fix i, j range
+        if (ip == i) i = mm;
+        if (j.p_ == mm.n_) j = m;
+      }
+    }
+
+    static auto quick_sort(auto&& i, auto&& j, auto&& cmp) noexcept
+    {
+      if ((j.p_ == i.n_) || (i == j)) return;
+      else if (j.p_ == std::next(i).n_)
+      {
+        auto m(std::next(i));
+        if (cmp(*m, *i)) node::iter_swap(i, m);
+        j.p_ = m.n_; // fix iterator
+
+        return;
+      }
+
+      auto b(j); auto const& m(i);
+
+      for (auto a(std::prev(j)); a != i; --a)
+      {
+        if (cmp(*m, *a) && (a != --b))
         {
-          node::iter_swap(mm, n);
+          iter_swap(a, b);
 
-          if (n.n_ == j.p_) j.p_ = mm.n_; // mm was swapped into n, fix j
-          if (n.n_ == m.p_) m.p_ = mm.n_; // mm was swapped into n, fix m
-          else if (n == m) m = mm; // m was swapped into n, fix m
-
-          if (i == mm) // i was was swapped into mm
-          {
-            i = n; // fix iterator, n is the new i
-
-            break;
-          }
-          else
-            mm = n; // advance mm
+          if (j.p_ == a.n_) j.p_ = b.n_;
+          if (i == b) i = a; // fix i, it got swapped
         }
       }
+
+      if (m != --b)
+      {
+        iter_swap(m, b);
+
+        if (j.p_ == m.n_) j.p_ = b.n_;
+        if (i == b) i = m; // fix i, it got swapped
+      }
+
+      quick_sort(i, ++b, cmp);
+      quick_sort(b, j, cmp);
     }
 
     static auto iter_swap(auto& a, decltype(a) b) noexcept
@@ -146,6 +181,27 @@ private:
 
       //
       return std::array<decltype(nxta), 2>{nxta, nxtb};
+    }
+
+    static const_iterator splice(auto&& i, auto&& b) noexcept
+    {
+      if (i == b) return std::next(b);
+
+      // i.p_ b.n_ i.n_
+      if (i.n_) i.n_->l_ ^= detail::conv(i.p_, b.n_);
+      if (i.p_) i.p_->l_ ^= detail::conv(i.n_, b.n_);
+
+      // b.p_ b.n_ e
+      auto const e(b.n_->link(b.p_));
+      if (e) e->l_ ^= detail::conv(b.n_, b.p_);
+      if (b.p_) b.p_->l_ ^= detail::conv(b.n_, e);
+      b.n_->l_ = detail::conv(i.p_, i.n_);
+
+      const_iterator const r(e, b.p_);
+
+      detail::assign(b.p_, i.p_)(i.p_, b.n_);
+
+      return r;
     }
   };
 
@@ -738,11 +794,9 @@ public:
           noexcept(noexcept(node::merge(i, i, j, cmp_)))
         {
           if (sz <= 1) return;
-          else if (2 == sz)
+          else if (8 >= sz)
           {
-            auto m(std::next(i));
-            if (cmp_(*m, *i)) node::iter_swap(i, m);
-            j.p_ = m.n_; // fix iterator
+            node::insertion_sort(i, j, cmp_);
 
             return;
           }
