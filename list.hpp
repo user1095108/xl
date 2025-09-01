@@ -103,19 +103,24 @@ private:
 
       for (auto m(std::next(i)); m != j;)
       {
-        auto ip(m);
-
         // find insertion point
+        decltype(m) ip{};
+
         for (auto n(std::prev(m)); cmp(*m, *n);)
           if (ip = n; i == n) break; else --n;
 
-        // splice
-        auto mm(m);
-        m = splice(ip, mm);
+        // splice or skip
+        if (ip)
+        {
+          auto mm(m);
+          m = splice(ip, mm);
 
-        // fix i, j range
-        if (ip == i) i = mm;
-        if (j.p_ == mm.n_) j = m;
+          // fix i, j range
+          if (ip == i) i = mm;
+          if (j.p_ == mm.n_) j = m;
+        }
+        else
+          ++m;
       }
     }
 
@@ -185,7 +190,7 @@ private:
 
     static const_iterator splice(auto&& i, auto&& b) noexcept
     {
-      if (i == b) return std::next(b);
+      // if (i == b) return std::next(b);
 
       // i.p_ b.n_ i.n_
       if (i.n_) i.n_->l_ ^= detail::conv(i.p_, b.n_);
