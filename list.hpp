@@ -190,7 +190,7 @@ private:
       return std::array<decltype(nxta), 2>{nxta, nxtb};
     }
 
-    static const_iterator splice(auto&& i, auto&& b) noexcept
+    static auto splice(auto&& i, decltype(i) b) noexcept
     {
       // if (i == b) return std::next(b);
 
@@ -204,7 +204,7 @@ private:
       if (b.p_) b.p_->l_ ^= detail::conv(b.n_, e);
       b.n_->l_ = detail::conv(i.p_, i.n_);
 
-      const_iterator const r(e, b.p_);
+      std::remove_cvref_t<decltype(i)> const r(e, b.p_);
 
       detail::assign(b.p_, i.p_)(i.p_, b.n_);
 
