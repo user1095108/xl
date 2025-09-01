@@ -125,44 +125,6 @@ private:
       }
     }
 
-    static void quick_sort(auto& i, decltype(i) j, auto cmp)
-      noexcept(noexcept(cmp(*i, *i)))
-    {
-      if ((j.p_ == i.n_) || (i == j)) return;
-      else if (j.p_ == std::next(i).n_)
-      {
-        auto m(std::next(i));
-        if (cmp(*m, *i)) node::iter_swap(i, m);
-        j.p_ = m.n_; // fix iterator
-
-        return;
-      }
-
-      auto b(j); auto const& m(i);
-
-      for (auto a(std::prev(j)); a != i; --a)
-      {
-        if (cmp(*m, *a) && (a != --b))
-        {
-          iter_swap(a, b);
-
-          if (j.p_ == a.n_) j.p_ = b.n_;
-          if (i == b) i = a; // fix i, it got swapped
-        }
-      }
-
-      if (m != --b)
-      {
-        iter_swap(m, b);
-
-        if (j.p_ == m.n_) j.p_ = b.n_;
-        if (i == b) i = m; // fix i, it got swapped
-      }
-
-      quick_sort(i, ++b, cmp);
-      quick_sort(b, j, cmp);
-    }
-
     static auto iter_swap(auto& a, decltype(a) b) noexcept
     {
       // a.p_ a nxta ... b.p_ b nxtb ... a.p_ a nxta
