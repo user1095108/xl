@@ -117,8 +117,8 @@ private:
           m = splice(ip, mm);
 
           // fix i, j range
-          if (ip == i) i = mm;
-          if (j.p_ == mm.n_) j = m;
+          if (ip == i) i.n_ = mm.n_;
+          if (j.p_ == mm.n_) j.p_ = m.p_;
         }
         else
           ++m; // skip
