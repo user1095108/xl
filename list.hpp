@@ -104,7 +104,7 @@ private:
     {
       // if (i == j) return;
 
-      for (auto m(std::next(i)); m != j;)
+      for (auto m(std::next(i));;)
       {
         // find insertion point
         decltype(m) ip{};
@@ -120,10 +120,10 @@ private:
 
           // fix i, j range
           if (ip == i) i.n_ = mm.n_;
-          if (j.p_ == mm.n_) j.p_ = m.p_;
+          if (j.p_ == mm.n_) { j.p_ = m.p_; break; }
         }
         else
-          ++m; // skip
+          if (j == ++m) break; // skip
       }
     }
 
