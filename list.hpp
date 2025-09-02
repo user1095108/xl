@@ -123,7 +123,7 @@ private:
           if (j.p_ == mm.n_) { j.p_ = m.p_; break; }
         }
         else
-          if (j == ++m) break; // skip
+          if (j.p_ == m.n_) break; else ++m; // skip
       }
     }
 
