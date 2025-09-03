@@ -110,7 +110,7 @@ private:
         decltype(m) ip{};
 
         for (auto n(std::prev(m)); cmp(*m, *n);)
-          if (ip = n; i == n) break; else --n;
+          if ((ip = n) == i) break; else --n;
 
         // splice or skip
         if (ip)
