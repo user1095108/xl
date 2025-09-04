@@ -213,8 +213,13 @@ public:
   {
   }
 
-  template <typename V = value_type>
-  explicit list(size_type c, V const& v = V{}, int = 0)
+  explicit list(size_type c)
+    noexcept(noexcept(emplace_back()))
+  {
+    while (c) --c, emplace_back();
+  }
+
+  explicit list(size_type c, auto const& v, int = 0)
     noexcept(noexcept(emplace_back(v)))
   {
     while (c) --c, emplace_back(v);
@@ -870,7 +875,7 @@ public:
     const_iterator const e) noexcept
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
-    if ((b == e) || (i == e)) [[unlikely]] return;
+    if ((b == e) || ((i == e) && (this == &o))) [[unlikely]] return;
 
     // relink i, b, e
     i.n_ ? i.n_->l_ ^= detail::conv(i.p_, e.p_) : bool(l_ = e.p_);
