@@ -2,6 +2,7 @@
 #include <iostream>
 #include <list>
 #include <memory>
+#include <numeric>
 #include <sstream>
 #include <vector>
 #include "list.hpp" // Replace with the actual container header
@@ -2492,6 +2493,314 @@ void test3()
     xl::list<int> lst = {11, 22, 33};
     lst = lst;                                  // self-assign
     assert((lst == xl::list<int>{11, 22, 33}));
+  }
+
+
+  // Test 1: Iterator arithmetic and bounds checking
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5};
+    auto it = lst.begin();
+    
+    // Test increment/decrement at boundaries
+    auto end_it = lst.end();
+    --end_it; // Should point to last element
+    assert(*end_it == 5);
+    
+    ++end_it; // Should be back to end
+    assert(end_it == lst.end());
+    
+    // Test distance calculation
+    assert(std::distance(lst.begin(), lst.end()) == 5);
+  }
+
+  // Test 2: Const correctness
+  {
+    const xl::list<int> const_lst = {10, 20, 30};
+    
+    // Test const methods
+    assert(const_lst.size() == 3);
+    assert(const_lst.front() == 10);
+    assert(const_lst.back() == 30);
+    assert(!const_lst.empty());
+    
+    // Test const iterators
+    auto cit = const_lst.cbegin();
+    assert(*cit == 10);
+    
+    int sum = 0;
+    for (auto it = const_lst.cbegin(); it != const_lst.cend(); ++it) {
+        sum += *it;
+    }
+    assert(sum == 60);
+  }
+
+  // Test 3: Memory allocation patterns
+  {
+    xl::list<int> lst;
+    
+    // Test repeated push/pop patterns
+    for (int cycle = 0; cycle < 100; ++cycle) {
+      for (int i = 0; i < 10; ++i) {
+        lst.push_back(i);
+      }
+      for (int i = 0; i < 5; ++i) {
+        lst.pop_back();
+      }
+    }
+    assert(lst.size() == 500); // 100 cycles * 5 net additions
+    
+    lst.clear();
+    assert(lst.empty());
+  }
+
+  // Test 6: Iterator invalidation scenarios
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5};
+    std::vector<decltype(lst.begin())> iterators;
+    
+    // Store iterators to each element
+    for (auto it = lst.begin(); it != lst.end(); ++it) {
+      iterators.push_back(it);
+    }
+    
+    // Erase middle element - only that iterator should be invalidated
+    auto middle_it = std::next(lst.begin(), 2);
+    lst.erase(middle_it);
+    
+    // Other iterators should still be valid
+    assert(*iterators[0] == 1);
+    assert(*iterators[1] == 2);
+    // iterators[2] is invalidated
+    assert(*iterators[3] == 4);
+    assert(*iterators[4] == 5);
+  }
+
+  // Test 7: Splice edge cases
+  {
+    xl::list<int> lst1 = {1, 2, 3};
+    xl::list<int> lst2 = {4, 5, 6};
+    
+    // Splice empty range
+    lst1.splice(lst1.end(), lst2, lst2.end(), lst2.end());
+    assert(lst1.size() == 3);
+    assert(lst2.size() == 3);
+
+    // Splice single element to itself (should be no-op)
+    auto it = std::next(lst1.begin());
+    lst1.splice(it, lst1, it);
+    assert((lst1 == xl::list<int>{1, 2, 3}));
+
+    // Splice range that includes insertion point
+    lst1.splice(lst1.begin(), lst1, std::next(lst1.begin()), lst1.end());
+    assert((lst1 == xl::list<int>{2, 3, 1}));
+  }
+
+  // Test 8: Merge with custom predicates
+  {
+    xl::list<int> lst1 = {5, 3, 1};
+    xl::list<int> lst2 = {6, 4, 2};
+    
+    // Merge in descending order
+    lst1.merge(lst2, std::greater<int>());
+    assert((lst1 == xl::list<int>{6, 5, 4, 3, 2, 1}));
+    assert(lst2.empty());
+  }
+
+  // Test 9: Unique with custom predicates
+  {
+    xl::list<int> lst = {1, 2, 2, 3, 4, 4, 4, 5};
+    
+    // Remove consecutive duplicates (default behavior)
+    auto original_size = lst.size();
+    auto removed = lst.unique();
+    assert(removed > 0);
+    assert(lst.size() < original_size);
+    assert((lst == xl::list<int>{1, 2, 3, 4, 5}));
+    
+    // Custom predicate - remove elements that differ by 1
+    lst = {1, 2, 4, 5, 7, 8};
+    lst.unique([](int a, int b) { return abs(a - b) <= 1; });
+    assert(lst.size() < 6);
+  }
+
+  // Test 10: Remove with complex predicates
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    
+    // Remove even numbers
+    lst.remove_if([](int x) { return x % 2 == 0; });
+    assert(lst.size() == 5);
+    
+    // Verify only odd numbers remain
+    for (const auto& val : lst) {
+      assert(val % 2 == 1);
+    }
+  }
+
+  // Test 1: Large list operations
+  {
+    const size_t N = 50000;
+    xl::list<size_t> large_list;
+    
+    // Fill with sequential numbers
+    for (size_t i = 0; i < N; ++i) {
+        large_list.push_back(i);
+    }
+    assert(large_list.size() == N);
+    
+    // Test find operation
+    auto found = xl::find(large_list, N/2);
+    assert(found && *found == N/2);
+    
+    // Test reverse operation
+    large_list.reverse();
+    assert(large_list.front() == N-1);
+    assert(large_list.back() == 0);
+    
+    // Test sort operation
+    large_list.sort();
+    assert(large_list.front() == 0);
+    assert(large_list.back() == N-1);
+  }
+
+  // Test 2: Fragmented memory usage
+  {
+    xl::list<int> lst;
+    
+    // Create fragmented access pattern
+    for (int i = 0; i < 1000; ++i) {
+      lst.push_back(i);
+      if (i % 3 == 0) {
+        lst.pop_front();
+      }
+    }
+    
+    // Verify integrity
+    assert(!lst.empty());
+    auto size = lst.size();
+    lst.sort();
+    assert(lst.size() == size); // Size shouldn't change after sort
+  }
+
+  // Test 1: Container concept requirements
+  {
+    xl::list<int> lst = {1, 2, 3};
+    
+    // Test Container requirements
+    static_assert(std::is_same_v<xl::list<int>::value_type, int>);
+    static_assert(std::is_same_v<xl::list<int>::reference, int&>);
+    static_assert(std::is_same_v<xl::list<int>::const_reference, const int&>);
+    
+    // Test that iterators satisfy requirements
+    static_assert(std::bidirectional_iterator<xl::list<int>::iterator>);
+    static_assert(std::bidirectional_iterator<xl::list<int>::const_iterator>);
+  }
+
+  // Test 2: Sequence container requirements
+  {
+    xl::list<int> lst;
+    
+    // Test constructors required by SequenceContainer
+    xl::list<int> lst1;
+    xl::list<int> lst2(5);
+    xl::list<int> lst3(5, 42);
+    xl::list<int> lst4{1, 2, 3, 4, 5};
+    
+    assert(lst1.empty());
+    assert(lst2.size() == 5);
+    assert(lst3.size() == 5 && lst3.front() == 42);
+    assert(lst4.size() == 5 && lst4.back() == 5);
+  }
+
+  // Test 3: Allocator-aware container requirements
+  {
+    xl::list<int> lst;
+
+    // Test max_size
+    assert(lst.max_size() > 0);
+
+    // Test that list works with standard algorithms
+    lst = {5, 2, 8, 1, 9};
+    assert(!std::is_sorted(lst.begin(), lst.end()));
+
+    lst.sort();
+    assert(std::is_sorted(lst.begin(), lst.end()));
+  }
+
+  // Test 1: Circular operations
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5};
+ 
+    // Rotate elements using splice
+    auto it = std::next(lst.begin(), 2);
+    lst.splice(lst.end(), lst, lst.begin(), it);
+    assert((lst == xl::list<int>{3, 4, 5, 1, 2}));
+
+    // Rotate back
+    it = std::next(lst.begin(), 3);
+    lst.splice(lst.begin(), lst, it, lst.end());
+    assert((lst == xl::list<int>{1, 2, 3, 4, 5}));
+  }
+
+  // Test 2: Nested container operations
+  {
+    xl::list<xl::list<int>> nested;
+    nested.push_back({1, 2, 3});
+    nested.push_back({4, 5, 6});
+    nested.push_back({7, 8, 9});
+    
+    assert(nested.size() == 3);
+    assert(nested.front().size() == 3);
+    assert(nested.back().back() == 9);
+    
+    // Flatten nested structure
+    xl::list<int> flattened;
+    for (const auto& inner : nested) {
+      for (const auto& val : inner) {
+        flattened.push_back(val);
+      }
+    }
+    assert(flattened.size() == 9);
+    assert(flattened.back() == 9);
+  }
+
+  // Test 4: Thread-safety considerations (basic)
+  {
+    // Test that independent operations don't interfere
+    xl::list<int> lst1 = {1, 2, 3};
+    xl::list<int> lst2 = {4, 5, 6};
+    
+    // Operations on separate lists
+    lst1.push_back(7);
+    lst2.push_front(0);
+
+    assert(lst1.back() == 7);
+    assert(lst2.front() == 0);
+
+    // Move between lists
+    lst1.splice(lst1.end(), std::move(lst2));
+    assert(lst2.empty());
+    assert(lst1.size() == 8);
+  }
+
+  // Test 5: Range-based algorithms
+  {
+    xl::list<int> lst = {1, 2, 3, 4, 5};
+    
+    // Test with standard algorithms
+    auto sum = std::accumulate(lst.begin(), lst.end(), 0);
+    assert(sum == 15);
+    
+    // Test transform
+    std::transform(lst.begin(), lst.end(), lst.begin(), 
+                  [](int x) { return x * 2; });
+    assert(lst.front() == 2);
+    assert(lst.back() == 10);
+    
+    // Test count_if
+    auto even_count = std::count_if(lst.begin(), lst.end(),
+                        [](int x) { return x % 2 == 0; });
+    assert(even_count == 5); // All should be even now
   }
 }
 
