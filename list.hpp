@@ -809,13 +809,12 @@ public:
     {
       for (;;)
       {
-        if (auto m(detail::next2(i, bsize)); m) [[likely]]
+        if (auto m(detail::next2(i, bsize)); m != i) [[likely]]
         {
           auto j(detail::next2(m, bsize));
 
-          if (4 >= bsize)
-            node::insertion_sort(i, j, cmp);
-          else
+          4 >= bsize ?
+            node::insertion_sort(i, j, cmp) :
             node::merge(i, m, j, cmp);
 
           if (!i.p_) { f_ = i.n_; }
