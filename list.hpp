@@ -809,7 +809,7 @@ public:
     {
       for (;;)
       {
-        if (auto m(detail::next2(i, bsize)); m) [[likely]]
+        if (auto m(detail::next2(i, bsize)); m) [[likely]] // !!!
         {
           auto j(detail::next2(m, bsize));
 
