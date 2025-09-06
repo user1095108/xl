@@ -82,7 +82,7 @@ int main()
   test_run("mostly-sorted", l);
 
   //
-  std::fill(l.begin(), l.end(), gen());
+  std::fill(l.begin(), l.end(), dist(gen));
 
   test_run("constant-value", l);
 
