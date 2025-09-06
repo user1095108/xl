@@ -35,7 +35,7 @@ int main ()
 {
   { // https://en.cppreference.com/w/cpp/container/list
   // Create a list containing integers
-  xl::list<int> l = {7, 5, 16, 8};
+  xl::list l = {7, 5, 16, 8};
 
   // Add an integer to the front of the list
   l.push_front(25);
@@ -80,7 +80,7 @@ int main ()
   }
 
   { // https://en.cppreference.com/w/cpp/container/list/erase
-  xl::list<int> c{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+  xl::list c{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
   print_container(c);
 
   c.erase(c.begin());
@@ -107,7 +107,7 @@ int main ()
 
   { // https://en.cppreference.com/w/cpp/container/list
   // Create a list containing integers
-  xl::list<int> l = {7, 5, 16, 8};
+  xl::list l = {7, 5, 16, 8};
 
   // Add an integer to the front of the list
   l.push_front(25);
@@ -127,8 +127,8 @@ int main ()
   }
 
   { // https://en.cppreference.com/w/cpp/container/list/splice
-  xl::list<int> list1{1, 2, 3, 4, 5};
-  xl::list<int> list2{10, 20, 30, 40, 50};
+  xl::list list1{1, 2, 3, 4, 5};
+  xl::list list2{10, 20, 30, 40, 50};
 
   auto it = list1.begin();
   std::advance(it, 2);
@@ -147,8 +147,8 @@ int main ()
   }
 
   { // https://en.cppreference.com/w/cpp/container/list/merge
-  xl::list<int> list1 = {5, 9, 1, 3, 3};
-  xl::list<int> list2 = {8, 7, 2, 3, 4, 4};
+  xl::list list1 = {5, 9, 1, 3, 3};
+  xl::list list2 = {8, 7, 2, 3, 4, 4};
 
   list1.sort();
   list2.sort();
@@ -173,7 +173,7 @@ int main ()
   }
 
   { // https://en.cppreference.com/w/cpp/container/list/unique
-  xl::list<int> c{1, 2, 2, 3, 3, 2, 1, 1, 2};
+  xl::list c{1, 2, 2, 3, 3, 2, 1, 1, 2};
   std::cout << "Before unique(): " << c << std::endl;
   const auto count1 = c.unique();
   std::cout << "After unique():  " << c << "\n"
@@ -189,6 +189,29 @@ int main ()
 
   std::cout << "After unique(pred):  " << c << "\n"
             << count2 << " elements were removed\n";
+  }
+
+  { // https://en.cppreference.com/w/cpp/container/list/assign.html
+  xl::list<char> characters;
+ 
+  auto print_list = [&]()
+  {
+    for (char c : characters)
+      std::cout << c << ' ';
+    std::cout << '\n';
+  };
+ 
+  characters.assign(5, 'a');
+  print_list();
+ 
+  const std::string extra(6, 'b');
+  characters.assign(extra.begin(), extra.end());
+  characters.assign_range(extra);
+  characters = extra;
+  print_list();
+ 
+  characters.assign({'C', '+', '+', '1', '1'});
+  print_list();
   }
 
   return 0;
