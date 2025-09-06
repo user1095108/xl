@@ -756,8 +756,9 @@ public:
     auto b(cbegin()), m(b), e(cend());
 
     {
-      size_type sz1{}, sz2{};
-      for (auto n(e); m != n; ++sz1, ++m) if (++sz2, m == --n) break;
+      size_type sz1{}, sz2(1);
+      for (auto n(e); m.n_ != n.p_; ++sz1, ++m)
+        if (++sz2, m.n_ == (--n).p_) break;
 
       if (!sz1) return;
 
@@ -848,14 +849,13 @@ public:
 
         auto m(i);
 
-        for (auto n(j); m != n; ++m) if (m == --n) break;
-
-        if ((j.p_ == m.n_) && cmp_(*m, *i))
         {
-          node::iter_swap(i, m);
-          j.p_ = m.n_; // fix iterator
+          size_type sz(1);
 
-          return;
+          for (auto n(j); m.n_ != n.p_; ++sz, ++m)
+            if (++sz, m.n_ == (--n).p_) break;
+
+          if (8 >= sz) { node::insertion_sort(i, j, cmp_); return; }
         }
 
         operator()(i, m);
