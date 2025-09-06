@@ -3,20 +3,20 @@
 #include <chrono>
 #include <iostream>
 #include <list>
-#include <numeric>
+#include <random>
 
 #include "list.hpp"
 
-int main()
+void test_run(std::string_view const& title, auto& l1)
 {
-  decltype(std::chrono::high_resolution_clock::now()) start, end;
+  std::cout << "=== " << title << " ===" << std::endl;
 
   // Prepare
-  std::list<int> l1(100000);
-  std::iota(l1.rbegin(), l1.rend(), 0);
   xl::list l2(xl::from_range, l1);
   xl::list l3(xl::from_range, l1);
   xl::list l4(xl::from_range, l1);
+
+  decltype(std::chrono::high_resolution_clock::now()) start, end;
 
   // Measure
   start = std::chrono::high_resolution_clock::now();
@@ -30,15 +30,14 @@ int main()
   std::chrono::duration<double> const xl_sort_time(end - start);
 
   start = std::chrono::high_resolution_clock::now();
-  l3.sort<1>();
+  l3.template sort<1>();
   end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> const xl_sort_time2(end - start);
 
   start = std::chrono::high_resolution_clock::now();
-  l4.sort<2>();
+  l4.template sort<2>();
   end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> const xl_sort_time3(end - start);
-
 
   // Print the results
   std::cout << "std::sort time: " << std_sort_time.count() << " seconds" << std::endl;
@@ -49,6 +48,52 @@ int main()
   assert(std::equal(l1.begin(), l1.end(), l2.begin(), l2.end()));
   assert(std::equal(l1.begin(), l1.end(), l3.begin(), l3.end()));
   assert(std::equal(l1.begin(), l1.end(), l4.begin(), l4.end()));
+}
 
+int main()
+{
+  constexpr std::size_t N(100000);
+  std::list<int> l(N);
+
+  //
+  std::iota(l.rbegin(), l.rend(), 0);
+
+  test_run("reverse-sorted", l);
+
+  //
+  std::mt19937 gen(std::random_device{}());
+  std::uniform_int_distribution<int> dist(
+    std::numeric_limits<int>::min()
+  );
+
+  std::generate(l.begin(), l.end(), [&]{ return dist(gen); });
+
+  test_run("random", l);
+
+  //
+  std::iota(l.begin(), l.end(), 0);
+
+  test_run("already sorted", l);
+
+  //
+  std::iota(l.begin(), l.end(), 0);
+  for (std::size_t i = 0; i < N / 1000; ++i)
+    *std::next(l.begin(), gen() % N) = dist(gen);
+
+  test_run("mostly-sorted", l);
+
+  //
+  std::fill(l.begin(), l.end(), gen());
+
+  test_run("constant-value", l);
+
+  //
+  auto it = l.begin();
+  for (std::size_t i = 0; i != N / 2; ++i) *it++ = i;
+  for (std::size_t i = N / 2; i != N;  ++i) *it++ = N - i;
+
+  test_run("organ-pipe", l);
+
+  //
   return 0;
 }
