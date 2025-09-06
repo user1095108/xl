@@ -838,35 +838,37 @@ public:
     std::declval<const_iterator&>(), cmp)))
     requires(2 == I)
   {
-    struct S
-    {
-      Cmp& cmp_;
-
-      void operator()(const_iterator& i, decltype(i) j) const
-        noexcept(noexcept(node::merge(i, i, j, cmp_)))
-      {
-        if ((j.p_ == i.n_) || (i == j)) return;
-
-        auto m(i);
-
-        {
-          size_type sz(1);
-
-          for (auto n(j); m.n_ != n.p_; ++sz, ++m)
-            if (++sz, m.n_ == (--n).p_) break;
-
-          if (8 >= sz) { node::insertion_sort(i, j, cmp_); return; }
-        }
-
-        operator()(i, m);
-        operator()(m, j);
-
-        node::merge(i, m, j, cmp_);
-      }
-    };
-
     auto b(cbegin()), e(cend());
-    S{cmp}(b, e);
+
+    {
+      struct
+      {
+        Cmp& cmp_;
+
+        void operator()(const_iterator& i, decltype(i) j) const
+          noexcept(noexcept(node::merge(i, i, j, cmp_)))
+        {
+          if ((j.p_ == i.n_) || (i == j)) return;
+
+          auto m(i);
+
+          {
+            size_type sz(1);
+
+            for (auto n(j); m.n_ != n.p_; ++sz, ++m)
+              if (++sz, m.n_ == (--n).p_) break;
+
+            if (8 >= sz) { node::insertion_sort(i, j, cmp_); return; }
+          }
+
+          operator()(i, m);
+          operator()(m, j);
+
+          node::merge(i, m, j, cmp_);
+        }
+      } const s{cmp}; s(b, e);
+    }
+
     detail::assign(f_, l_)(b.n_, e.p_);
   }
 
