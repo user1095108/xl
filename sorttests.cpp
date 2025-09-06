@@ -76,7 +76,6 @@ int main()
   test_run("already sorted", l);
 
   //
-  std::iota(l.begin(), l.end(), 0);
   for (std::size_t i = 0; i < N / 1000; ++i)
     *std::next(l.begin(), gen() % N) = dist(gen);
 
