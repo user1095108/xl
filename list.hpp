@@ -1006,17 +1006,21 @@ inline auto find(list<T> const& c, T const k)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-template <typename U, typename V>
-inline auto operator==(list<U> const& l, list<V> const& r)
+inline auto operator==(std::ranges::input_range auto const& l,
+  std::ranges::input_range auto const& r)
   noexcept(noexcept(std::equal(l.begin(), l.end(), r.begin(), r.end())))
+  requires(requires{std::remove_cvref_t<decltype(l)>::xl_list_tag;} ||
+    requires{std::remove_cvref_t<decltype(r)>::xl_list_tag;})
 {
   return std::equal(l.begin(), l.end(), r.begin(), r.end());
 }
 
-template <typename U, typename V>
-inline auto operator<=>(list<U> const& l, list<V> const& r)
+inline auto operator<=>(std::ranges::input_range auto const& l,
+  std::ranges::input_range auto const& r)
   noexcept(noexcept(std::lexicographical_compare_three_way(
     l.begin(), l.end(), r.begin(), r.end())))
+  requires(requires{std::remove_cvref_t<decltype(l)>::xl_list_tag;} ||
+    requires{std::remove_cvref_t<decltype(r)>::xl_list_tag;})
 {
   return std::lexicographical_compare_three_way(
     l.begin(), l.end(), r.begin(), r.end());
