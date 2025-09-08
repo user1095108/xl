@@ -759,7 +759,7 @@ void test1() {
   xl::list<int> list9 = {1, 3, 5};
   xl::list<int> list10 = {2, 4};
   list9.merge(list10);
-  assert(list9 == xl::list<int>({1, 2, 3, 4, 5}) && list10.empty());
+  assert(list9 == std::initializer_list<int>({1, 2, 3, 4, 5}) && list10.empty());
 
   // Test case 6: Merging two non-empty lists with duplicates
   xl::list<int> list11 = {1, 2, 3};
