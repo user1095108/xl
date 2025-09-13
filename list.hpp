@@ -75,8 +75,6 @@ private:
     static void merge(const_iterator& b, const_iterator const m,
       decltype(b) e, auto c) noexcept(noexcept(c(*b, *b)))
     {
-      if ((m == e) || !c(*m, m.p_->v_)) return;
-
       auto i(b), j(m), ni((c(*i, *j) ? ++i : (++j,
         i.p_ ? i.p_->l_ ^= detail::conv(i.n_, j.p_) : 0,
         (b.n_ = j.p_)->l_ = detail::conv(i.p_), j), b));
@@ -705,7 +703,8 @@ public:
       auto b(cbegin()), e(o.cend()), m(o.cbegin());
       m.p_ = l_; // fix iterator
 
-      node::merge(b, m, e, cmp);
+      if (cmp(*m, m.p_->v_))
+        node::merge(b, m, e, cmp);
 
       detail::assign(f_, l_)(b.n_, e.p_);
     }
@@ -789,12 +788,15 @@ public:
             operator()(m, j, sz - hsz);
           }
 
-          node::merge(i, m, j, cmp_);
+          if (cmp_(*m, m.p_->v_))
+            node::merge(i, m, j, cmp_);
         }
       } const s{cmp}; s(b, m, sz1); s(m, e, sz2);
     }
 
-    node::merge(b, m, e, cmp);
+    if (cmp(*m, m.p_->v_))
+      node::merge(b, m, e, cmp);
+
     detail::assign(f_, l_)(b.n_, e.p_);
   }
 
@@ -814,8 +816,10 @@ public:
         {
           auto j(detail::next2(m, bsize));
 
-          4 == bsize ?
-            node::insertion_sort(i, j, cmp) :
+          //
+          if (4 >= bsize)
+            node::insertion_sort(i, j, cmp);
+          else if (cmp(*m, m.p_->v_))
             node::merge(i, m, j, cmp);
 
           //
@@ -864,7 +868,8 @@ public:
           operator()(i, m);
           operator()(m, j);
 
-          node::merge(i, m, j, cmp_);
+          if (cmp_(*m, m.p_->v_))
+            node::merge(i, m, j, cmp_);
         }
       } const s{cmp}; s(b, e);
     }
