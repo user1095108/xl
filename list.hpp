@@ -735,7 +735,7 @@ public:
         std::same_as<const_iterator, std::remove_reference_t<decltype(a)>> ||
         std::same_as<iterator, std::remove_reference_t<decltype(a)>>)
   {
-    if (a != b)
+    if (a != b) [[likely]]
     {
       auto const [nxta, nxtb](node::iter_swap(a, b));
 
@@ -759,7 +759,7 @@ public:
       for (auto n(e); m.n_ != n.p_; ++sz1, ++m)
         if (++sz2, m.n_ == (--n).p_) break;
 
-      if (!sz1) return;
+      if (!sz1) [[unlikely]] return;
 
       struct
       {
@@ -817,9 +817,9 @@ public:
           auto j(detail::next2(m, bsize));
 
           //
-          if (4 >= bsize)
+          if (4 >= bsize) [[unlikely]]
             node::insertion_sort(i, j, cmp);
-          else if (cmp(*m, m.p_->v_))
+          else if (cmp(*m, m.p_->v_)) [[likely]]
             node::merge(i, m, j, cmp);
 
           //
