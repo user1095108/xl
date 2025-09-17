@@ -769,7 +769,7 @@ public:
           size_type const sz) const
           noexcept(noexcept(node::merge(i, i, j, cmp_)))
         {
-          if (sz <= 1) return;
+          if (sz <= 1) [[unlikely]] return;
           else if (8 >= sz)
           {
             node::insertion_sort(i, j, cmp_);
@@ -788,7 +788,7 @@ public:
             operator()(m, j, sz - hsz);
           }
 
-          if (cmp_(*m, m.p_->v_))
+          if (cmp_(*m, m.p_->v_)) [[likely]]
             node::merge(i, m, j, cmp_);
         }
       } const s{cmp}; s(b, m, sz1); s(m, e, sz2);
@@ -885,7 +885,7 @@ public:
             operator()(m, j);
             --depth_;
 
-            if (cmp_(*m, m.p_->v_))
+            if (cmp_(*m, m.p_->v_)) [[likely]]
               node::merge(i, m, j, cmp_);
           }
         }
@@ -911,7 +911,7 @@ public:
         void operator()(const_iterator& i, decltype(i) j) const
           noexcept(noexcept(node::merge(i, i, j, cmp_)))
         {
-          if ((j.p_ == i.n_) || (i == j)) return;
+          if ((j.p_ == i.n_) || (i == j)) [[unlikely]] return;
 
           auto m(i);
 
@@ -927,7 +927,7 @@ public:
           operator()(i, ++m);
           operator()(m, j);
 
-          if (cmp_(*m, m.p_->v_))
+          if (cmp_(*m, m.p_->v_)) [[likely]]
             node::merge(i, m, j, cmp_);
         }
       } const s{std::forward<Cmp>(cmp)}; s(b, e);
