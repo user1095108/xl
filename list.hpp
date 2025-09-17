@@ -817,7 +817,7 @@ public:
 
             do ++sz, ++i; while ((i != e) && cmp(i.p_->v_, *i));
 
-            return std::pair(i, sz);
+            return std::pair<decltype(i), size_type const>(i, sz);
           }
         );
 
