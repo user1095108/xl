@@ -2499,16 +2499,15 @@ void test3()
   // Test 1: Iterator arithmetic and bounds checking
   {
     xl::list<int> lst = {1, 2, 3, 4, 5};
-    auto it = lst.begin();
-    
+
     // Test increment/decrement at boundaries
     auto end_it = lst.end();
     --end_it; // Should point to last element
     assert(*end_it == 5);
-    
+
     ++end_it; // Should be back to end
     assert(end_it == lst.end());
-    
+
     // Test distance calculation
     assert(std::distance(lst.begin(), lst.end()) == 5);
   }
