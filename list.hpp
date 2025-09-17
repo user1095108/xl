@@ -806,7 +806,7 @@ public:
     std::declval<const_iterator&>(), cmp)))
     requires(1 == I)
   { // bottom-up merge sort
-    size_type bsize(4);
+    size_type bsize(1);
 
     for (auto i(cbegin());; i = cbegin(), bsize *= 2)
     {
@@ -817,22 +817,20 @@ public:
           auto j(detail::next2(m, bsize));
 
           //
-          if (4 >= bsize) [[unlikely]]
-            node::insertion_sort(i, j, cmp);
-          else if (cmp(*m, m.p_->v_)) [[likely]]
-            node::merge(i, m, j, cmp);
+          if (cmp(*m, m.p_->v_)) [[likely]]
+            4 >= bsize ?
+              node::insertion_sort(i, j, cmp) :
+              node::merge(i, m, j, cmp);
 
           //
-          if (!i.p_) { f_ = i.n_; }
-          if (!j.n_) { l_ = j.p_;
-            if (i.p_) [[likely]] break; else [[unlikely]] return; }
-
-          //
-          i = j;
+          if (!i.p_) [[unlikely]] f_ = i.n_;
+          if (j) [[likely]] i = j; else [[unlikely]] { l_ = j.p_; break; }
         }
-        else [[unlikely]]
-          if (i.p_) [[likely]] break; else [[unlikely]] return;
+        else
+          break;
       }
+
+      if (!i.p_) [[unlikely]] break;
     }
   }
 
