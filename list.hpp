@@ -813,9 +813,10 @@ public:
         static constinit auto const next([](auto i, decltype(i) const e,
           auto cmp) noexcept(noexcept(cmp(*i, *i)))
           {
+            assert(i != e);
             size_type sz{};
 
-            do ++sz, ++i; while ((i != e) && cmp(i.p_->v_, *i));
+            do ++sz, ++i; while ((i != e) && !cmp(*i, i.p_->v_));
 
             return std::pair<decltype(i), size_type const>(i, sz);
           }
@@ -831,16 +832,18 @@ public:
 
               auto const sete(j == e);
 
-              //assert(cmp(*m, m.p_->v_));
+              //assert(!cmp(m.p_->v_, *m));
               16 >= sz1 + sz2?
                 node::insertion_sort(i, j, cmp) :
                 node::merge(i, m, j, cmp);
+
+              // assert(std::is_sorted(i, j, cmp));
 
               //
               if (setb) [[unlikely]] setb = {}, b = i;
               if (sete) [[unlikely]] { e = j; break; } else [[likely]] i = j;
             }
-            else // !!!
+            else // !!! assert(std::is_sorted(i, m, cmp));
               break;
           }
 
