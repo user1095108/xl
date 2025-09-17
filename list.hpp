@@ -806,68 +806,63 @@ public:
     std::declval<const_iterator&>(), cmp)))
     requires(1 == I)
   { // bottom-up merge sort
-    static constinit auto const nonrecursive_sort(
-      [](auto& b, decltype(b) e, auto cmp)
-        noexcept(noexcept(node::merge(b, b, b, cmp)))
-      {
-        static constinit auto const next([](auto i, decltype(i) const e,
-          auto cmp) noexcept(noexcept(cmp(*i, *i)))
-          {
-            // assert(i != e);
-            size_type sz{};
-
-            do ++sz, ++i; while ((i != e) && !cmp(*i, i.p_->v_));
-
-            return std::pair<decltype(i), size_type const>(i, sz);
-          }
-        );
-
-        for (auto i(b);; i = b)
-        { // start run
-          for (bool setb(true);;)
-          {
-            if (auto&& [m, sz1](next(i, e, cmp)); m != e) [[likely]] // !!!
-            {
-              auto&& [j, sz2](next(m, e, cmp));
-
-              auto const sete(j == e);
-
-              // assert(!cmp(m.p_->v_, *m));
-              16 >= sz1 + sz2?
-                node::insertion_sort(i, j, cmp) :
-                node::merge(i, m, j, cmp);
-
-              // assert(std::is_sorted(i, j, cmp));
-              if (setb) [[unlikely]] setb = {}, b = i;
-              if (sete) [[unlikely]] { e = j; break; } else [[likely]] i = j;
-            }
-            else // !!! assert(std::is_sorted(i, m, cmp));
-              break;
-          }
-
-          if (i == b) [[unlikely]] break;
-        }
-      }
-    );
-
     auto b(cbegin()), e(cend());
 
     {
       struct
       {
         Cmp cmp_;
-        unsigned depth_{};
 
-        void operator()(const_iterator& i, decltype(i) j)
+        static auto next(const_iterator i, decltype(i) const e, Cmp cmp)
+          noexcept(noexcept(cmp(*i, *i)))
+        {
+          // assert(i != e);
+          size_type sz{};
+
+          do ++sz, ++i; while ((i != e) && !cmp(*i, i.p_->v_));
+
+          return std::pair<decltype(i), size_type const>(i, sz);
+        }
+
+        static auto nonrecursive_sort(const_iterator& b, decltype(b) e,
+          Cmp const& cmp)
+          noexcept(noexcept(node::merge(b, b, e, cmp)))
+        {
+          for (auto i(b);; i = b)
+          { // start run
+            for (bool setb(true);;)
+            {
+              if (auto&& [m, sz1](next(i, e, cmp)); m != e) [[likely]] // !!!
+              {
+                auto&& [j, sz2](next(m, e, cmp));
+                // assert(sz2);
+
+                auto const sete(j == e);
+
+                // assert(!cmp(m.p_->v_, *m));
+                16 >= sz1 + sz2?
+                  node::insertion_sort(i, j, cmp) :
+                  node::merge(i, m, j, cmp);
+                // assert(std::is_sorted(i, j, cmp_));
+
+                if (setb) [[unlikely]] setb = {}, b = i;
+                if (sete) [[unlikely]] { e = j; break; } else [[likely]] i = j;
+              }
+              else // !!! assert(std::is_sorted(i, m, cmp));
+                break;
+            }
+
+            if (i == b) [[unlikely]] break;
+          }
+        }
+
+        void operator()(const_iterator& i, decltype(i) j,
+          unsigned depth = {}) const
           noexcept(noexcept(node::merge(i, i, j, cmp_)))
         {
           if ((j.p_ == i.n_) || (i == j)) [[unlikely]] return;
-          else if (64u == depth_)
-          {
+          else if (32u == depth) [[unlikely]]
             nonrecursive_sort(i, j, cmp_);
-
-            return;
-          }
           else [[likely]]
           {
             auto m(i);
@@ -881,16 +876,14 @@ public:
               if (16 >= sz) { node::insertion_sort(i, j, cmp_); return; }
             }
    
-            ++depth_;
-            operator()(i, ++m);
-            operator()(m, j);
-            --depth_;
+            operator()(i, ++m, ++depth);
+            operator()(m, j, depth);
 
             if (cmp_(*m, m.p_->v_)) [[likely]]
               node::merge(i, m, j, cmp_);
           }
         }
-      } s{std::forward<Cmp>(cmp)}; s(b, e);
+      } const s{std::forward<Cmp>(cmp)}; s(b, e);
     }
 
     detail::assign(f_, l_)(b.n_, e.p_);
@@ -913,23 +906,25 @@ public:
           noexcept(noexcept(node::merge(i, i, j, cmp_)))
         {
           if ((j.p_ == i.n_) || (i == j)) [[unlikely]] return;
-
-          auto m(i);
-
+          else [[likely]]
           {
-            size_type sz(1);
+            auto m(i);
 
-            for (auto n(j); m.n_ != n.p_; ++sz, ++m)
-              if (++sz, m.n_ == (--n).p_) break;
+            {
+              size_type sz(1);
 
-            if (16 >= sz) { node::insertion_sort(i, j, cmp_); return; }
+              for (auto n(j); m.n_ != n.p_; ++sz, ++m)
+                if (++sz, m.n_ == (--n).p_) break;
+
+              if (16 >= sz) { node::insertion_sort(i, j, cmp_); return; }
+            }
+
+            operator()(i, ++m);
+            operator()(m, j);
+
+            if (cmp_(*m, m.p_->v_)) [[likely]]
+              node::merge(i, m, j, cmp_);
           }
-
-          operator()(i, ++m);
-          operator()(m, j);
-
-          if (cmp_(*m, m.p_->v_)) [[likely]]
-            node::merge(i, m, j, cmp_);
         }
       } const s{std::forward<Cmp>(cmp)}; s(b, e);
     }
