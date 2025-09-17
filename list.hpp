@@ -763,7 +763,7 @@ public:
 
       struct
       {
-        Cmp& cmp_;
+        Cmp cmp_;
 
         void operator()(const_iterator& i, decltype(i) j,
           size_type const sz) const
@@ -854,7 +854,7 @@ public:
     {
       struct S
       {
-        Cmp& cmp_;
+        Cmp cmp_;
         unsigned depth_{};
 
         void operator()(const_iterator& i, decltype(i) j)
@@ -906,7 +906,7 @@ public:
     {
       struct
       {
-        Cmp& cmp_;
+        Cmp cmp_;
 
         void operator()(const_iterator& i, decltype(i) j) const
           noexcept(noexcept(node::merge(i, i, j, cmp_)))
