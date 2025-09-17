@@ -52,7 +52,7 @@ void test_run(std::string_view const& title, auto& l1)
 
 int main()
 {
-  constexpr std::size_t N(100000);
+  constexpr std::size_t N(300000);
   std::list<int> l(N);
 
   //

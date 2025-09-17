@@ -100,7 +100,7 @@ private:
     static void insertion_sort(auto& i, decltype(i) j, auto cmp)
       noexcept(noexcept(cmp(*i, *i)))
     {
-      // if (i == j) return;
+      // if ((j.p_ == i.n_) || (i == j)) return;
 
       for (auto m(std::next(i));;)
       {
@@ -747,7 +747,7 @@ public:
 
   //
   template <int I = 0, class Cmp = std::less<value_type>>
-  void sort(Cmp cmp = Cmp()) noexcept(noexcept(node::merge(
+  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
     std::declval<const_iterator&>(), std::declval<const_iterator>(),
     std::declval<const_iterator&>(), cmp)))
     requires(0 == I)
@@ -801,41 +801,102 @@ public:
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp cmp = Cmp()) noexcept(noexcept(node::merge(
+  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
     std::declval<const_iterator&>(), std::declval<const_iterator>(),
     std::declval<const_iterator&>(), cmp)))
     requires(1 == I)
   { // bottom-up merge sort
-    size_type bsize(1);
-
-    for (auto i(cbegin());; i = cbegin(), bsize *= 2)
-    {
-      for (;;)
+    static constinit auto const nonrecursive_sort(
+      [](auto& b, decltype(b) e, auto cmp)
+        noexcept(noexcept(node::merge(b, b, b, cmp)))
       {
-        if (auto m(detail::next2(i, bsize)); m) [[likely]] // !!!
-        {
-          auto j(detail::next2(m, bsize));
+        static constinit auto const next([](auto i, decltype(i) const e,
+          auto cmp) noexcept(noexcept(cmp(*i, *i)))
+          {
+            size_type sz{};
 
-          //
-          if (cmp(*m, m.p_->v_)) [[likely]]
-            4 >= bsize ?
-              node::insertion_sort(i, j, cmp) :
-              node::merge(i, m, j, cmp);
+            do ++sz, ++i; while ((i != e) && cmp(i.p_->v_, *i));
 
-          //
-          if (!i.p_) [[unlikely]] f_ = i.n_;
-          if (j) [[likely]] i = j; else [[unlikely]] { l_ = j.p_; break; }
+            return std::pair(i, sz);
+          }
+        );
+
+        for (auto i(b);; i = b)
+        { // start run
+          for (bool setb(true);;)
+          {
+            if (auto&& [m, sz1](next(i, e, cmp)); m != e) [[likely]] // !!!
+            {
+              auto&& [j, sz2](next(m, e, cmp));
+
+              auto const sete(j == e);
+
+              //assert(cmp(*m, m.p_->v_));
+              16 >= sz1 + sz2?
+                node::insertion_sort(i, j, cmp) :
+                node::merge(i, m, j, cmp);
+
+              //
+              if (setb) [[unlikely]] b = i, setb = {};
+              if (sete) [[unlikely]] { e = j; break; } else [[likely]] i = j;
+            }
+            else // !!!
+              break;
+          }
+
+          if (i == b) [[unlikely]] break;
         }
-        else
-          break;
       }
+    );
 
-      if (!i.p_) [[unlikely]] break;
+    auto b(cbegin()), e(cend());
+
+    {
+      struct S
+      {
+        Cmp& cmp_;
+        unsigned depth_{};
+
+        void operator()(const_iterator& i, decltype(i) j)
+          noexcept(noexcept(node::merge(i, i, j, cmp_)))
+        {
+          if ((j.p_ == i.n_) || (i == j)) [[unlikely]] return;
+          else if (64u == depth_)
+          {
+            nonrecursive_sort(i, j, cmp_);
+
+            return;
+          }
+          else [[likely]]
+          {
+            auto m(i);
+
+            {
+              size_type sz(1);
+
+              for (auto n(j); m.n_ != n.p_; ++sz, ++m)
+                if (++sz, m.n_ == (--n).p_) break;
+
+              if (16 >= sz) { node::insertion_sort(i, j, cmp_); return; }
+            }
+   
+            ++depth_;
+            operator()(i, ++m);
+            operator()(m, j);
+            --depth_;
+
+            if (cmp_(*m, m.p_->v_))
+              node::merge(i, m, j, cmp_);
+          }
+        }
+      } s{cmp}; s(b, e);
     }
+
+    detail::assign(f_, l_)(b.n_, e.p_);
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp cmp = Cmp()) noexcept(noexcept(node::merge(
+  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
     std::declval<const_iterator&>(), std::declval<const_iterator>(),
     std::declval<const_iterator&>(), cmp)))
     requires(2 == I)
@@ -860,10 +921,10 @@ public:
             for (auto n(j); m.n_ != n.p_; ++sz, ++m)
               if (++sz, m.n_ == (--n).p_) break;
 
-            if (8 >= sz) { node::insertion_sort(i, j, cmp_); return; }
+            if (16 >= sz) { node::insertion_sort(i, j, cmp_); return; }
           }
 
-          operator()(i, m);
+          operator()(i, ++m);
           operator()(m, j);
 
           if (cmp_(*m, m.p_->v_))
