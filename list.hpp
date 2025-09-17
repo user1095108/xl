@@ -852,7 +852,7 @@ public:
     auto b(cbegin()), e(cend());
 
     {
-      struct S
+      struct
       {
         Cmp cmp_;
         unsigned depth_{};
