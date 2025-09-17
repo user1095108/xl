@@ -791,7 +791,7 @@ public:
           if (cmp_(*m, m.p_->v_))
             node::merge(i, m, j, cmp_);
         }
-      } const s{std::forward<Cmp>(cmp)}; s(b, m, sz1); s(m, e, sz2);
+      } const s{cmp}; s(b, m, sz1); s(m, e, sz2);
     }
 
     if (cmp(*m, m.p_->v_))
@@ -837,7 +837,7 @@ public:
                 node::merge(i, m, j, cmp);
 
               //
-              if (setb) [[unlikely]] b = i, setb = {};
+              if (setb) [[unlikely]] setb = {}, b = i;
               if (sete) [[unlikely]] { e = j; break; } else [[likely]] i = j;
             }
             else // !!!
