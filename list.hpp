@@ -791,7 +791,7 @@ public:
           if (cmp_(*m, m.p_->v_))
             node::merge(i, m, j, cmp_);
         }
-      } const s{cmp}; s(b, m, sz1); s(m, e, sz2);
+      } const s{std::forward<Cmp>(cmp)}; s(b, m, sz1); s(m, e, sz2);
     }
 
     if (cmp(*m, m.p_->v_))
@@ -889,7 +889,7 @@ public:
               node::merge(i, m, j, cmp_);
           }
         }
-      } s{cmp}; s(b, e);
+      } s{std::forward<Cmp>(cmp)}; s(b, e);
     }
 
     detail::assign(f_, l_)(b.n_, e.p_);
@@ -930,7 +930,7 @@ public:
           if (cmp_(*m, m.p_->v_))
             node::merge(i, m, j, cmp_);
         }
-      } const s{cmp}; s(b, e);
+      } const s{std::forward<Cmp>(cmp)}; s(b, e);
     }
 
     detail::assign(f_, l_)(b.n_, e.p_);
