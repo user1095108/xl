@@ -4,6 +4,7 @@
 
 #include <cstdint> // std::uintptr_t
 #include <algorithm> // std::move()
+#include <bit> // std::bit_width()
 #include <compare> // std::three_way_comparable
 #include <initializer_list>
 #include <ranges>
@@ -755,7 +756,7 @@ public:
     auto b(cbegin()), m(b), e(cend());
 
     {
-      size_type sz1{}, sz2(1);
+      size_type sz1{}, sz2{};
       for (auto n(e); m.n_ != n.p_; ++sz1, ++m)
         if (++sz2, m.n_ == (--n).p_) break;
 
@@ -769,7 +770,7 @@ public:
           noexcept(noexcept(node::merge(i, i, j, cmp)))
         {
           if (sz <= 1) [[unlikely]] return;
-          else if (8 >= sz)
+          else if (16 >= sz)
             node::insertion_sort(i, j, cmp);
           else [[likely]]
           {
@@ -790,7 +791,7 @@ public:
         }
       };
 
-      S::merge_sort(b, ++m, sz1, cmp);
+      S::merge_sort(b, ++m, ++sz1, cmp);
       S::merge_sort(m, e, sz2, cmp);
     }
 
@@ -806,6 +807,49 @@ public:
     std::declval<const_iterator&>(), std::declval<const_iterator>(),
     std::declval<const_iterator&>(), cmp)))
     requires(1 == I)
+  {
+    auto b(cbegin()), e(cend());
+
+    //
+    struct S
+    {
+      static void merge_sort(const_iterator& i, decltype(i) j, Cmp& cmp)
+        noexcept(noexcept(node::merge(i, i, j, cmp)))
+      {
+        if ((j.p_ == i.n_) || (i == j)) [[unlikely]] return;
+        else [[likely]]
+        {
+          auto m(i);
+
+          {
+            size_type sz(1);
+
+            for (auto n(j); m.n_ != n.p_; ++sz, ++m)
+              if (++sz, m.n_ == (--n).p_) break;
+
+            if (16 >= sz) { node::insertion_sort(i, j, cmp); return; }
+          }
+
+          merge_sort(i, ++m, cmp);
+          merge_sort(m, j, cmp);
+
+          if (cmp(*m, m.p_->v_)) [[likely]]
+            node::merge(i, m, j, cmp);
+        }
+      }
+    };
+
+    S::merge_sort(b, e, cmp);
+
+    //
+    detail::assign(f_, l_)(b.n_, e.p_);
+  }
+
+  template <int I, class Cmp = std::less<value_type>>
+  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
+    std::declval<const_iterator&>(), std::declval<const_iterator>(),
+    std::declval<const_iterator&>(), cmp)))
+    requires(2 == I)
   { // bottom-up merge sort
     auto b(cbegin()), e(cend());
 
@@ -854,6 +898,46 @@ public:
         }
       }
 
+      static auto nonrecursive_sort2(const_iterator& b, decltype(b) e,
+        Cmp& cmp) noexcept(noexcept(node::merge(b, b, e, cmp)))
+      {
+        std::pair<const_iterator, const_iterator> runs[65]{};
+
+        for (auto i(b);;)
+        {
+          auto&& [j, sz](next(i, e, cmp)); // get run
+
+          auto idx(std::bit_width(sz));
+
+          if (auto& run(runs[idx]); run.first)
+          { // merge runs and propagate carries
+            ++idx;
+          }
+          else
+            run = {i, j};
+
+          i = j;
+        }
+
+        { // merge runs
+          auto const end(std::end(runs));
+
+          auto i(std::begin(runs));
+
+          for (auto j(std::next(i)); end != j; ++j)
+          {
+            if (i->first && j->first)
+            { // merge runs into *j
+              *i = {};
+            }
+
+            if (!i->first) i = j;
+          }
+
+          if (i->first) detail::assign(b, e)(i->first, i->second);
+        }
+      }
+
       static void merge_sort(const_iterator& i, decltype(i) j, Cmp& cmp,
         unsigned depth = {})
         noexcept(noexcept(node::merge(i, i, j, cmp)))
@@ -876,49 +960,6 @@ public:
  
           merge_sort(i, ++m, cmp, ++depth);
           merge_sort(m, j, cmp, depth);
-
-          if (cmp(*m, m.p_->v_)) [[likely]]
-            node::merge(i, m, j, cmp);
-        }
-      }
-    };
-
-    S::merge_sort(b, e, cmp);
-
-    //
-    detail::assign(f_, l_)(b.n_, e.p_);
-  }
-
-  template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
-    std::declval<const_iterator&>(), std::declval<const_iterator>(),
-    std::declval<const_iterator&>(), cmp)))
-    requires(2 == I)
-  {
-    auto b(cbegin()), e(cend());
-
-    //
-    struct S
-    {
-      static void merge_sort(const_iterator& i, decltype(i) j, Cmp& cmp)
-        noexcept(noexcept(node::merge(i, i, j, cmp)))
-      {
-        if ((j.p_ == i.n_) || (i == j)) [[unlikely]] return;
-        else [[likely]]
-        {
-          auto m(i);
-
-          {
-            size_type sz(1);
-
-            for (auto n(j); m.n_ != n.p_; ++sz, ++m)
-              if (++sz, m.n_ == (--n).p_) break;
-
-            if (16 >= sz) { node::insertion_sort(i, j, cmp); return; }
-          }
-
-          merge_sort(i, ++m, cmp);
-          merge_sort(m, j, cmp);
 
           if (cmp(*m, m.p_->v_)) [[likely]]
             node::merge(i, m, j, cmp);
