@@ -757,8 +757,9 @@ public:
 
     {
       size_type sz1{}, sz2{};
-      for (auto n(e); m.n_ != n.p_; ++sz1, ++m)
-        if (++sz2, m.n_ == (--n).p_) break;
+
+      for (auto n(e); m != n; ++sz1, ++m)
+        if (++sz2, m == --n) break;
 
       if (!sz1) [[unlikely]] return;
 
@@ -790,7 +791,7 @@ public:
         }
       };
 
-      S::merge_sort(b, ++m, ++sz1, cmp);
+      S::merge_sort(b, m, sz1, cmp);
       S::merge_sort(m, e, sz2, cmp);
     }
 
@@ -828,7 +829,7 @@ public:
             if (16 >= sz) { node::insertion_sort(i, j, cmp); return; }
           }
 
-          merge_sort(i, ++m, cmp);
+          merge_sort(i, m, cmp);
           merge_sort(m, j, cmp);
 
           if (cmp(*m, m.p_->v_)) [[likely]]
@@ -955,7 +956,7 @@ public:
             if (16 >= sz) { node::insertion_sort(i, j, cmp); return; }
           }
  
-          merge_sort(i, ++m, cmp, ++depth);
+          merge_sort(i, m, cmp, ++depth);
           merge_sort(m, j, cmp, depth);
 
           if (cmp(*m, m.p_->v_)) [[likely]]
