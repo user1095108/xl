@@ -769,10 +769,7 @@ public:
           size_type const sz, Cmp& cmp)
           noexcept(noexcept(node::merge(i, i, j, cmp)))
         {
-          if (sz <= 1) [[unlikely]] return;
-          else if (16 >= sz)
-            node::insertion_sort(i, j, cmp);
-          else [[likely]]
+          if (16 < sz) [[likely]]
           {
             auto m(i);
 
@@ -788,6 +785,8 @@ public:
             if (cmp(*m, m.p_->v_)) [[likely]]
               node::merge(i, m, j, cmp);
           }
+          else if (sz > 1)
+            node::insertion_sort(i, j, cmp);
         }
       };
 
