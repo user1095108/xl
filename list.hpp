@@ -794,7 +794,7 @@ public:
       S::merge_sort(m, e, sz2, cmp);
     }
 
-    if (cmp(*m, m.p_->v_))
+    if (cmp(*m, m.p_->v_)) [[likely]]
       node::merge(b, m, e, cmp);
 
     //
