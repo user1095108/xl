@@ -816,8 +816,7 @@ public:
       static void merge_sort(const_iterator& i, decltype(i) j, Cmp& cmp)
         noexcept(noexcept(node::merge(i, i, j, cmp)))
       {
-        if ((j.p_ == i.n_) || (i == j)) [[unlikely]] return;
-        else [[likely]]
+        if ((j.p_ != i.n_) && (i != j)) [[likely]]
         {
           auto m(i);
 
@@ -942,10 +941,9 @@ public:
         unsigned depth = {})
         noexcept(noexcept(node::merge(i, i, j, cmp)))
       {
-        if ((j.p_ == i.n_) || (i == j)) [[unlikely]] return;
-        else if (32u == depth) [[unlikely]]
+        if (32u == depth) [[unlikely]]
           nonrecursive_sort(i, j, cmp);
-        else [[likely]]
+        else if ((j.p_ != i.n_) && (i != j)) [[likely]]
         {
           auto m(i);
 
