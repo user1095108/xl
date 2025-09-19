@@ -101,6 +101,23 @@ private:
       ni.n_->l_ = detail::conv(ni.p_, k.n_); // link ni to k, ni.p_ is valid
     }
 
+    static void merge(const_iterator& a, decltype(a) b,
+      const_iterator const c, decltype(a) d, auto cmp)
+      noexcept(noexcept(merge(a, c, b, cmp)))
+    {
+      if (b != c) [[likely]]
+      { // splice [c, d) before b.n_, b.p_ c.n_, ..., d.p_, b.n_
+        if (d) d.n_->l_ ^= detail::conv(d.p_, c.p_); // link d to c.p_
+        c.p_->l_ ^= detail::conv(c.n_, d.n_); // link c.p_ to d
+        d.p_->l_ ^= detail::conv(d.n_, b.n_); // link d.p_ to b
+        b.n_->l_ ^= detail::conv(b.p_, d.p_); // link b to d.p_
+        b.p_->l_ ^= detail::conv(b.n_, c.n_); // link b.p_ to c
+        c.n_->l_ ^= detail::conv(d.p_ = c.p_, b.p_); // link c to b.p_
+      }
+
+      merge(a, c, b);
+    }
+
     static void insertion_sort(auto& i, decltype(i) j, auto cmp)
       noexcept(noexcept(cmp(*i, *i)))
     {
