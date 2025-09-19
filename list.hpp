@@ -76,26 +76,29 @@ private:
     static void merge(const_iterator& b, const_iterator const m,
       decltype(b) e, auto c) noexcept(noexcept(c(*b, *b)))
     {
-      auto i(b), j(m), ni((c(*i, *j) ? ++i : (++j,
-        i.p_ ? i.p_->l_ ^= detail::conv(i.n_, j.p_) : 0,
-        (b.n_ = j.p_)->l_ = detail::conv(i.p_), j), b));
+      auto i(b), j(m), ni((c(*i, *j) ? ++i :
+        (i.p_ ? i.p_->l_ ^= detail::conv(i.n_, j.n_) : 0,
+        b.n_ = j.n_, ++j), b)); // ni = b, relink and fix parent of b, if necessary
 
       for (const_iterator k; (i != m) && (j != e);)
       {
         c(*i, *j) ? k = i, ++i : (k = j, ++j);
 
-        k.n_->l_ = detail::conv(k.p_ = ni.n_); // ni k
-        ni.n_->l_ = detail::conv(ni.p_, k.n_);
+        k.n_->l_ = detail::conv(k.p_ = ni.n_); // link k to ni
+        ni.n_->l_ = detail::conv(ni.p_, k.n_); // link ni to k, ni.p_ is valid
 
         ni = k;
       }
 
+      // select the first remaining element (k) of the 2 ranges,
+      // if the remaining element is i, relink e to m.p_ and fix e
       auto const k(i == m ? j :
         (e.n_ ? e.n_->l_ ^= detail::conv(e.p_, m.p_) : 0,
         (e.p_ = m.p_)->l_ ^= detail::conv(m.n_, e.n_), i));
 
-      k.n_->l_ ^= detail::conv(k.p_, ni.n_); // ni k
-      ni.n_->l_ = detail::conv(ni.p_, k.n_);
+      // link k and ni
+      k.n_->l_ ^= detail::conv(k.p_, ni.n_); // link k to n
+      ni.n_->l_ = detail::conv(ni.p_, k.n_); // link ni to k, ni.p_ is valid
     }
 
     static void insertion_sort(auto& i, decltype(i) j, auto cmp)
@@ -941,10 +944,10 @@ public:
         unsigned depth = {})
         noexcept(noexcept(node::merge(i, i, j, cmp)))
       {
-        if (32u == depth) [[unlikely]]
-          nonrecursive_sort(i, j, cmp);
-        else if ((j.p_ != i.n_) && (i != j)) [[likely]]
+        if ((j.p_ != i.n_) && (i != j)) [[likely]]
         {
+          if (32u == depth) { nonrecursive_sort(i, j, cmp); return; }
+
           auto m(i);
 
           {
