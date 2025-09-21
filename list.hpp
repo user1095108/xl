@@ -884,8 +884,6 @@ public:
               auto j(next(m, bsize, e));
               // assert(sz2);
 
-              auto const sete(j == e);
-
               if (bsize0 >= bsize)
                 node::insertion_sort(i, j, cmp);
               else if (cmp(*m, m.p_->v_))
@@ -893,13 +891,13 @@ public:
               // assert(std::is_sorted(i, j, cmp));
 
               if (setb) [[unlikely]] setb = {}, b = i;
-              if (sete) [[unlikely]] { e = j; break; } else [[likely]] i = j;
+              if (j == e)[[unlikely]] { e = j; break; } else [[likely]] i = j;
             }
             else if (bsize0 == bsize)
             {
               if (i.n_ != m.p_)
-                node::insertion_sort(i, m, cmp);
-              //assert(std::is_sorted(i, m, cmp));
+                node::insertion_sort(i, e, cmp);
+              //assert(std::is_sorted(i, e, cmp));
               break;
             }
             else [[unlikely]]
