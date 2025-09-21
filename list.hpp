@@ -891,13 +891,22 @@ public:
               // assert(std::is_sorted(i, j, cmp));
 
               if (setb) [[unlikely]] setb = {}, b = i;
-              if (j == e)[[unlikely]] { e = j; break; } else [[likely]] i = j;
+
+              if (j == e) [[unlikely]]
+              {
+                e.p_ = j.p_;
+
+                break;
+              }
+              else [[likely]]
+                i = j;
             }
             else if (bsize0 == bsize)
             {
               if (i.n_ != m.p_)
                 node::insertion_sort(i, e, cmp);
               //assert(std::is_sorted(i, e, cmp));
+
               break;
             }
             else [[unlikely]]
