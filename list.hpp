@@ -901,11 +901,10 @@ public:
               else [[likely]]
                 i = j;
             }
-            else if (bsize0 == bsize)
+            else if ((bsize0 == bsize) && (i.n_ != m.p_))
             {
-              if (i.n_ != m.p_)
-                node::insertion_sort(i, e, cmp);
-              //assert(std::is_sorted(i, e, cmp));
+              node::insertion_sort(i, e, cmp);
+              // assert(std::is_sorted(i, e, cmp));
 
               break;
             }
