@@ -961,7 +961,7 @@ public:
     std::declval<const_iterator&>(), cmp)))
     requires(3 == I)
   { // bottom-up merge sort
-    if (empty()) return;
+    if (empty()) [[unlikely]] return;
 
     struct run
     {
@@ -1055,12 +1055,13 @@ public:
               // continue merging
               if (auto const p(r->prev_); p && (p->sz_ == sz))
               {
-                r->a_ = const_iterator{};
+                r->a_ = const_iterator{}; // invalidate
                 r = p;
               }
               else
               {
-                detail::assign(r->a_, r->b_, r->sz_)(i, j, sz);
+                detail::assign(r->a_, r->b_, r->sz_)(i, j, sz); // store
+
                 break;
               }
             }
@@ -1068,28 +1069,18 @@ public:
             if (sz) { i = m; continue; } // merge success
           }
 
-          // push run
           //assert(std::is_sorted(i, j));
           struct run run(prun, i, j);
 
-          i = merge_sort(&run, detach(run.a_, run.b_));
+          i = merge_sort(&run, detach(run.a_, run.b_)); // push
         }
 
-        if (!b_ && prun)
+        if (prun)
         { // merge remaining runs
-          for (auto j(prun->prev_); j; j = j->prev_)
-          {
-            //assert(i != j);
-            //assert(i->a_);
-            //assert(i->a_ && j->a_);
-            //assert(i->a_ != j->a_);
-
-            // merge into i
-            merge(prun->a_, prun->b_, j->a_, j->b_);
-          }
-
-          // the whole list is in prun
-          detail::assign(b_, e_)(prun->a_.n_, prun->b_.p_);
+          if (auto const p(prun->prev_); p) [[likely]]
+            merge(p->a_, p->b_, prun->a_, prun->b_);
+          else
+            detail::assign(b_, e_)(prun->a_.n_, prun->b_.p_);
         }
 
         return const_iterator{}; // clear the stack
