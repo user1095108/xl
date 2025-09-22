@@ -1076,10 +1076,7 @@ public:
         }
 
         if (!b_ && prun)
-        {
-          // merge remaining runs
-          struct run *i{prun};
-
+        { // merge remaining runs
           for (auto j(prun->prev_); j; j = j->prev_)
           {
             //assert(i != j);
@@ -1088,11 +1085,11 @@ public:
             //assert(i->a_ != j->a_);
 
             // merge into i
-            merge(i->a_, i->b_, j->a_, j->b_);
+            merge(prun->a_, prun->b_, j->a_, j->b_);
           }
 
-          // the whole list is in i->a_
-          detail::assign(b_, e_)(i->a_.n_, i->b_.p_);
+          // the whole list is in prun
+          detail::assign(b_, e_)(prun->a_.n_, prun->b_.p_);
         }
 
         return const_iterator{}; // clear the stack
