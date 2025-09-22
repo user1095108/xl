@@ -955,6 +955,172 @@ public:
     detail::assign(f_, l_)(b.n_, e.p_);
   }
 
+  template <int I, class Cmp = std::less<value_type>>
+  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
+    std::declval<const_iterator&>(), std::declval<const_iterator>(),
+    std::declval<const_iterator&>(), cmp)))
+    requires(3 == I)
+  { // bottom-up merge sort
+    if (empty()) return;
+
+    struct run
+    {
+      struct run *prev_;
+
+      const_iterator a_, b_;
+      unsigned short sz_{};
+    };
+
+    constexpr size_type bsize0(16);
+
+    //
+    struct S
+    {
+      decltype((cmp)) cmp_;
+      node *b_{}, *e_{};
+
+      static auto detach(const_iterator& i, const_iterator& j) noexcept
+      {
+        //assert(i != j);
+        i.n_->l_ ^= detail::conv(i.p_);
+        i.p_ = {};
+        if (j.n_)
+          j.n_->l_ ^= detail::conv(j.p_),
+          j.p_->l_ ^= detail::conv(j.n_);
+
+        auto const n(j.n_);
+        j.n_ = {};
+
+        //assert(std::is_sorted(i, j));
+        return const_iterator{n, {}};
+      }
+
+      void merge(const_iterator& a, const_iterator& b,
+        const_iterator c, const_iterator d)
+        noexcept(noexcept(node::merge(a, a, a, cmp_)))
+      {
+        //assert(a.n_);
+        //assert(!b.n_);
+        //assert(c.n_);
+        //assert(!d.n_);
+
+        b.p_->l_ ^= detail::conv(c.n_);
+        c.n_->l_ ^= detail::conv(b.p_);
+        c.p_ = b.p_;
+
+        //assert(std::is_sorted(a, c));
+        //assert(std::is_sorted(c, d));
+
+        if (cmp_(*c, c.p_->v_)) [[unlikely]]
+          node::merge(a, c, d, cmp_);
+
+        b = d;
+        //assert(std::is_sorted(a, d));
+      }
+
+      static auto next(const_iterator i, size_type n) noexcept
+      {
+        // assert(i != e);
+        do --n, ++i; while (n && i);
+
+        return i;
+      }
+
+      const_iterator merge_sort(struct run * const prun,
+        const_iterator i)
+        noexcept(noexcept(node::merge(i, i, i, cmp)))
+      { // bottom-up merge sort
+        for (;;)
+        {
+          if (prun && !prun->a_) return i; // pop stack
+          else if (!i) [[unlikely]] break;
+
+          const_iterator j(next(i, bsize0));
+
+          // try to merge run with a previous run
+          if (auto r(prun); r)
+          {
+            const_iterator m;
+            decltype(run::sz_) sz{};
+
+            for (; r->sz_ == sz;)
+            {
+              // merge with a previous run
+              //assert(r->a_);
+              if (!sz) m = detach(i, j);
+              ++sz;
+
+              merge(i, j, r->a_, r->b_);
+
+              // continue merging
+              if (auto const p(r->prev_); p && (p->sz_ == sz))
+              {
+                r->a_ = const_iterator{};
+                r = p;
+              }
+              else
+              {
+                detail::assign(r->a_, r->b_, r->sz_)(i, j, sz);
+                break;
+              }
+            }
+
+            if (sz) { i = m; continue; } // merge success
+          }
+
+          // push run
+          //assert(std::is_sorted(i, j));
+          struct run run(prun, i, j);
+
+          i = merge_sort(&run, detach(run.a_, run.b_));
+        }
+
+        if (!b_ && prun)
+        {
+          // merge remaining runs
+          struct run *i{prun};
+
+          for (auto j(prun->prev_); j; j = j->prev_)
+          {
+            //assert(i != j);
+            //assert(i->a_);
+            //assert(i->a_ && j->a_);
+            //assert(i->a_ != j->a_);
+
+            // merge into i
+            merge(i->a_, i->b_, j->a_, j->b_);
+          }
+
+          // the whole list is in i->a_
+          detail::assign(b_, e_)(i->a_.n_, i->b_.p_);
+        }
+
+        return const_iterator{}; // clear the stack
+      }
+    } s{cmp};
+
+    for (auto i(cbegin());;)
+    { // sort blocks of bsize0 elements or less
+      auto m(S::next(i, bsize0));
+
+      if (m.p_ != i.n_) [[likely]]
+      {
+        node::insertion_sort(i, m, cmp);
+
+        if (!i.p_) [[unlikely]] f_ = i.n_; // fix b
+      }
+
+      if (!m) [[unlikely]] { l_ = m.p_; break; } // fix e
+
+      i = m; // advance
+    }
+
+    s.merge_sort({}, cbegin());
+
+    //
+    detail::assign(f_, l_)(s.b_, s.e_);
+  }
+
   //
   void splice(const_iterator const i, auto&& o, const_iterator const b,
     const_iterator const e) noexcept
