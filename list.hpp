@@ -1035,7 +1035,7 @@ public:
           if (prun && !prun->a_) return i; // pop stack
           else if (!i) [[unlikely]] break;
 
-          const_iterator j(next(i, bsize0));
+          auto j(next(i, bsize0));
 
           // try to merge run with a previous run
           if (auto r(prun); r)
