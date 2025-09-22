@@ -786,7 +786,7 @@ public:
               merge_sort(m, j, sz - hsz, cmp);
             }
 
-            if (cmp(*m, m.p_->v_)) [[likely]]
+            if (cmp(*m, m.p_->v_))
               node::merge(i, m, j, cmp);
           }
           else if (sz > 1)
@@ -798,7 +798,7 @@ public:
       S::merge_sort(m, e, sz2, cmp);
     }
 
-    if (cmp(*m, m.p_->v_)) [[likely]]
+    if (cmp(*m, m.p_->v_))
       node::merge(b, m, e, cmp);
 
     //
@@ -836,7 +836,7 @@ public:
           merge_sort(i, m, cmp);
           merge_sort(m, j, cmp);
 
-          if (cmp(*m, m.p_->v_)) [[likely]]
+          if (cmp(*m, m.p_->v_))
             node::merge(i, m, j, cmp);
         }
       }
@@ -943,7 +943,7 @@ public:
           merge_sort(i, m, cmp, ++depth);
           merge_sort(m, j, cmp, depth);
 
-          if (cmp(*m, m.p_->v_)) [[likely]]
+          if (cmp(*m, m.p_->v_))
             node::merge(i, m, j, cmp);
         }
       }
@@ -1011,7 +1011,7 @@ public:
         //assert(std::is_sorted(a, c));
         //assert(std::is_sorted(c, d));
 
-        if (cmp_(*c, c.p_->v_)) [[unlikely]]
+        if (cmp_(*c, c.p_->v_))
           node::merge(a, c, d, cmp_);
 
         b = d;
