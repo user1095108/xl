@@ -868,7 +868,7 @@ public:
         return i;
       }
 
-      static auto nonrecursive_sort(const_iterator& b, decltype(b) e,
+      static void nonrecursive_sort(const_iterator& b, decltype(b) e,
         decltype((cmp)) cmp)
         noexcept(noexcept(node::merge(b, b, e, cmp)))
       {
@@ -877,7 +877,7 @@ public:
 
         for (auto i(b);; bsize *= 2, i = b)
         { // start run
-          for (bool setb(true);; )
+          for (bool setb(true);;)
           {
             if (auto m(next(i, bsize, e)); m != e) [[likely]] // !!!
             {
