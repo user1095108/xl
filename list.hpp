@@ -871,42 +871,46 @@ public:
       static void nonrecursive_sort(const_iterator& b, decltype(b) e,
         decltype((cmp)) cmp)
         noexcept(noexcept(node::merge(b, b, e, cmp)))
-      {
-        constexpr auto bsize0(8);
+      { // bottom-up merge sort
+        constexpr size_type bsize0(16);
+
+        for (auto i(b);;)
+        { // sort blocks of bsize0 elements or less
+          auto m(next(i, bsize0, e));
+
+          if (m.p_ != i.n_) [[likely]]
+          {
+            node::insertion_sort(i, m, cmp);
+
+            if (i.p_ == b.p_) [[unlikely]] b.n_ = i.n_; // fix b
+          }
+
+          if (m == e) [[unlikely]] { e.p_ = m.p_; break; } // fix e
+
+          i = m; // advance
+        }
+
         size_type bsize(bsize0);
 
         for (auto i(b);; bsize *= 2, i = b)
-        { // start run
-          for (bool setb(true);;)
+        {
+          for (;;) // merge runs
           {
             if (auto m(next(i, bsize, e)); m != e) [[likely]] // !!!
             {
               auto j(next(m, bsize, e));
-              // assert(sz2);
 
-              if (bsize0 >= bsize)
-                node::insertion_sort(i, j, cmp);
-              else if (cmp(*m, m.p_->v_))
-                node::merge(i, m, j, cmp);
-              // assert(std::is_sorted(i, j, cmp));
-
-              if (setb) [[unlikely]] setb = {}, b = i;
-
-              if (j == e) [[unlikely]]
+              if (cmp(*m, m.p_->v_)) // skip merge?
               {
-                e.p_ = j.p_;
+                node::merge(i, m, j, cmp);
+                // assert(std::is_sorted(i, j, cmp));
 
-                break;
+                if (i.p_ == b.p_) [[unlikely]] b.n_ = i.n_; // fix b
               }
-              else [[likely]]
-                i = j;
-            }
-            else if ((bsize0 == bsize) && (i.n_ != m.p_))
-            {
-              node::insertion_sort(i, e, cmp);
-              // assert(std::is_sorted(i, e, cmp));
 
-              break;
+              if (j == e) [[unlikely]] { e.p_ = j.p_; break; } // fix e
+
+              i = j; // advance
             }
             else [[unlikely]]
               break;
@@ -914,7 +918,7 @@ public:
 
           if (i == b) [[unlikely]] break;
         }
-        //assert(std::is_sorted(b, e, cmp));
+        // assert(std::is_sorted(b, e, cmp));
       }
 
       static void merge_sort(const_iterator& i, decltype(i) j,
@@ -923,7 +927,7 @@ public:
       {
         if ((j.p_ != i.n_) && (i != j)) [[likely]]
         {
-          if (10u == depth) { nonrecursive_sort(i, j, cmp); return; }
+          if (10 == depth) { nonrecursive_sort(i, j, cmp); return; }
 
           auto m(i);
 
