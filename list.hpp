@@ -1036,34 +1036,32 @@ public:
           else if (!i) [[unlikely]] break;
 
           auto j(next(i, bsize0));
+          auto const m(detach(i, j));
 
           // try to merge run with a previous run
-          if (auto r(prun); r)
           {
-            const_iterator m;
             decltype(run::sz_) sz{};
 
-            for (; r->sz_ == sz;)
+            for (struct run *r(prun), *p{};;)
             {
-              // merge with a previous run
-              //assert(r->a_);
-              if (!sz) m = detach(i, j);
-              ++sz;
-
-              merge(i, j, r->a_, r->b_);
-
-              // continue merging
-              if (auto const p(r->prev_); p && (p->sz_ == sz))
+              if (r && (r->sz_ == sz))
               {
+                // merge with a previous run
+                //assert(r->a_);
+                ++sz;
+
+                merge(i, j, r->a_, r->b_);
                 r->a_ = const_iterator{}; // invalidate
-                r = p;
-              }
-              else
-              {
-                detail::assign(r->a_, r->b_, r->sz_)(i, j, sz); // store
 
-                break;
+                p = r;
+                r = r->prev_;
+
+                continue; // continue merging
               }
+              else if (p)
+                detail::assign(p->a_, p->b_, p->sz_)(i, j, sz); // store
+
+              break;
             }
 
             if (sz) { i = m; continue; } // merge success
@@ -1072,7 +1070,7 @@ public:
           //assert(std::is_sorted(i, j));
           struct run run(prun, i, j);
 
-          i = merge_sort(&run, detach(run.a_, run.b_)); // push
+          i = merge_sort(&run, m); // push
         }
 
         if (prun)
