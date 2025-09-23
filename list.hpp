@@ -111,8 +111,8 @@ private:
         // find insertion point
         decltype(m) ip{};
 
-        for (auto n(std::prev(m)); cmp(*m, *n);)
-          if ((ip = n) == i) break; else --n;
+        for (auto n(m); cmp(*m, n.p_->v_);)
+          if ((ip = --n) == i) break;
 
         // splice or skip
         if (ip)
@@ -857,7 +857,7 @@ public:
           i = merge_sort(&run, m); // push
         }
 
-        if (prun)
+        if (prun) [[likely]]
         { // merge remaining runs
           if (auto const p(prun->prev_); p) [[likely]]
             merge(p->a_, p->b_, prun->a_, prun->b_);
@@ -970,19 +970,15 @@ public:
 
         // merge remaining runs
         {
-          auto i(std::begin(runs));
+          auto const i(std::ranges::find_if(runs,
+            [](auto&& a) noexcept { return bool(std::get<0>(a)); }));
 
-          auto const end(std::next(i, szhi + 1));
+          auto& [a, b](*i);
 
-          for (auto j(std::next(i)); end != j; ++j)
-          {
-            if (auto& [a, b](*i); !a)
-              i = j;
-            else if (auto const& [c, d](*j); c)
+          for (auto& j: std::ranges::subrange(std::next(i),
+            std::next(std::begin(runs), szhi + 1)))
+            if (auto const& [c, d](j); c)
               merge(a, b, c, d);
-          }
-
-          auto const& [a, b](*i);
 
           return std::pair(a.n_, b.p_);
         }
