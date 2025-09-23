@@ -109,7 +109,7 @@ private:
       for (auto m(std::next(i));;)
       {
         // find insertion point
-        decltype(m) ip{};
+        decltype(m) ip{}; // insertion point
 
         for (auto n(m); cmp(*m, n.p_->v_);)
           if ((ip = --n) == i) break;
