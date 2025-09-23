@@ -852,8 +852,7 @@ public:
                 merge(i, j, r->a_, r->b_);
                 r->a_ = const_iterator{}; // invalidate
 
-                p = r;
-                r = r->prev_;
+                detail::assign(p, r)(r, r->prev_);
 
                 continue; // continue merging
               }
