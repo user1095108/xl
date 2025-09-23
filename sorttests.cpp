@@ -46,7 +46,7 @@ void test_run(std::string_view const& title, auto& l1)
   std::chrono::duration<double> const xl_sort_time4(end - start);
 
   // Print the results
-  std::cout << "std::sort time: " << std_sort_time.count() << " seconds" << std::endl;
+  std::cout << "std::list::sort time: " << std_sort_time.count() << " seconds" << std::endl;
   std::cout << "xl::sort time: " << xl_sort_time.count() << " seconds" << std::endl;
   std::cout << "xl::sort2 time: " << xl_sort_time2.count() << " seconds" << std::endl;
   std::cout << "xl::sort3 time: " << xl_sort_time3.count() << " seconds" << std::endl;
