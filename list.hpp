@@ -942,7 +942,7 @@ public:
           auto const m(detach(i, j));
 
           {
-            unsigned sz{};
+            decltype(szhi) sz{};
 
             // try to merge run with a previous run
             for (auto r(std::begin(runs));;)
@@ -956,8 +956,8 @@ public:
               }
               else
               {
-                detail::assign(a, b)(i, j);
                 if (sz > szhi) szhi = sz;
+                detail::assign(a, b)(i, j);
 
                 break;
               }
@@ -992,7 +992,6 @@ public:
     //
     std::tie(f_, l_) = s.merge_sort(cbegin());
   }
-
 
   template <int I, class Cmp = std::less<value_type>>
   void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
