@@ -807,7 +807,7 @@ public:
         return i;
       }
 
-      const_iterator merge_sort(struct run * const prun,
+      const_iterator merge_sort(struct run* const prun,
         const_iterator i)
         noexcept(noexcept(node::merge(i, i, i, cmp)))
       { // bottom-up merge sort
