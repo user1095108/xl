@@ -116,7 +116,7 @@ private:
 
         // splice or skip
         if (ip)
-        {
+        { // splice
           auto mm(m);
           m = splice(ip, mm);
 
