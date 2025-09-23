@@ -778,13 +778,12 @@ public:
       {
         //assert(i != j);
         i.n_->l_ ^= detail::conv(i.p_);
-        i.p_ = {};
         if (j.n_)
           j.n_->l_ ^= detail::conv(j.p_),
           j.p_->l_ ^= detail::conv(j.n_);
 
         auto const n(j.n_);
-        j.n_ = {};
+        i.p_ = j.n_ = {};
 
         //assert(std::is_sorted(i, j));
         return const_iterator{n, {}};
