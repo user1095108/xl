@@ -884,8 +884,6 @@ public:
     //
     struct S
     {
-      decltype((cmp)) cmp_;
-
       static auto detach(const_iterator& i, const_iterator& j) noexcept
       {
         i.n_->l_ ^= detail::conv(i.p_);
@@ -899,16 +897,16 @@ public:
         return const_iterator{n, {}};
       }
 
-      void merge(const_iterator& a, const_iterator& b,
-        const_iterator c, const_iterator d)
-        noexcept(noexcept(node::merge(a, a, a, cmp_)))
+      static void merge(const_iterator& a, const_iterator& b,
+        const_iterator c, const_iterator d, decltype((cmp)) cmp)
+        noexcept(noexcept(node::merge(a, a, a, cmp)))
       {
         b.p_->l_ ^= detail::conv(c.n_);
         c.n_->l_ ^= detail::conv(b.p_);
         c.p_ = b.p_;
 
-        if (cmp_(*c, c.p_->v_))
-          node::merge(a, c, d, cmp_);
+        if (cmp(*c, c.p_->v_))
+          node::merge(a, c, d, cmp);
 
         b = d;
       }
@@ -921,7 +919,7 @@ public:
         return i;
       }
 
-      auto merge_sort(const_iterator i)
+      static auto merge_sort(const_iterator i, decltype((cmp)) cmp)
         noexcept(noexcept(node::merge(i, i, i, cmp)))
       { // bottom-up merge sort
         unsigned short szhi{};
@@ -933,7 +931,7 @@ public:
           auto j(next(i, bsize0));
 
           if (j.p_ != i.n_) [[likely]]
-            node::insertion_sort(i, j, cmp_);
+            node::insertion_sort(i, j, cmp);
 
           auto const m(detach(i, j));
 
@@ -947,7 +945,7 @@ public:
               {
                 ++sz; ++r;
 
-                merge(i, j, a, b);
+                merge(i, j, a, b, cmp);
                 a = const_iterator{};
               }
               else
@@ -974,15 +972,15 @@ public:
           for (auto& j: std::ranges::subrange(
             std::next(decltype(&std::as_const(*i))(i)),
             std::next(std::cbegin(runs), szhi + 1)))
-            if (auto& [c, d](j); c) merge(a, b, c, d);
+            if (auto& [c, d](j); c) merge(a, b, c, d, cmp);
 
           return std::pair(a.n_, b.p_);
         }
       }
-    } s{cmp};
+    };
 
     //
-    std::tie(f_, l_) = s.merge_sort(cbegin());
+    std::tie(f_, l_) = S::merge_sort(cbegin(), cmp);
   }
 
   template <int I, class Cmp = std::less<value_type>>
