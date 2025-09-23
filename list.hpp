@@ -813,7 +813,7 @@ public:
       { // bottom-up merge sort
         for (;;)
         {
-          if (prun && !prun->a_) return i; // pop stack
+          if (prun && !prun->a_) return i; // pop run
           else if (!i) [[unlikely]] break;
 
           auto j(next(i, bsize0));
@@ -826,35 +826,31 @@ public:
           // try to merge run with a previous run
           {
             decltype(run::sz_) sz{};
+            struct run* p{};
 
-            for (struct run *r(prun), *p{};;)
-            {
-              if (r && (r->sz_ == sz))
-              {
-                // merge with a previous run
-                //assert(r->a_);
-                ++sz;
+            for (auto r(prun); r && (r->sz_ == sz);)
+            { // merge with a previous run
+              //assert(r->a_);
+              ++sz;
 
-                merge(i, j, r->a_, r->b_);
-                r->a_ = const_iterator{}; // invalidate
+              merge(i, j, r->a_, r->b_);
+              r->a_ = const_iterator{}; // invalidate run, it's merged
 
-                detail::assign(p, r)(r, r->prev_);
-
-                continue; // continue merging
-              }
-              else if (p)
-                detail::assign(p->a_, p->b_, p->sz_)(i, j, sz); // store
-
-              break;
+              detail::assign(p, r)(r, r->prev_);
             }
 
-            if (sz) { i = m; continue; } // merge success
+            if (p)
+            { // merge success, no need to push run
+              detail::assign(p->a_, p->b_, p->sz_, i)(i, j, sz, m); // store
+
+              continue;
+            }
           }
 
-          //assert(std::is_sorted(i, j));
+          //assert(std::is_sorted(i, j, cmp_));
           struct run run(prun, i, j);
 
-          i = merge_sort(&run, m); // push
+          i = merge_sort(&run, m); // push run
         }
 
         if (prun) [[likely]]
@@ -928,9 +924,9 @@ public:
       auto merge_sort(const_iterator i)
         noexcept(noexcept(node::merge(i, i, i, cmp)))
       { // bottom-up merge sort
-        unsigned szhi{};
+        unsigned short szhi{};
 
-        std::pair<const_iterator, const_iterator> runs[32]{};
+        std::pair<const_iterator, const_iterator> runs[28]{};
 
         do
         {
@@ -947,7 +943,7 @@ public:
             // try to merge run with a previous run
             for (auto r(std::begin(runs));;)
             {
-              if (auto& [a, b] = *r; a)
+              if (auto& [a, b](*r); a)
               {
                 ++sz; ++r;
 
@@ -975,10 +971,10 @@ public:
 
           auto& [a, b](*i);
 
-          for (auto& j: std::ranges::subrange(std::next(i),
-            std::next(std::begin(runs), szhi + 1)))
-            if (auto const& [c, d](j); c)
-              merge(a, b, c, d);
+          for (auto& j: std::ranges::subrange(
+            std::next(decltype(&std::as_const(*i))(i)),
+            std::next(std::cbegin(runs), szhi + 1)))
+            if (auto& [c, d](j); c) merge(a, b, c, d);
 
           return std::pair(a.n_, b.p_);
         }
