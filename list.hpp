@@ -778,7 +778,7 @@ public:
       {
         //assert(i != j);
         i.n_->l_ ^= detail::conv(i.p_);
-        if (j.n_)
+        if (j.n_) [[likely]]
           j.n_->l_ ^= detail::conv(j.p_),
           j.p_->l_ ^= detail::conv(j.n_);
 
