@@ -756,8 +756,6 @@ public:
     std::declval<const_iterator&>(), cmp)))
     requires(0 == I)
   { // bottom-up merge sort
-    if (empty()) [[unlikely]] return;
-
     struct run
     {
       struct run *prev_;
@@ -776,7 +774,6 @@ public:
 
       static auto detach(const_iterator& i, const_iterator& j) noexcept
       {
-        //assert(i != j);
         i.n_->l_ ^= detail::conv(i.p_);
         if (j.n_) [[likely]]
           j.n_->l_ ^= detail::conv(j.p_),
@@ -785,7 +782,6 @@ public:
         auto const n(j.n_);
         i.p_ = j.n_ = {};
 
-        //assert(std::is_sorted(i, j));
         return const_iterator{n, {}};
       }
 
@@ -793,23 +789,14 @@ public:
         const_iterator c, const_iterator d)
         noexcept(noexcept(node::merge(a, a, a, cmp_)))
       {
-        //assert(a.n_);
-        //assert(!b.n_);
-        //assert(c.n_);
-        //assert(!d.n_);
-
         b.p_->l_ ^= detail::conv(c.n_);
         c.n_->l_ ^= detail::conv(b.p_);
         c.p_ = b.p_;
-
-        //assert(std::is_sorted(a, c));
-        //assert(std::is_sorted(c, d));
 
         if (cmp_(*c, c.p_->v_))
           node::merge(a, c, d, cmp_);
 
         b = d;
-        //assert(std::is_sorted(a, d));
       }
 
       static auto next(const_iterator i, size_type n) noexcept
@@ -893,6 +880,125 @@ public:
     std::declval<const_iterator&>(), std::declval<const_iterator>(),
     std::declval<const_iterator&>(), cmp)))
     requires(1 == I)
+  { // bottom-up merge sort
+    if (empty()) [[unlikely]] return;
+
+    constexpr size_type bsize0(16);
+
+    //
+    struct S
+    {
+      decltype((cmp)) cmp_;
+
+      static auto detach(const_iterator& i, const_iterator& j) noexcept
+      {
+        i.n_->l_ ^= detail::conv(i.p_);
+        if (j.n_) [[likely]]
+          j.n_->l_ ^= detail::conv(j.p_),
+          j.p_->l_ ^= detail::conv(j.n_);
+
+        auto const n(j.n_);
+        i.p_ = j.n_ = {};
+
+        return const_iterator{n, {}};
+      }
+
+      void merge(const_iterator& a, const_iterator& b,
+        const_iterator c, const_iterator d)
+        noexcept(noexcept(node::merge(a, a, a, cmp_)))
+      {
+        b.p_->l_ ^= detail::conv(c.n_);
+        c.n_->l_ ^= detail::conv(b.p_);
+        c.p_ = b.p_;
+
+        if (cmp_(*c, c.p_->v_))
+          node::merge(a, c, d, cmp_);
+
+        b = d;
+      }
+
+      static auto next(const_iterator i, size_type n) noexcept
+      {
+        // assert(i != e);
+        do --n, ++i; while (n && i);
+
+        return i;
+      }
+
+      auto merge_sort(const_iterator i)
+        noexcept(noexcept(node::merge(i, i, i, cmp)))
+      { // bottom-up merge sort
+        unsigned szhi{};
+
+        std::pair<const_iterator, const_iterator> runs[32]{};
+
+        do
+        {
+          auto j(next(i, bsize0));
+
+          if (j.p_ != i.n_) [[likely]]
+            node::insertion_sort(i, j, cmp_);
+
+          auto const m(detach(i, j));
+
+          {
+            unsigned sz{};
+
+            // try to merge run with a previous run
+            for (auto r(std::begin(runs));;)
+            {
+              if (auto& [a, b] = *r; a)
+              {
+                ++sz; ++r;
+
+                merge(i, j, a, b);
+                a = const_iterator{};
+              }
+              else
+              {
+                detail::assign(a, b)(i, j);
+                if (sz > szhi) szhi = sz;
+
+                break;
+              }
+            }
+          }
+
+          i = m;
+        }
+        while (i);
+
+        // merge remaining runs
+        {
+          auto i(std::begin(runs));
+
+          auto const end(std::next(i, szhi + 1));
+
+          for (auto j(std::next(i)); end != j; ++j)
+          {
+            if (auto& [a, b](*i); !a)
+              i = j;
+            else if (auto const& [c, d](*j); c)
+              merge(a, b, c, d);
+          }
+
+          auto const& [a, b](*i);
+
+          return std::pair(a.n_, b.p_);
+        }
+      }
+    } s{cmp};
+
+    //
+    std::tie(f_, l_) = s.merge_sort(cbegin());
+  }
+
+
+  template <int I, class Cmp = std::less<value_type>>
+  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
+    std::declval<const_iterator&>(), std::declval<const_iterator>(),
+    std::declval<const_iterator&>(), cmp)))
+    requires(2 == I)
   { // classic merge sort
     auto b(cbegin()), m(b), e(cend());
 
@@ -947,7 +1053,7 @@ public:
   void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
     std::declval<const_iterator&>(), std::declval<const_iterator>(),
     std::declval<const_iterator&>(), cmp)))
-    requires(2 == I)
+    requires(3 == I)
   {
     auto b(cbegin()), e(cend());
 
@@ -990,7 +1096,7 @@ public:
   void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
     std::declval<const_iterator&>(), std::declval<const_iterator>(),
     std::declval<const_iterator&>(), cmp)))
-    requires(3 == I)
+    requires(4 == I)
   { // bottom-up merge sort
     auto b(cbegin()), e(cend());
 
