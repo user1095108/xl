@@ -1036,6 +1036,10 @@ public:
           else if (!i) [[unlikely]] break;
 
           auto j(next(i, bsize0));
+
+          if (j.p_ != i.n_) [[likely]]
+            node::insertion_sort(i, j, cmp_);
+
           auto const m(detach(i, j));
 
           // try to merge run with a previous run
@@ -1084,22 +1088,6 @@ public:
         return const_iterator{}; // clear the stack
       }
     } s{cmp};
-
-    for (auto i(cbegin());;)
-    { // sort blocks of bsize0 elements or less
-      auto m(S::next(i, bsize0));
-
-      if (m.p_ != i.n_) [[likely]]
-      {
-        node::insertion_sort(i, m, cmp);
-
-        if (!i.p_) [[unlikely]] f_ = i.n_; // fix b
-      }
-
-      if (!m) [[unlikely]] { l_ = m.p_; break; } // fix e
-
-      i = m; // advance
-    }
 
     s.merge_sort({}, cbegin());
 
