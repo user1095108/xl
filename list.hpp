@@ -860,7 +860,7 @@ public:
             detail::assign(b_, e_)(prun->a_.n_, prun->b_.p_);
         }
 
-        return const_iterator{}; // clear the stack
+        return {}; // clear the stack
       }
     } s{cmp};
 
