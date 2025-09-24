@@ -865,7 +865,6 @@ public:
 
     s.merge_sort({}, cbegin());
 
-    //
     detail::assign(f_, l_)(s.b_, s.e_);
   }
 
@@ -985,6 +984,34 @@ public:
     std::declval<const_iterator&>(), cmp)))
     requires(2 == I)
   { // classic merge sort
+    struct S
+    {
+      static void merge_sort(const_iterator& i, decltype(i) j,
+        size_type const sz, decltype((cmp)) cmp)
+        noexcept(noexcept(node::merge(i, i, j, cmp)))
+      {
+        if (16 < sz) [[likely]]
+        {
+          auto m(i);
+
+          {
+            auto const hsz(sz / 2);
+
+            { auto n(hsz); do ++m; while (--n); }
+
+            merge_sort(i, m, hsz, cmp);
+            merge_sort(m, j, sz - hsz, cmp);
+          }
+
+          if (cmp(*m, m.p_->v_))
+            node::merge(i, m, j, cmp);
+        }
+        else if (sz > 1)
+          node::insertion_sort(i, j, cmp);
+      }
+    };
+
+    //
     auto b(cbegin()), m(b), e(cend());
 
     {
@@ -995,34 +1022,6 @@ public:
 
       if (!sz1) [[unlikely]] return;
 
-      //
-      struct S
-      {
-        static void merge_sort(const_iterator& i, decltype(i) j,
-          size_type const sz, decltype((cmp)) cmp)
-          noexcept(noexcept(node::merge(i, i, j, cmp)))
-        {
-          if (16 < sz) [[likely]]
-          {
-            auto m(i);
-
-            {
-              auto const hsz(sz / 2);
-
-              { auto n(hsz); do ++m; while (--n); }
-
-              merge_sort(i, m, hsz, cmp);
-              merge_sort(m, j, sz - hsz, cmp);
-            }
-
-            if (cmp(*m, m.p_->v_))
-              node::merge(i, m, j, cmp);
-          }
-          else if (sz > 1)
-            node::insertion_sort(i, j, cmp);
-        }
-      };
-
       S::merge_sort(b, m, sz1, cmp);
       S::merge_sort(m, e, sz2, cmp);
     }
@@ -1030,7 +1029,6 @@ public:
     if (cmp(*m, m.p_->v_))
       node::merge(b, m, e, cmp);
 
-    //
     detail::assign(f_, l_)(b.n_, e.p_);
   }
 
@@ -1040,9 +1038,6 @@ public:
     std::declval<const_iterator&>(), cmp)))
     requires(3 == I)
   {
-    auto b(cbegin()), e(cend());
-
-    //
     struct S
     {
       static void merge_sort(const_iterator& i, decltype(i) j,
@@ -1071,9 +1066,11 @@ public:
       }
     };
 
+    //
+    auto b(cbegin()), e(cend());
+
     S::merge_sort(b, e, cmp);
 
-    //
     detail::assign(f_, l_)(b.n_, e.p_);
   }
 
@@ -1083,9 +1080,6 @@ public:
     std::declval<const_iterator&>(), cmp)))
     requires(4 == I)
   { // bottom-up merge sort
-    auto b(cbegin()), e(cend());
-
-    //
     struct S
     {
       static auto next(const_iterator i, size_type n, decltype(i) const e)
@@ -1178,9 +1172,11 @@ public:
       }
     };
 
+    //
+    auto b(cbegin()), e(cend());
+
     S::merge_sort(b, e, cmp);
 
-    //
     detail::assign(f_, l_)(b.n_, e.p_);
   }
 
