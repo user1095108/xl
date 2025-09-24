@@ -822,8 +822,7 @@ public:
 
           auto const m(detach(i, j));
 
-          // try to merge run with a previous run
-          {
+          { // try to merge run with a valid stored run
             decltype(run::sz_) sz{};
             struct run* p{};
 
@@ -833,7 +832,7 @@ public:
               ++sz;
 
               merge(i, j, r->a_, r->b_);
-              r->a_ = const_iterator{}; // invalidate run, it's merged
+              r->a_ = const_iterator{}; // invalidate stored run, it's merged
 
               detail::assign(p, r)(r, r->prev_);
             }
@@ -937,7 +936,7 @@ public:
             for (auto r(std::begin(runs));;)
             {
               if (auto& [a, b](*r); a)
-              { // merge [i, j) with a valid stored run
+              { // merge run [i, j) with a valid stored run
                 ++sz; ++r; // increase size rank
 
                 merge(i, j, a, b, cmp); // merged run is in [i, j)
