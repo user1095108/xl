@@ -788,7 +788,7 @@ public:
       void merge(const_iterator& a, const_iterator& b,
         const_iterator c, const_iterator d)
         noexcept(noexcept(node::merge(a, a, a, cmp_)))
-      {
+      { // merge runs [a, b) and [c, d)
         b.p_->l_ ^= detail::conv(c.n_);
         c.n_->l_ ^= detail::conv(b.p_);
         c.p_ = b.p_;
@@ -801,7 +801,7 @@ public:
 
       static auto next(const_iterator i, size_type n) noexcept
       {
-        // assert(i != e);
+        // assert(n && i);
         do --n, ++i; while (n && i);
 
         return i;
@@ -877,8 +877,6 @@ public:
     std::declval<const_iterator&>(), cmp)))
     requires(1 == I)
   { // bottom-up merge sort
-    if (empty()) [[unlikely]] return;
-
     constexpr size_type bsize0(16);
 
     //
@@ -900,7 +898,7 @@ public:
       static void merge(const_iterator& a, const_iterator& b,
         const_iterator c, const_iterator d, decltype((cmp)) cmp)
         noexcept(noexcept(node::merge(a, a, a, cmp)))
-      {
+      { // merge runs [a, b) and [i, j)
         b.p_->l_ ^= detail::conv(c.n_);
         c.n_->l_ ^= detail::conv(b.p_);
         c.p_ = b.p_;
@@ -913,7 +911,7 @@ public:
 
       static auto next(const_iterator i, size_type n) noexcept
       {
-        // assert(i != e);
+        // assert(n && i);
         do --n, ++i; while (n && i);
 
         return i;
@@ -928,30 +926,30 @@ public:
 
         do
         {
-          auto j(next(i, bsize0));
+          auto j(next(i, bsize0)); // advance
 
           if (j.p_ != i.n_) [[likely]]
-            node::insertion_sort(i, j, cmp);
+            node::insertion_sort(i, j, cmp); // sort run [i, j)
 
-          auto const m(detach(i, j));
+          auto const m(detach(i, j)); // detach run [i, j)
 
           {
             decltype(szhi) sz{};
 
-            // try to merge run with a previous run
+            // try to merge run [i, j) with a previous run
             for (auto r(std::begin(runs));;)
             {
               if (auto& [a, b](*r); a)
-              {
-                ++sz; ++r;
+              { // merge with a valid run
+                ++sz; ++r; // increase size rank
 
-                merge(i, j, a, b, cmp);
-                a = const_iterator{};
+                merge(i, j, a, b, cmp); // merged run is in [i, j)
+                a = const_iterator{}; // invalidate stored run
               }
               else
               {
-                if (sz > szhi) szhi = sz;
-                detail::assign(a, b)(i, j);
+                if (sz > szhi) szhi = sz; // update highest size rank
+                detail::assign(a, b)(i, j); // store run
 
                 break;
               }
@@ -962,17 +960,18 @@ public:
         }
         while (i);
 
-        // merge remaining runs
-        {
+        { // merge remaining runs
           auto const i(std::ranges::find_if(runs,
             [](auto&& a) noexcept { return bool(std::get<0>(a)); }));
+          // assert(std::end(runs) != i);
 
-          auto& [a, b](*i);
+          auto& [a, b](*i); // i points to the first valid stored run
 
           for (auto& j: std::ranges::subrange(
             std::next(decltype(&std::as_const(*i))(i)),
             std::next(std::cbegin(runs), szhi + 1)))
-            if (auto& [c, d](j); c) merge(a, b, c, d, cmp);
+            if (auto& [c, d](j); c) // merge valid runs into *i
+              merge(a, b, c, d, cmp);
 
           return std::pair(a.n_, b.p_);
         }
@@ -980,7 +979,8 @@ public:
     };
 
     //
-    std::tie(f_, l_) = S::merge_sort(cbegin(), cmp);
+    if (!empty()) [[likely]]
+      std::tie(f_, l_) = S::merge_sort(cbegin(), cmp);
   }
 
   template <int I, class Cmp = std::less<value_type>>
