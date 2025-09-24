@@ -829,7 +829,7 @@ public:
 
             for (auto r(prun); r && (r->sz_ == sz);)
             { // merge with a previous run
-              //assert(r->a_);
+              // assert(r->a_);
               ++sz;
 
               merge(i, j, r->a_, r->b_);
@@ -846,7 +846,7 @@ public:
             }
           }
 
-          //assert(std::is_sorted(i, j, cmp_));
+          // assert(std::is_sorted(i, j, cmp_));
           struct run run(prun, i, j);
 
           i = merge_sort(&run, m); // push run
@@ -931,14 +931,13 @@ public:
 
           auto const m(detach(i, j)); // detach run [i, j)
 
-          {
+          { // try to merge run [i, j) with a valid stored run
             decltype(szhi) sz{};
 
-            // try to merge run [i, j) with a previous run
             for (auto r(std::begin(runs));;)
             {
               if (auto& [a, b](*r); a)
-              { // merge with a valid run
+              { // merge [i, j) with a valid stored run
                 ++sz; ++r; // increase size rank
 
                 merge(i, j, a, b, cmp); // merged run is in [i, j)
@@ -963,12 +962,12 @@ public:
             [](auto&& a) noexcept { return bool(std::get<0>(a)); }));
           // assert(std::end(runs) != i);
 
-          auto& [a, b](*i); // i points to the first valid stored run
+          auto& [a, b](*i); // *i is the first valid stored run
 
           for (auto& j: std::ranges::subrange(
             std::next(decltype(&std::as_const(*i))(i)),
             std::next(std::cbegin(runs), szhi + 1)))
-            if (auto& [c, d](j); c) // merge valid runs into *i
+            if (auto& [c, d](j); c) // merge valid stored runs into *i
               merge(a, b, c, d, cmp);
 
           return std::pair(a.n_, b.p_);
