@@ -755,20 +755,17 @@ public:
     std::declval<const_iterator&>(), std::declval<const_iterator>(),
     std::declval<const_iterator&>(), cmp)))
     requires(0 == I)
-  { // bottom-up merge sort
-    struct run
-    {
-      struct run *prev_;
-
-      const_iterator a_, b_;
-      unsigned short sz_{};
-    };
-
-    constexpr size_type bsize0(16);
-
-    //
+  { // recursive bottom-up merge sort
     struct S
     {
+      struct run
+      {
+        struct run *prev_;
+
+        const_iterator a_, b_;
+        unsigned short sz_{};
+      };
+
       decltype((cmp)) cmp_;
       node *b_{}, *e_{};
 
@@ -810,7 +807,9 @@ public:
       const_iterator merge_sort(struct run* const prun,
         const_iterator i)
         noexcept(noexcept(node::merge(i, i, i, cmp)))
-      { // bottom-up merge sort
+      { // recursive bottom-up merge sort
+        constexpr size_type bsize0(16);
+
         for (;;)
         {
           if (prun && !prun->a_) return i; // pop run
@@ -877,9 +876,6 @@ public:
     std::declval<const_iterator&>(), cmp)))
     requires(1 == I)
   { // bottom-up merge sort
-    constexpr size_type bsize0(16);
-
-    //
     struct S
     {
       static auto detach(const_iterator& i, const_iterator& j) noexcept
@@ -920,6 +916,8 @@ public:
       static auto merge_sort(const_iterator i, decltype((cmp)) cmp)
         noexcept(noexcept(node::merge(i, i, i, cmp)))
       { // bottom-up merge sort
+        constexpr size_type bsize0(16);
+
         unsigned short szhi{};
 
         std::pair<const_iterator, const_iterator> runs[28]{};
