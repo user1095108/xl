@@ -767,7 +767,7 @@ public:
       };
 
       decltype((cmp)) cmp_;
-      node *b_{}, *e_{};
+      node *f_{}, *l_{};
 
       static auto detach(const_iterator& i, const_iterator& j) noexcept
       {
@@ -856,7 +856,7 @@ public:
           if (auto const p(prun->prev_); p) [[likely]]
             merge(p->a_, p->b_, prun->a_, prun->b_);
           else
-            detail::assign(b_, e_)(prun->a_.n_, prun->b_.p_);
+            detail::assign(f_, l_)(prun->a_.n_, prun->b_.p_);
         }
 
         return {}; // clear the stack
@@ -865,7 +865,7 @@ public:
 
     s.merge_sort({}, cbegin());
 
-    detail::assign(f_, l_)(s.b_, s.e_);
+    detail::assign(f_, l_)(s.f_, s.l_);
   }
 
   template <int I, class Cmp = std::less<value_type>>
