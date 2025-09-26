@@ -82,8 +82,6 @@ int main()
   }
   test_run("organ-pipe", l);
 
-  // === Additional patterns ===
-
   // Sawtooth
   l.clear();
   for (std::size_t i = 0; i < N; ++i)
