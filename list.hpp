@@ -1313,22 +1313,24 @@ inline auto find(list<T> const& c, T const k)
 //////////////////////////////////////////////////////////////////////////////
 inline auto operator==(std::ranges::input_range auto const& l,
   std::ranges::input_range auto const& r)
-  noexcept(noexcept(std::equal(l.begin(), l.end(), r.begin(), r.end())))
+  noexcept(noexcept(std::equal(std::cbegin(l), std::cend(l), std::cbegin(r),
+    std::cend(r))))
   requires(requires{std::remove_cvref_t<decltype(l)>::xl_list_tag;} ||
     requires{std::remove_cvref_t<decltype(r)>::xl_list_tag;})
 {
-  return std::equal(l.begin(), l.end(), r.begin(), r.end());
+  return std::equal(std::cbegin(l), std::cend(l), std::cbegin(r),
+    std::cend(r));
 }
 
 inline auto operator<=>(std::ranges::input_range auto const& l,
   std::ranges::input_range auto const& r)
   noexcept(noexcept(std::lexicographical_compare_three_way(
-    l.begin(), l.end(), r.begin(), r.end())))
+    std::cbegin(l), std::cend(l), std::cbegin(r), std::cend(r))))
   requires(requires{std::remove_cvref_t<decltype(l)>::xl_list_tag;} ||
     requires{std::remove_cvref_t<decltype(r)>::xl_list_tag;})
 {
-  return std::lexicographical_compare_three_way(
-    l.begin(), l.end(), r.begin(), r.end());
+  return std::lexicographical_compare_three_way(std::cbegin(l), std::cend(l),
+    std::cbegin(r), std::cend(r));
 }
 
 template <typename T>

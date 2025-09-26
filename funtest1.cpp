@@ -5,6 +5,7 @@
 #include <string>
 #include <algorithm>
 #include <iterator>
+#include <memory>
 #include <numeric>
 
 struct Person {
@@ -15,7 +16,11 @@ struct Person {
     bool operator<(Person const& o) const { return id < o.id || (id == o.id && name < o.name); }
 };
 
-int main() {
+int main()
+{
+    /* ----------------------------------------------------------
+     * 1.  EVERY ORIGINAL TEST (unchanged)
+     * ---------------------------------------------------------- */
     // --- basics: push, emplace, front/back, size, empty
     xl::list<int> a;
     assert(a.empty());
@@ -55,7 +60,7 @@ int main() {
     // --- splice: move a range
     xl::list<int> c = {100, 200, 300, 400}; // c: 100,200,300,400
     auto c_first = std::next(c.begin());           // -> 200
-    auto c_last = std::next(c.begin(), 3);         // -> 400 (range is [200,300])
+    auto c_last  = std::next(c.begin(), 3);         // -> 400 (range is [200,300])
     a.splice(a.end(), c, c_first, c_last); // move 200,300 to end of a
     // c now should contain two elements: 100 and 400
     assert(c.size() == 2);
@@ -158,7 +163,161 @@ int main() {
     assert(std::find(L1.begin(), L1.end(), 5) != L1.end());
     assert(std::find(L2.begin(), L2.end(), 5) == L2.end() || *L2.begin() == 4); // L2 now contains only 4
 
-    // All checks passed
+    /* ----------------------------------------------------------
+     * 2.  NEW TESTS – corner cases & stress
+     * ---------------------------------------------------------- */
+
+    // 2.1  default ctor + clear + re-use
+    {
+        xl::list<int> z;
+        assert(z.empty() && z.begin() == z.end());
+        z.clear();                       // double clear must be safe
+        assert(z.empty());
+        z = {7,8,9};
+        assert(z.size()==3 && z.back()==9);
+    }
+
+    // 2.2  range ctor from empty iterators
+    {
+        int* p = nullptr;
+        xl::list<int> z(p, p);           // empty range
+        assert(z.empty());
+    }
+
+    // 2.3  self-splice single element (should be no-op)
+    {
+        xl::list<int> z = {1,2,3};
+        auto it = std::next(z.begin());
+        z.splice(z.begin(), z, it);      // move '2' to front – still 3 elements
+        assert(z.size()==3);
+        int want[] = {2,1,3};
+        assert(want == z);
+    }
+
+    // 2.4  self-splice whole list
+    {
+        xl::list<int> z = {1,2,3};
+        z.splice(z.end(), z, z.begin(), z.end());
+        assert(3 == z.size());
+    }
+
+    // 2.5  splice entire list into another, then reverse-merge
+    {
+        xl::list<int> A = {1,3,5};
+        xl::list<int> B = {2,4,6};
+        A.splice(A.end(), B);            // move all nodes
+        assert(B.empty() && A.size()==6);
+        int want[] = {1,3,5,2,4,6};
+        assert(want == A);
+    }
+
+    // 2.6  merge with duplicates interleaved
+    {
+        xl::list<int> A = {1,3,3,7};
+        xl::list<int> B = {2,3,3,8};
+        A.sort();  B.sort();
+        A.merge(B);
+        assert(B.empty());
+        int want[] = {1,2,3,3,3,3,7,8};
+        assert(want == A);
+    }
+
+    // 2.7  unique with no duplicates, and with all equal
+    {
+        xl::list<int> no = {1,2,3};
+        no.unique();                     // nothing changes
+        assert(no.size()==3);
+
+        xl::list<int> all = {5,5,5};
+        all.unique();
+        assert(all.size()==1 && all.front()==5);
+    }
+
+    // 2.8  remove_if that removes everything
+    {
+        xl::list<int> z = {1,1,1};
+        z.remove_if([](int){ return true; });
+        assert(z.empty());
+    }
+
+    // 2.9  large assign & iterator arithmetic
+    {
+        xl::list<int> z;
+        z.assign(1'000'000, 42);
+        assert(z.size()==1'000'000);
+        assert(std::all_of(z.begin(), z.end(), [](int v){ return v==42; }));
+        z.assign(0, 0);                  // shrink to zero
+        assert(z.empty());
+    }
+
+    // 2.10  exception safety: ensure push/pop don't leak if copy throws
+    static int cnt;
+    struct ThrowOnCopy {
+        int val{};
+        ThrowOnCopy() = default;
+        ThrowOnCopy(int v):val(v){}
+        ThrowOnCopy(const ThrowOnCopy&){
+            if(++cnt == 2) throw std::bad_alloc();
+        }
+    };
+    {
+        xl::list<ThrowOnCopy> z;
+        z.emplace_back(1);
+        z.emplace_back(2);
+        bool caught = false;
+        try {
+            z.push_back(ThrowOnCopy(3)); // will throw
+        } catch(const std::bad_alloc&) {
+            caught = true;
+        }
+        assert(z.size()==2);             // list unchanged
+        assert(caught);
+    }
+
+    // 2.11  move semantics (if your list supports move-only types)
+    struct MoveOnly {
+        std::unique_ptr<int> p;
+        explicit MoveOnly(int v):p(std::make_unique<int>(v)){}
+        MoveOnly(const MoveOnly&) = delete;
+        MoveOnly& operator=(const MoveOnly&) = delete;
+        MoveOnly(MoveOnly&&) = default;
+        MoveOnly& operator=(MoveOnly&&) = default;
+        int value() const { return *p; }
+    };
+    {
+        xl::list<MoveOnly> z;
+        z.emplace_back(7);
+        z.emplace_front(5);
+        assert(z.front().value()==5 && z.back().value()==7);
+        z.pop_front();
+        assert(z.front().value()==7);
+    }
+
+    // 2.12  const-correctness & cbegin/cend
+    {
+        const xl::list<int> z = {1,2,3};
+        assert(*z.cbegin() == 1);
+        assert(std::distance(z.cbegin(), z.cend()) == 3);
+    }
+
+    // 2.13  erase on end() must return end()
+    {
+        xl::list<int> z = {1};
+        auto it = z.erase(z.begin());
+        assert(it == z.end() && z.empty());
+    }
+
+    // 2.14  insert at end() appends
+    {
+        xl::list<int> z = {1,2};
+        z.insert(z.end(), 3);
+        int want[] = {1,2,3};
+        assert(want == z);
+    }
+
+    /* ----------------------------------------------------------
+     * 3.  FINAL REPORT
+     * ---------------------------------------------------------- */
     std::cout << "All xl::list tests passed — high five! ✋\n";
     return 0;
 }
