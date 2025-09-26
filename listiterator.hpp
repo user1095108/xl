@@ -79,12 +79,6 @@ public:
   listiterator& operator=(listiterator const&) = default;
   listiterator& operator=(listiterator&&) = default;
 
-  listiterator& operator=(iterator_t const& o) noexcept
-    requires(std::is_const_v<T>)
-  {
-    n_ = o.n_; p_ = o.p_; return *this;
-  }
-
   // increment, decrement
   auto& operator++() noexcept
   {
