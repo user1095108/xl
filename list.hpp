@@ -767,7 +767,7 @@ public:
       };
 
       decltype((cmp)) cmp_;
-      node *f_{}, *l_{};
+      list& l_;
 
       static auto detach(const_iterator& i, const_iterator& j) noexcept
       {
@@ -832,7 +832,7 @@ public:
               ++sz;
 
               merge(i, j, r->a_, r->b_);
-              r->a_ = const_iterator{}; // invalidate stored run, it's merged
+              r->a_ = {}; // invalidate stored run, it's merged
 
               detail::assign(p, r)(r, r->prev_);
             }
@@ -856,16 +856,14 @@ public:
           if (auto const p(prun->prev_); p) [[likely]]
             merge(p->a_, p->b_, prun->a_, prun->b_);
           else
-            detail::assign(f_, l_)(prun->a_.n_, prun->b_.p_);
+            detail::assign(l_.f_, l_.l_)(prun->a_.n_, prun->b_.p_);
         }
 
         return {}; // clear the stack
       }
-    } s{cmp};
+    } s{cmp, *this};
 
     s.merge_sort({}, cbegin());
-
-    detail::assign(f_, l_)(s.f_, s.l_);
   }
 
   template <int I, class Cmp = std::less<value_type>>
@@ -939,7 +937,7 @@ public:
                 ++sz; ++r; // increase size rank
 
                 merge(i, j, a, b, cmp); // merged run is in [i, j)
-                a = const_iterator{}; // invalidate stored run
+                a = {}; // invalidate stored run
               }
               else
               {
@@ -973,7 +971,6 @@ public:
       }
     };
 
-    //
     if (!empty()) [[likely]]
       std::tie(f_, l_) = S::merge_sort(cbegin(), cmp);
   }
