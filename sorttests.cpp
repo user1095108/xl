@@ -7,6 +7,31 @@
 
 #include "list.hpp"
 
+template <template <typename...> class L>
+bool is_stable_sort()
+{
+  int keys[]{1,2,2,3,3,3,4,4,4,4,5};
+
+  struct Elem { int key; std::size_t idx; };   // stability tag
+
+  L<Elem> c;
+
+  for (std::size_t i{}; i != std::size(keys); ++i)
+    c.push_back(Elem{keys[i], i});
+
+  /* call the supplied member-function pointer */
+  c.sort([](const Elem& a, const Elem& b) { return a.key < b.key; });
+
+  /* verify stability */
+  for (auto it = c.begin(), prev = it++; it != c.end(); ++it, ++prev) {
+    if (prev->key == it->key && prev->idx > it->idx) {
+      return false;  // equal keys but wrong order - not stable
+    }
+  }
+
+  return true;
+}
+
 void test_run(std::string_view const& title, auto& l1)
 {
   std::cout << "=== " << title << " ===" << std::endl;
@@ -44,6 +69,9 @@ void test_run(std::string_view const& title, auto& l1)
 
 int main()
 {
+  std::cout << "std::list::sort is stable? " << is_stable_sort<std::list>() << std::endl;
+  std::cout << "xl::list::sort is stable? " << is_stable_sort<xl::list>() << std::endl;
+
   constexpr std::size_t N(200000);
   std::list<int> l(N);
 
