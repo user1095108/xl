@@ -961,8 +961,7 @@ public:
 
           auto& [a, b](*i); // *i is the first valid stored run
 
-          for (auto& j: std::ranges::subrange(
-            std::next(i),
+          for (auto& j: std::ranges::subrange(std::next(i),
             std::next(std::begin(runs), szhi + 1)))
             if (auto& [c, d](j); c) // merge valid stored runs into *i
               merge(c, d, a, b, cmp);
