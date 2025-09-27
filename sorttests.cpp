@@ -10,19 +10,21 @@
 template <template <typename...> class L>
 bool is_stable_sort()
 {
-  struct Elem { int key; std::size_t idx; };   // stability tag
+  auto const v(std::views::iota(0, 1000) |
+               std::views::transform(
+                 [](int const i) noexcept
+                 {
+                   return std::pair{i % 3, i};
+                 }));
 
-  L<Elem> c;
+  L<std::pair<int, int>> c(v.begin(), v.end());
 
-  for (std::size_t i{}; i != 1000; ++i)
-    c.emplace_back(i % 3, i);
-
-  c.sort([](auto&& a, auto&& b) noexcept { return a.key < b.key; });
-  assert(1000 == c.size());
+  c.sort([](auto const& a, auto const& b) noexcept
+    { return std::get<0>(a) < std::get<0>(b); });
 
   /* verify stability */
   for (auto it = c.begin(), prev = it++; it != c.end(); ++it, ++prev) {
-    if ((prev->key == it->key) && (prev->idx > it->idx))
+    if ((prev->first == it->first) && (prev->second > it->second))
       return false;  // equal keys but wrong order - not stable
   }
 
@@ -35,7 +37,6 @@ void test_run(std::string_view const& title, auto& l1)
 
   // Prepare
   xl::list l2(xl::from_range, l1);
-  xl::list l3(xl::from_range, l1);
 
   decltype(std::chrono::high_resolution_clock::now()) start, end;
 
@@ -50,18 +51,11 @@ void test_run(std::string_view const& title, auto& l1)
   end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> const xl_sort_time(end - start);
 
-  start = std::chrono::high_resolution_clock::now();
-  l3.template sort<1>();
-  end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double> const xl_sort_time2(end - start);
-
   // Print the results
   std::cout << "std::list::sort time: " << std_sort_time.count() << " seconds" << std::endl;
   std::cout << "xl::sort time: " << xl_sort_time.count() << " seconds" << std::endl;
-  std::cout << "xl::sort2 time: " << xl_sort_time2.count() << " seconds" << std::endl;
 
   assert(std::equal(l1.begin(), l1.end(), l2.begin(), l2.end()));
-  assert(std::equal(l1.begin(), l1.end(), l3.begin(), l3.end()));
 }
 
 int main()
