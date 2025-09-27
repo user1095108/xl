@@ -976,17 +976,6 @@ public:
       std::tie(f_, l_) = S::merge_sort(cbegin(), cmp);
   }
 
-  template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
-    std::declval<const_iterator&>(), std::declval<const_iterator>(),
-    std::declval<const_iterator&>(), cmp)))
-    requires(2 == I)
-  {
-    if (auto b(cbegin()), e(cend()); (b != e) && (e.p_ != b.n_))
-      node::insertion_sort(b, e, cmp),
-      detail::assign(f_, l_)(b.n_, e.p_);
-  }
-
   //
   void splice(const_iterator const i, auto&& o, const_iterator const b,
     const_iterator const e) noexcept
