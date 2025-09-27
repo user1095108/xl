@@ -76,18 +76,19 @@ private:
     static void merge(const_iterator& b, const_iterator const m,
       decltype(b) e, auto c) noexcept(noexcept(c(*b, *b)))
     {
-      auto i(b), j(m), ni((c(*i, *j) ? ++i :
-        (i.p_ ? i.p_->l_ ^= detail::conv(i.n_, j.n_) : 0,
-        b.n_ = j.n_, ++j), b)); // ni = b, relink and fix parent of b, if necessary
+      auto i(b), j(m), ni((c(*j, *i) ?
+        i.p_ ? i.p_->l_ ^= detail::conv(i.n_, j.n_) : 0,
+        b.n_ = j.n_, ++j : ++i, b)); // ni = b, relink and fix parent of b, if necessary
 
       for (const_iterator k; (i != m) && (j != e);)
       {
-        c(*i, *j) ? k = i, ++i : (k = j, ++j);
+        c(*j, *i) ? k = j, ++j : (k = i, ++i);
 
         k.n_->l_ = detail::conv(k.p_ = ni.n_); // link k to ni
         ni.n_->l_ = detail::conv(ni.p_, k.n_); // link ni to k, ni.p_ is valid
 
         ni = k;
+        //assert(!c(*k, k.p_->v_));
       }
 
       // select the first remaining element k of the 2 ranges,
@@ -783,7 +784,7 @@ public:
       }
 
       void merge(const_iterator& a, const_iterator& b,
-        const_iterator c, const_iterator d)
+        const_iterator& c, const_iterator& d)
         noexcept(noexcept(node::merge(a, a, a, cmp_)))
       { // merge runs [a, b) and [c, d)
         b.p_->l_ ^= detail::conv(c.n_);
@@ -793,7 +794,7 @@ public:
         if (cmp_(*c, c.p_->v_))
           node::merge(a, c, d, cmp_);
 
-        b = d;
+        detail::assign(b, c)(d, a);
       }
 
       static auto next(const_iterator i, size_type n) noexcept
@@ -831,7 +832,7 @@ public:
               // assert(r->a_);
               ++sz;
 
-              merge(i, j, r->a_, r->b_);
+              merge(r->a_, r->b_, i, j);
               r->a_ = {}; // invalidate stored run, it's merged
 
               detail::assign(p, r)(r, r->prev_);
@@ -888,9 +889,9 @@ public:
       }
 
       static void merge(const_iterator& a, const_iterator& b,
-        const_iterator c, const_iterator d, decltype((cmp)) cmp)
+        const_iterator& c, const_iterator& d, decltype((cmp)) cmp)
         noexcept(noexcept(node::merge(a, a, a, cmp)))
-      { // merge runs [a, b) and [i, j)
+      { // merge runs [a, b) and [c, d)
         b.p_->l_ ^= detail::conv(c.n_);
         c.n_->l_ ^= detail::conv(b.p_);
         c.p_ = b.p_;
@@ -898,7 +899,7 @@ public:
         if (cmp(*c, c.p_->v_))
           node::merge(a, c, d, cmp);
 
-        b = d;
+        detail::assign(b, c)(d, a);
       }
 
       static auto next(const_iterator i, size_type n) noexcept
@@ -936,7 +937,7 @@ public:
               { // merge run [i, j) with a valid stored run
                 ++sz; ++r; // increase size rank
 
-                merge(i, j, a, b, cmp); // merged run is in [i, j)
+                merge(a, b, i, j, cmp); // merged run is in [i, j)
                 a = {}; // invalidate stored run
               }
               else
@@ -961,10 +962,10 @@ public:
           auto& [a, b](*i); // *i is the first valid stored run
 
           for (auto& j: std::ranges::subrange(
-            std::next(decltype(&std::as_const(*i))(i)),
-            std::next(std::cbegin(runs), szhi + 1)))
+            std::next(i),
+            std::next(std::begin(runs), szhi + 1)))
             if (auto& [c, d](j); c) // merge valid stored runs into *i
-              merge(a, b, c, d, cmp);
+              merge(c, d, a, b, cmp);
 
           return std::pair(a.n_, b.p_);
         }
@@ -973,6 +974,17 @@ public:
 
     if (!empty()) [[likely]]
       std::tie(f_, l_) = S::merge_sort(cbegin(), cmp);
+  }
+
+  template <int I, class Cmp = std::less<value_type>>
+  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
+    std::declval<const_iterator&>(), std::declval<const_iterator>(),
+    std::declval<const_iterator&>(), cmp)))
+    requires(2 == I)
+  {
+    if (auto b(cbegin()), e(cend()); (b != e) && (e.p_ != b.n_))
+      node::insertion_sort(b, e, cmp),
+      detail::assign(f_, l_)(b.n_, e.p_);
   }
 
   //

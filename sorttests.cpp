@@ -10,23 +10,20 @@
 template <template <typename...> class L>
 bool is_stable_sort()
 {
-  int keys[]{1,2,2,3,3,3,4,4,4,4,5};
-
   struct Elem { int key; std::size_t idx; };   // stability tag
 
   L<Elem> c;
 
-  for (std::size_t i{}; i != std::size(keys); ++i)
-    c.push_back(Elem{keys[i], i});
+  for (std::size_t i{}; i != 1000; ++i)
+    c.emplace_back(i % 3, i);
 
-  /* call the supplied member-function pointer */
-  c.sort([](const Elem& a, const Elem& b) { return a.key < b.key; });
+  c.sort([](auto&& a, auto&& b) noexcept { return a.key < b.key; });
+  assert(1000 == c.size());
 
   /* verify stability */
   for (auto it = c.begin(), prev = it++; it != c.end(); ++it, ++prev) {
-    if (prev->key == it->key && prev->idx > it->idx) {
+    if ((prev->key == it->key) && (prev->idx > it->idx))
       return false;  // equal keys but wrong order - not stable
-    }
   }
 
   return true;
