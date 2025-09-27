@@ -789,9 +789,8 @@ public:
       { // merge runs [a, b) and [c, d)
         b.p_->l_ ^= detail::conv(c.n_);
         c.n_->l_ ^= detail::conv(b.p_);
-        c.p_ = b.p_;
 
-        if (cmp_(*c, c.p_->v_))
+        if (cmp_(*c, (c.p_ = b.p_)->v_))
           node::merge(a, c, d, cmp_);
 
         detail::assign(b, c)(d, a);
@@ -894,9 +893,8 @@ public:
       { // merge runs [a, b) and [c, d)
         b.p_->l_ ^= detail::conv(c.n_);
         c.n_->l_ ^= detail::conv(b.p_);
-        c.p_ = b.p_;
 
-        if (cmp(*c, c.p_->v_))
+        if (cmp(*c, (c.p_ = b.p_)->v_))
           node::merge(a, c, d, cmp);
 
         detail::assign(b, c)(d, a);
