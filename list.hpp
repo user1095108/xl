@@ -998,6 +998,9 @@ inline auto find(list<T> const& c, T const k)
   return find<0>(c, k);
 }
 
+template <typename T>
+inline void swap(list<T>& l, decltype(l) r) noexcept { l.swap(r); }
+
 //////////////////////////////////////////////////////////////////////////////
 inline auto operator==(std::ranges::input_range auto const& l,
   std::ranges::input_range auto const& r)
@@ -1020,9 +1023,6 @@ inline auto operator<=>(std::ranges::input_range auto const& l,
   return std::lexicographical_compare_three_way(std::cbegin(l), std::cend(l),
     std::cbegin(r), std::cend(r));
 }
-
-template <typename T>
-inline void swap(list<T>& l, decltype(l) r) noexcept { l.swap(r); }
 
 //
 template <class It>
