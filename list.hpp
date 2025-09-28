@@ -194,7 +194,7 @@ private:
 
   template <class Cmp>
   struct merge_sort
-  {
+  { // recursive bottom-up merge sort
     struct run
     {
       struct run *prev_;
@@ -861,10 +861,14 @@ public:
   //
   template <class Cmp = std::less<value_type>>
   void sort(Cmp&& cmp = Cmp())
-  noexcept(noexcept(std::declval<merge_sort<Cmp&&>>()({}, cbegin(), cend())))
-  { // recursive bottom-up merge sort
+    noexcept(noexcept(std::declval<merge_sort<Cmp&&>>()({}, {}, {})))
+  {
     merge_sort<Cmp&&>{std::forward<Cmp>(cmp), *this}({}, cbegin(), cend());
   }
+
+  template <typename U, class Cmp>
+  friend void sort(list<U>& l, const_iterator b, const_iterator e, Cmp&& cmp)
+    noexcept(noexcept(std::declval<merge_sort<Cmp&&>>()({}, {}, {})));
 
   //
   void splice(const_iterator const i, auto&& o, const_iterator const b,
@@ -997,6 +1001,16 @@ inline auto find(list<T> const& c, T const k)
   noexcept(noexcept(find<0>(c, k)))
 {
   return find<0>(c, k);
+}
+
+template <typename T, class Cmp = std::less<typename list<T>::value_type>>
+void sort(list<T>& l, typename list<T>::const_iterator const b,
+  typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
+  noexcept(noexcept(std::declval<typename list<T>::
+    template merge_sort<Cmp&&>>()({}, b, e)))
+{
+  typename list<T>::template merge_sort<Cmp&&>{
+    std::forward<Cmp>(cmp), l}({}, b, e);
 }
 
 template <typename T>
