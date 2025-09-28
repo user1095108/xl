@@ -73,6 +73,19 @@ private:
     }
 
     //
+    static auto detach(const_iterator& i, const_iterator& j) noexcept
+    {
+      i.n_->l_ ^= detail::conv(i.p_);
+      if (j.n_) [[likely]]
+        j.n_->l_ ^= detail::conv(j.p_),
+        j.p_->l_ ^= detail::conv(j.n_);
+
+      auto const n(j.n_);
+      i.p_ = j.n_ = {};
+
+      return const_iterator{n, {}};
+    }
+
     static void merge(const_iterator& b, const_iterator const m,
       decltype(b) e, auto c) noexcept(noexcept(c(*b, *b)))
     {
@@ -176,6 +189,99 @@ private:
       detail::assign(b.p_, i.p_)(i.p_, b.n_);
 
       return r;
+    }
+  };
+
+  template <class Cmp>
+  struct merge_sort
+  {
+    struct run
+    {
+      struct run *prev_;
+
+      const_iterator a_, b_;
+      unsigned short sz_{};
+    };
+
+    Cmp cmp_;
+    list& l_;
+
+    void merge(const_iterator& a, const_iterator& b,
+      const_iterator& c, const_iterator& d)
+      noexcept(noexcept(node::merge(a, a, a, cmp_)))
+    { // merge runs [a, b) and [c, d)
+      b.p_->l_ ^= detail::conv(c.n_);
+      c.n_->l_ ^= detail::conv(b.p_);
+
+      if (cmp_(*c, (c.p_ = b.p_)->v_))
+        node::merge(a, c, d, cmp_);
+
+      detail::assign(b, c)(d, a);
+    }
+
+    static auto next(const_iterator i, size_type n) noexcept
+    {
+      // assert(n && i);
+      do --n, ++i; while (n && i);
+
+      return i;
+    }
+
+    const_iterator operator()(struct run* const prun, const_iterator i)
+      noexcept(noexcept(node::merge(i, i, i, cmp_)))
+    { // recursive bottom-up merge sort
+      constexpr size_type bsize0(16);
+
+      for (;;)
+      {
+        if (prun && !prun->a_) return i; // pop run
+        else if (!i) [[unlikely]] break;
+
+        auto j(next(i, bsize0));
+
+        if (j.p_ != i.n_) [[likely]]
+          node::insertion_sort(i, j, cmp_);
+
+        auto const m(node::detach(i, j));
+
+        { // try to merge run with a valid stored run
+          decltype(run::sz_) sz{};
+          struct run* p{};
+
+          for (auto r(prun); r && (r->sz_ == sz);)
+          { // merge with a previous run
+            // assert(r->a_);
+            ++sz;
+
+            merge(r->a_, r->b_, i, j);
+            r->a_ = {}; // invalidate stored run, it's merged
+
+            detail::assign(p, r)(r, r->prev_);
+          }
+
+          if (p)
+          { // merge success, no need to push run
+            detail::assign(p->a_, p->b_, p->sz_, i)(i, j, sz, m); // store
+
+            continue;
+          }
+        }
+
+        // assert(std::is_sorted(i, j, cmp_));
+        struct run run(prun, i, j);
+
+        i = (*this)(&run, m); // push run
+      }
+
+      if (prun) [[likely]]
+      { // merge remaining runs
+        if (auto const p(prun->prev_); p) [[likely]]
+          merge(p->a_, p->b_, prun->a_, prun->b_);
+        else
+          detail::assign(l_.f_, l_.l_)(prun->a_.n_, prun->b_.p_);
+      }
+
+      return {}; // clear the stack
     }
   };
 
@@ -752,117 +858,10 @@ public:
 
   //
   template <class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
-    std::declval<const_iterator&>(), std::declval<const_iterator>(),
-    std::declval<const_iterator&>(), cmp)))
+  void sort(Cmp&& cmp = Cmp())
+  noexcept(noexcept(std::declval<merge_sort<Cmp&&>>()({}, cbegin())))
   { // recursive bottom-up merge sort
-    struct S
-    {
-      struct run
-      {
-        struct run *prev_;
-
-        const_iterator a_, b_;
-        unsigned short sz_{};
-      };
-
-      decltype((cmp)) cmp_;
-      list& l_;
-
-      static auto detach(const_iterator& i, const_iterator& j) noexcept
-      {
-        i.n_->l_ ^= detail::conv(i.p_);
-        if (j.n_) [[likely]]
-          j.n_->l_ ^= detail::conv(j.p_),
-          j.p_->l_ ^= detail::conv(j.n_);
-
-        auto const n(j.n_);
-        i.p_ = j.n_ = {};
-
-        return const_iterator{n, {}};
-      }
-
-      void merge(const_iterator& a, const_iterator& b,
-        const_iterator& c, const_iterator& d)
-        noexcept(noexcept(node::merge(a, a, a, cmp_)))
-      { // merge runs [a, b) and [c, d)
-        b.p_->l_ ^= detail::conv(c.n_);
-        c.n_->l_ ^= detail::conv(b.p_);
-
-        if (cmp_(*c, (c.p_ = b.p_)->v_))
-          node::merge(a, c, d, cmp_);
-
-        detail::assign(b, c)(d, a);
-      }
-
-      static auto next(const_iterator i, size_type n) noexcept
-      {
-        // assert(n && i);
-        do --n, ++i; while (n && i);
-
-        return i;
-      }
-
-      const_iterator merge_sort(struct run* const prun,
-        const_iterator i)
-        noexcept(noexcept(node::merge(i, i, i, cmp)))
-      { // recursive bottom-up merge sort
-        constexpr size_type bsize0(16);
-
-        for (;;)
-        {
-          if (prun && !prun->a_) return i; // pop run
-          else if (!i) [[unlikely]] break;
-
-          auto j(next(i, bsize0));
-
-          if (j.p_ != i.n_) [[likely]]
-            node::insertion_sort(i, j, cmp_);
-
-          auto const m(detach(i, j));
-
-          { // try to merge run with a valid stored run
-            decltype(run::sz_) sz{};
-            struct run* p{};
-
-            for (auto r(prun); r && (r->sz_ == sz);)
-            { // merge with a previous run
-              // assert(r->a_);
-              ++sz;
-
-              merge(r->a_, r->b_, i, j);
-              r->a_ = {}; // invalidate stored run, it's merged
-
-              detail::assign(p, r)(r, r->prev_);
-            }
-
-            if (p)
-            { // merge success, no need to push run
-              detail::assign(p->a_, p->b_, p->sz_, i)(i, j, sz, m); // store
-
-              continue;
-            }
-          }
-
-          // assert(std::is_sorted(i, j, cmp_));
-          struct run run(prun, i, j);
-
-          i = merge_sort(&run, m); // push run
-        }
-
-        if (prun) [[likely]]
-        { // merge remaining runs
-          if (auto const p(prun->prev_); p) [[likely]]
-            merge(p->a_, p->b_, prun->a_, prun->b_);
-          else
-            detail::assign(l_.f_, l_.l_)(prun->a_.n_, prun->b_.p_);
-        }
-
-        return {}; // clear the stack
-      }
-    } s{cmp, *this};
-
-    s.merge_sort({}, cbegin());
+    merge_sort<Cmp&&>{std::forward<Cmp>(cmp), *this}({}, cbegin());
   }
 
   //
