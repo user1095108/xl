@@ -867,8 +867,10 @@ public:
   }
 
   template <typename U, class Cmp>
-  friend void sort(list<U>& l, const_iterator, const_iterator, Cmp&& cmp)
-    noexcept(noexcept(std::declval<merge_sort<Cmp&&>>()({}, {}, {})));
+  friend void sort(list<U>&, typename list<U>::const_iterator,
+    typename list<U>::const_iterator, Cmp&&)
+    noexcept(noexcept(std::declval<typename list<U>::
+      template merge_sort<Cmp&&>>()({}, {}, {})));
 
   //
   void splice(const_iterator const i, auto&& o, const_iterator const b,
