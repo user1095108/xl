@@ -32,12 +32,12 @@ bool is_stable_sort()
 
   if (!std::ranges::is_sorted(c, cmp)) return false;
 
-  return std::ranges::adjacent_find(c,
+  return std::ranges::adjacent_find(std::as_const(c),
     [](auto const& l, auto const& r) noexcept
     { // equal keys but wrong order - not stable
       return l.first == r.first && l.second > r.second;
     }
-  ) == c.end();
+  ) == c.cend();
 }
 
 void test_run(std::string_view const& title, auto& l1)
