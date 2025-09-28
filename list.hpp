@@ -219,15 +219,17 @@ private:
       detail::assign(b, c)(d, a);
     }
 
-    static auto next(const_iterator i, size_type n) noexcept
+    static auto next(const_iterator i, size_type n,
+      const_iterator const e) noexcept
     {
       // assert(n && i);
-      do --n, ++i; while (n && i);
+      do --n, ++i; while (n && (i != e));
 
       return i;
     }
 
-    const_iterator operator()(struct run* const prun, const_iterator i)
+    const_iterator operator()(struct run* const prun, const_iterator i,
+      const_iterator const e)
       noexcept(noexcept(node::merge(i, i, i, cmp_)))
     { // recursive bottom-up merge sort
       constexpr size_type bsize0(16);
@@ -237,7 +239,7 @@ private:
         if (prun && !prun->a_) return i; // pop run
         else if (!i) [[unlikely]] break;
 
-        auto j(next(i, bsize0));
+        auto j(next(i, bsize0, e));
 
         if (j.p_ != i.n_) [[likely]]
           node::insertion_sort(i, j, cmp_);
@@ -270,7 +272,7 @@ private:
         // assert(std::is_sorted(i, j, cmp_));
         struct run run(prun, i, j);
 
-        i = (*this)(&run, m); // push run
+        i = (*this)(&run, m, e); // push run
       }
 
       if (prun) [[likely]]
@@ -859,9 +861,9 @@ public:
   //
   template <class Cmp = std::less<value_type>>
   void sort(Cmp&& cmp = Cmp())
-  noexcept(noexcept(std::declval<merge_sort<Cmp&&>>()({}, cbegin())))
+  noexcept(noexcept(std::declval<merge_sort<Cmp&&>>()({}, cbegin(), cend())))
   { // recursive bottom-up merge sort
-    merge_sort<Cmp&&>{std::forward<Cmp>(cmp), *this}({}, cbegin());
+    merge_sort<Cmp&&>{std::forward<Cmp>(cmp), *this}({}, cbegin(), cend());
   }
 
   //
