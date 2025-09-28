@@ -867,7 +867,7 @@ public:
   }
 
   template <typename U, class Cmp>
-  friend void sort(list<U>& l, const_iterator b, const_iterator e, Cmp&& cmp)
+  friend void sort(list<U>& l, const_iterator, const_iterator, Cmp&& cmp)
     noexcept(noexcept(std::declval<merge_sort<Cmp&&>>()({}, {}, {})));
 
   //
@@ -1007,7 +1007,7 @@ template <typename T, class Cmp = std::less<typename list<T>::value_type>>
 void sort(list<T>& l, typename list<T>::const_iterator const b,
   typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
   noexcept(noexcept(std::declval<typename list<T>::
-    template merge_sort<Cmp&&>>()({}, b, e)))
+    template merge_sort<Cmp&&>>()({}, {}, {})))
 {
   typename list<T>::template merge_sort<Cmp&&>{
     std::forward<Cmp>(cmp), l}({}, b, e);
