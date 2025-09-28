@@ -10,25 +10,34 @@
 template <template <typename...> class L>
 bool is_stable_sort()
 {
-  auto const v(std::views::iota(0, 1000) |
-               std::views::transform(
-                 [](int const i) noexcept
-                 {
-                   return std::pair{i % 3, i};
-                 }));
+  auto const v(
+    std::views::iota(0, 1000) |
+    std::views::transform(
+      [](int const i) noexcept
+      {
+        return std::pair{i % 3, i};
+      }
+    )
+  );
 
   L<std::pair<int, int>> c(v.begin(), v.end());
 
-  c.sort([](auto const& a, auto const& b) noexcept
+  auto const cmp([](auto const& a, auto const& b) noexcept
     { return std::get<0>(a) < std::get<0>(b); });
 
-  /* verify stability */
-  for (auto it = c.begin(), prev = it++; it != c.end(); ++it, ++prev) {
-    if ((prev->first == it->first) && (prev->second > it->second))
-      return false;  // equal keys but wrong order - not stable
-  }
+  if constexpr (requires { c.sort(cmp); })
+    c.sort(cmp);
+  else
+    std::ranges::sort(c, cmp);
 
-  return true;
+  if (!std::ranges::is_sorted(c, cmp)) return false;
+
+  return std::ranges::adjacent_find(c,
+    [](auto const& l, auto const& r) noexcept
+    { // equal keys but wrong order - not stable
+      return l.first == r.first && l.second > r.second;
+    }
+  ) == c.end();
 }
 
 void test_run(std::string_view const& title, auto& l1)
