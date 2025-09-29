@@ -237,7 +237,7 @@ private:
       for (;;)
       {
         if (prun && !prun->a_) return i; // pop invalid stored run
-        else if (i == e) [[unlikely]] break;
+        else if (e == i) [[unlikely]] break;
 
         auto j(next(i, bsize0, e));
 
