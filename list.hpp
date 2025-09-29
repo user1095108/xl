@@ -236,8 +236,8 @@ private:
 
       for (;;)
       {
-        if (prun && !prun->a_) return i; // pop run
-        else if (!i) [[unlikely]] break;
+        if (prun && !prun->a_) return i; // pop invalid stored run
+        else if (i == e) [[unlikely]] break;
 
         auto j(next(i, bsize0, e));
 
@@ -251,7 +251,7 @@ private:
           struct run* p{};
 
           for (auto r(prun); r && (r->sz_ == sz);)
-          { // merge with a previous run
+          { // merge with a previous valid stored run
             // assert(r->a_);
             ++sz;
 
@@ -283,7 +283,7 @@ private:
           detail::assign(l_.f_, l_.l_)(prun->a_.n_, prun->b_.p_);
       }
 
-      return {}; // clear the stack
+      return e; // clear the stack
     }
   };
 
@@ -800,14 +800,11 @@ public:
   template <class Cmp = std::less<value_type>>
   void merge(auto&& o, Cmp cmp = Cmp())
     noexcept(noexcept(node::merge(std::declval<const_iterator&>(),
-      std::declval<const_iterator>(), std::declval<const_iterator&>(),
-      cmp)))
+      std::declval<const_iterator>(), std::declval<const_iterator&>(), cmp)))
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
     if (empty())
-    {
       detail::assign(f_, l_)(o.f_, o.l_);
-    }
     else if (!o.empty())
     {
       l_->l_ ^= detail::conv(o.f_); // link this and o
