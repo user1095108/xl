@@ -275,13 +275,11 @@ private:
         i = (*this)(&run, m, e); // push run
       }
 
-      if (prun) [[likely]]
-      { // merge remaining runs
+      if (prun) [[likely]] // merge remaining runs
         if (auto const p(prun->prev_); p) [[likely]]
           merge(p->a_, p->b_, prun->a_, prun->b_);
         else
           detail::assign(l_.f_, l_.l_)(prun->a_.n_, prun->b_.p_);
-      }
 
       return e; // clear the stack
     }
@@ -868,6 +866,8 @@ public:
     typename list<U>::const_iterator, Cmp&&)
     noexcept(noexcept(std::declval<typename list<U>::
       template merge_sort<Cmp&&>>()({}, {}, {})));
+
+  #include "sortingalgorithms.hpp"
 
   //
   void splice(const_iterator const i, auto&& o, const_iterator const b,
