@@ -22,6 +22,8 @@ constexpr auto conv(auto const ...n) noexcept
   return (std::uintptr_t(n) ^ ...);
 }
 
+constexpr auto next(auto i) noexcept { return ++i; }
+
 constexpr auto next(auto i, auto n) noexcept
 {
   while (n) --n, ++i;
