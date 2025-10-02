@@ -30,8 +30,12 @@ bool is_stable_sort()
   {
     if constexpr (1 == N)
       c.template sort<1>(cmp);
-    if constexpr (2 == N)
+    else if constexpr (2 == N)
       c.template sort<2>(cmp);
+    else if constexpr (3 == N)
+      c.template sort<3>(cmp);
+    else if constexpr (4 == N)
+      c.template sort<4>(cmp);
     else
       c.sort(cmp);
   }
@@ -56,6 +60,8 @@ void test_run(std::string_view const& title, auto& l1)
   xl::list l2(xl::from_range, l1);
   xl::list l3(xl::from_range, l1);
   xl::list l4(xl::from_range, l1);
+  xl::list l5(xl::from_range, l1);
+  xl::list l6(xl::from_range, l1);
 
   decltype(std::chrono::high_resolution_clock::now()) start, end;
 
@@ -80,16 +86,29 @@ void test_run(std::string_view const& title, auto& l1)
   end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> const xl_sort_time2(end - start);
 
+  start = std::chrono::high_resolution_clock::now();
+  l5.template sort<3>();
+  end = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> const xl_sort_time3(end - start);
+
+  start = std::chrono::high_resolution_clock::now();
+  l6.template sort<4>();
+  end = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> const xl_sort_time4(end - start);
 
   // Print the results
   std::cout << "std::list::sort time: " << std_sort_time.count() << " seconds" << std::endl;
   std::cout << "xl::sort time: " << xl_sort_time.count() << " seconds" << std::endl;
   std::cout << "xl::sort1 time: " << xl_sort_time1.count() << " seconds" << std::endl;
   std::cout << "xl::sort2 time: " << xl_sort_time2.count() << " seconds" << std::endl;
+  std::cout << "xl::sort3 time: " << xl_sort_time3.count() << " seconds" << std::endl;
+  std::cout << "xl::sort4 time: " << xl_sort_time4.count() << " seconds" << std::endl;
 
-  assert(std::equal(l1.begin(), l1.end(), l2.begin(), l2.end()));
-  assert(std::equal(l1.begin(), l1.end(), l3.begin(), l3.end()));
-  assert(std::equal(l1.begin(), l1.end(), l4.begin(), l4.end()));
+  assert(l1 == l2);
+  assert(l1 == l3);
+  assert(l1 == l4);
+  assert(l1 == l5);
+  assert(l1 == l6);
 }
 
 int main()
@@ -98,6 +117,8 @@ int main()
   std::cout << "xl::list::sort is stable? " << is_stable_sort<xl::list>() << std::endl;
   std::cout << "xl::list::sort1 is stable? " << is_stable_sort<xl::list, 1>() << std::endl;
   std::cout << "xl::list::sort2 is stable? " << is_stable_sort<xl::list, 2>() << std::endl;
+  std::cout << "xl::list::sort3 is stable? " << is_stable_sort<xl::list, 3>() << std::endl;
+  std::cout << "xl::list::sort4 is stable? " << is_stable_sort<xl::list, 4>() << std::endl;
 
   constexpr std::size_t N(200000);
   std::list<int> l(N);
