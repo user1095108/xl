@@ -139,7 +139,7 @@ private:
           if (j.p_ == mm.n_) { j.p_ = m.p_; break; }
         }
         else
-          if (j.p_ == m.n_) break; else ++m; // skip
+          if (j.p_ == m.n_) break; else [[likely]] ++m; // skip
       }
     }
 
