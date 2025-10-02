@@ -120,7 +120,7 @@ private:
     {
       // if ((j.p_ == i.n_) || (i == j)) return;
 
-      for (auto m(std::next(i));;)
+      for (auto m(detail::next(i));;)
       {
         // find insertion point
         decltype(m) ip{}; // insertion point
