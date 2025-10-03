@@ -161,8 +161,8 @@ private:
 
           { auto n(hsz); do ++m; while (--n); }
 
-          sort(i, m, hsz, cmp);
-          sort(m, j, sz - hsz, cmp);
+          sort(i, m, hsz, std::forward<decltype(cmp)>(cmp));
+          sort(m, j, sz - hsz, std::forward<decltype(cmp)>(cmp));
         }
 
         if (cmp(*m, m.p_->v_))
@@ -191,8 +191,8 @@ private:
           if (16 >= sz) { node::insertion_sort(i, j, cmp); return; }
         }
 
-        sort(i, m, cmp);
-        sort(m, j, cmp);
+        sort(i, m, std::forward<decltype(cmp)>(cmp));
+        sort(m, j, std::forward<decltype(cmp)>(cmp));
 
         if (cmp(*m, m.p_->v_))
           node::merge(i, m, j, cmp);
