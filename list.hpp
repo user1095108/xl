@@ -276,10 +276,12 @@ private:
       }
 
       if (prun) [[likely]] // merge remaining runs
+      {
         if (auto const p(prun->prev_); p) [[likely]]
           merge(p->a_, p->b_, prun->a_, prun->b_);
         else
           detail::assign(l_.f_, l_.l_)(prun->a_.n_, prun->b_.p_);
+      }
 
       return e; // clear the stack
     }
