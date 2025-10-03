@@ -147,7 +147,7 @@ private:
   };
 
   struct merge_sort3
-  {
+  { // recursive top-down merge sort
     static void sort(const_iterator& i, decltype(i) j, size_type const sz,
       auto&& cmp)
       noexcept(noexcept(node::merge(i, i, j, cmp)))
@@ -174,7 +174,7 @@ private:
   };
 
   struct merge_sort4
-  {
+  { // recursive top-down merge sort
     static void sort(const_iterator& i, decltype(i) j, auto&& cmp)
       noexcept(noexcept(node::merge(i, i, j, cmp)))
     {
