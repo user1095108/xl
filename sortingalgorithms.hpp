@@ -168,7 +168,7 @@ private:
         i = m; // advance
       }
 
-      size_type bsize(bsize0);
+      auto bsize(bsize0);
 
       for (auto i(b);; bsize *= 2, i = b)
       {
@@ -238,9 +238,9 @@ public:
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp()) noexcept(noexcept(node::merge(
-    std::declval<const_iterator&>(), std::declval<const_iterator>(),
-    std::declval<const_iterator&>(), cmp)))
+  void sort(Cmp&& cmp = Cmp())
+    noexcept(noexcept(node::merge(std::declval<const_iterator&>(),
+      std::declval<const_iterator>(), std::declval<const_iterator&>(), cmp)))
     requires(3 == I)
   {
     auto b(cbegin()), e(cend());
