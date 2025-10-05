@@ -256,9 +256,12 @@ public:
       std::declval<const_iterator>(), std::declval<const_iterator&>(), cmp)))
     requires(4 == I)
   {
-    auto b(cbegin()), e(cend());
+    if (!empty()) [[likely]]
+    {
+      auto b(cbegin()), e(cend());
 
-    merge_sort4::sort(b, e, cmp);
+      merge_sort4::sort(b, e, cmp);
 
-    detail::assign(f_, l_)(b.n_, e.p_);
+      detail::assign(f_, l_)(b.n_, e.p_);
+    }
   }
