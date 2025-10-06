@@ -190,8 +190,7 @@ int main()
         auto it = std::next(z.begin());
         z.splice(z.begin(), z, it);      // move '2' to front – still 3 elements
         assert(z.size()==3);
-        int want[] = {2,1,3};
-        assert(want == z);
+        assert(((int[]){2,1,3} == z));
     }
 
     // 2.4  self-splice whole list
@@ -207,8 +206,7 @@ int main()
         xl::list<int> B = {2,4,6};
         A.splice(A.end(), B);            // move all nodes
         assert(B.empty() && A.size()==6);
-        int want[] = {1,3,5,2,4,6};
-        assert(want == A);
+        assert(((int[]){1,3,5,2,4,6} == A));
     }
 
     // 2.6  merge with duplicates interleaved
@@ -218,8 +216,7 @@ int main()
         A.sort();  B.sort();
         A.merge(B);
         assert(B.empty());
-        int want[] = {1,2,3,3,3,3,7,8};
-        assert(want == A);
+        assert(((int[]){1,2,3,3,3,3,7,8} == A));
     }
 
     // 2.7  unique with no duplicates, and with all equal
