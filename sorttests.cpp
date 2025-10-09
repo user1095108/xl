@@ -25,17 +25,10 @@ bool is_stable_sort()
   auto const cmp([](auto const& a, auto const& b) noexcept
     { return std::get<0>(a) < std::get<0>(b); });
 
-  
   if constexpr (requires { c.sort(cmp); })
   {
-    if constexpr (1 == N)
-      c.template sort<1>(cmp);
-    else if constexpr (2 == N)
-      c.template sort<2>(cmp);
-    else if constexpr (3 == N)
-      c.template sort<3>(cmp);
-    else if constexpr (4 == N)
-      c.template sort<4>(cmp);
+    if constexpr (N > 0)
+      c.template sort<N>(cmp);
     else
       c.sort(cmp);
   }
