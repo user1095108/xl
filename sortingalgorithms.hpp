@@ -30,7 +30,7 @@ private:
 
       unsigned short szhi{};
 
-      std::pair<const_iterator, const_iterator> runs[28]{};
+      std::pair<const_iterator, const_iterator> runs[28]{}; // !!!
 
       do
       {
@@ -44,8 +44,8 @@ private:
         { // try to merge run [i, j) with a valid stored run
           decltype(szhi) sz{};
 
-          for (auto r(std::begin(runs)); std::end(runs) != r; ++r)
-            if (auto& [a, b](*r); a)
+          for (auto& [a, b] : runs)
+            if (a)
             { // merge run [i, j) with a valid stored run
               ++sz; // increase size rank
               merge(a, b, i, j, cmp); // merged run is in [i, j)
