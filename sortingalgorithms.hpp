@@ -28,7 +28,7 @@ private:
     {
       constexpr size_type bsize0(16);
 
-      unsigned short szhi{};
+      std::pair<const_iterator, const_iterator> const* endr{};
 
       std::pair<const_iterator, const_iterator> runs[
         sizeof(std::size_t) * CHAR_BIT]{};
@@ -42,44 +42,36 @@ private:
 
         auto const m(node::detach(i, j)); // detach run [i, j)
 
-        { // try to merge run [i, j) with a valid stored run
-          decltype(szhi) sz{};
+        // try to merge run [i, j) with a valid stored run
+        for (auto r(std::begin(runs));; ++r)
+          if (auto& [a, b](*r); a)
+          { // merge run [i, j) with a valid stored run
+            merge(a, b, i, j, cmp); // merged run is in [i, j)
+            a = {}; // invalidate stored run
+          }
+          else
+          {
+            detail::assign(a, b)(i, j); // store run
+            if (r > endr) endr = r; // update highest size rank
 
-          for (auto r(std::begin(runs));; ++r)
-            if (auto& [a, b](*r); a)
-            { // merge run [i, j) with a valid stored run
-              ++sz; // increase size rank
-              merge(a, b, i, j, cmp); // merged run is in [i, j)
-              a = {}; // invalidate stored run
-            }
-            else
-            {
-              detail::assign(a, b)(i, j); // store run
-
-              break;
-            }
-
-          szhi = std::max(szhi, sz); // update highest size rank
-        }
+            break;
+          }
 
         i = m;
       }
       while (i);
 
-      { // merge remaining runs
-        auto i(std::ranges::find_if(runs,
-          [](auto&& a) noexcept { return bool(std::get<0>(a)); }));
-        // assert(std::end(runs) != i);
+      // merge remaining runs
+      auto j(std::ranges::find_if(runs,
+        [](auto&& a) noexcept { return bool(std::get<0>(a)); }));
+      // assert(std::end(runs) != i);
 
-        auto& [a, b](*i); // *i is the first valid stored run
-        ++i;
+      auto& [a, b](*j); // *i is the first valid stored run
 
-        for (auto const end(std::next(std::begin(runs), szhi + 1));
-          end != i; ++i) // merge valid stored runs
-          if (auto& [c, d](*i); c) merge(c, d, a, b, cmp);
+      for (++j, ++endr; endr != j; ++j) // merge valid stored runs
+        if (auto& [c, d](*j); c) merge(c, d, a, b, cmp);
 
-        return std::pair(a.n_, b.p_);
-      }
+      return std::pair(a.n_, b.p_);
     }
   };
 
