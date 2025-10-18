@@ -66,7 +66,7 @@ private:
         [](auto&& a) noexcept { return bool(std::get<0>(a)); }));
       // assert(std::end(runs) != i);
 
-      auto& [a, b](*j); // *i is the first valid stored run
+      auto& [a, b](*j); // first valid stored run
 
       for (++j, ++endr; endr != j; ++j) // merge valid stored runs
         if (auto& [c, d](*j); c) merge(c, d, a, b, cmp);
