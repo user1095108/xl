@@ -67,16 +67,16 @@ private:
       while (i);
 
       { // merge remaining runs
-        auto const i(std::ranges::find_if(runs,
+        auto i(std::ranges::find_if(runs,
           [](auto&& a) noexcept { return bool(std::get<0>(a)); }));
         // assert(std::end(runs) != i);
 
         auto& [a, b](*i); // *i is the first valid stored run
+        ++i;
 
-        for (auto& j: std::ranges::subrange(std::next(i),
-          std::next(std::begin(runs), szhi + 1)))
-          if (auto& [c, d](j); c) // merge valid stored runs into *i
-            merge(c, d, a, b, cmp);
+        for (auto const end(std::next(std::begin(runs), szhi + 1));
+          end != i; ++i) // merge valid stored runs
+          if (auto& [c, d](*i); c) merge(c, d, a, b, cmp);
 
         return std::pair(a.n_, b.p_);
       }
