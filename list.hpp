@@ -2,6 +2,7 @@
 # define XL_LIST_HPP
 # pragma once
 
+#include <climits> // CHAR_BIT
 #include <cstdint> // std::uintptr_t
 #include <algorithm> // std::move()
 #include <bit> // std::bit_width()
