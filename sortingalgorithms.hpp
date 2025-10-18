@@ -64,7 +64,7 @@ private:
       // merge remaining runs
       auto j(std::ranges::find_if(runs,
         [](auto&& a) noexcept { return bool(std::get<0>(a)); }));
-      // assert(std::end(runs) != i);
+      // assert(std::end(runs) != j);
 
       auto& [a, b](*j); // first valid stored run
 
