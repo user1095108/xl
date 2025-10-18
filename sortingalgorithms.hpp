@@ -71,7 +71,7 @@ private:
       for (++j, ++endr; endr != j; ++j) // merge valid stored runs
         if (auto& [c, d](*j); c) merge(c, d, a, b, cmp);
 
-      return (node*[2])(a.n_, b.p_);
+      return std::pair(a.n_, b.p_);
     }
   };
 
