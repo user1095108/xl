@@ -30,7 +30,8 @@ private:
 
       unsigned short szhi{};
 
-      std::pair<const_iterator, const_iterator> runs[28]{}; // !!!
+      std::pair<const_iterator, const_iterator> runs[
+        sizeof(std::size_t) * CHAR_BIT]{};
 
       do
       {
@@ -41,25 +42,21 @@ private:
 
         auto const m(node::detach(i, j)); // detach run [i, j)
 
-        { // try to merge run [i, j) with a valid stored run
-          decltype(szhi) sz{};
+        // try to merge run [i, j) with a valid stored run
+        for (decltype(szhi) sz{}; auto& [a, b] : runs)
+          if (a)
+          { // merge run [i, j) with a valid stored run
+            ++sz; // increase size rank
+            merge(a, b, i, j, cmp); // merged run is in [i, j)
+            a = {}; // invalidate stored run
+          }
+          else
+          {
+            detail::assign(a, b)(i, j); // store run
+            szhi = std::max(szhi, sz); // update highest size rank
 
-          for (auto& [a, b] : runs)
-            if (a)
-            { // merge run [i, j) with a valid stored run
-              ++sz; // increase size rank
-              merge(a, b, i, j, cmp); // merged run is in [i, j)
-              a = {}; // invalidate stored run
-            }
-            else
-            {
-              detail::assign(a, b)(i, j); // store run
-
-              break;
-            }
-
-          szhi = std::max(szhi, sz); // update highest size rank
-        }
+            break;
+          }
 
         i = m;
       }
