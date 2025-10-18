@@ -44,21 +44,21 @@ private:
         { // try to merge run [i, j) with a valid stored run
           decltype(szhi) sz{};
 
-          for (auto r(std::begin(runs));;)
+          for (auto r(std::begin(runs)); std::end(runs) != r; ++r)
             if (auto& [a, b](*r); a)
             { // merge run [i, j) with a valid stored run
-              ++sz; ++r; // increase size rank
-
+              ++sz; // increase size rank
               merge(a, b, i, j, cmp); // merged run is in [i, j)
               a = {}; // invalidate stored run
             }
             else
             {
-              if (sz > szhi) szhi = sz; // update highest size rank
               detail::assign(a, b)(i, j); // store run
 
               break;
             }
+
+          szhi = std::max(szhi, sz); // update highest size rank
         }
 
         i = m;
