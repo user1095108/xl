@@ -939,26 +939,26 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
-inline auto erase_if(list<T>& c, auto&& pred)
+auto erase_if(list<T>& c, auto&& pred)
   noexcept(noexcept(c.remove_if(std::forward<decltype(pred)>(pred))))
 {
   return c.remove_if(std::forward<decltype(pred)>(pred));
 }
 
 template <int = 0, typename T>
-inline auto erase(list<T>& c, auto const& ...k)
+auto erase(list<T>& c, auto const& ...k)
   noexcept(noexcept(c.remove(k...)))
 {
   return c.remove(k...);
 }
 
 template <typename T>
-inline auto erase(list<T>& c, T const k) noexcept(noexcept(erase<0>(c, k)))
+auto erase(list<T>& c, T const k) noexcept(noexcept(erase<0>(c, k)))
 {
   return erase<0>(c, k);
 }
 
-inline auto find_if(auto&& c, auto pred)
+auto find_if(auto&& c, auto pred)
   noexcept(noexcept(pred(*c.begin())))
   requires(requires{std::remove_cvref_t<decltype(c)>::xl_list_tag;})
 {
@@ -978,7 +978,7 @@ inline auto find_if(auto&& c, auto pred)
 }
 
 template <int = 0>
-inline auto find(auto&& c, auto const& ...k)
+auto find(auto&& c, auto const& ...k)
   noexcept(noexcept(((*c.cbegin() == k), ...)))
   requires(!!sizeof...(k))
 {
@@ -992,22 +992,22 @@ inline auto find(auto&& c, auto const& ...k)
 }
 
 template <typename T>
-inline auto find(list<T>& c, T const k)
+auto find(list<T>& c, T const k)
   noexcept(noexcept(find<0>(c, k)))
 {
   return find<0>(c, k);
 }
 
 template <typename T>
-inline auto find(list<T> const& c, T const k)
+auto find(list<T> const& c, T const k)
   noexcept(noexcept(find<0>(c, k)))
 {
   return find<0>(c, k);
 }
 
-template <typename T, class Cmp = std::less<typename list<T>::value_type>>
+template <typename T, class Cmp = std::less<T>>
 void sort(list<T>& l, typename list<T>::const_iterator const b,
-  typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
+  decltype(b) e, Cmp&& cmp = Cmp())
   noexcept(noexcept(std::declval<typename list<T>::
     template merge_sort<Cmp&&>>()({}, {}, {})))
 {
@@ -1016,10 +1016,10 @@ void sort(list<T>& l, typename list<T>::const_iterator const b,
 }
 
 template <typename T>
-inline void swap(list<T>& l, decltype(l) r) noexcept { l.swap(r); }
+void swap(list<T>& l, decltype(l) r) noexcept { l.swap(r); }
 
 //////////////////////////////////////////////////////////////////////////////
-inline auto operator==(std::ranges::input_range auto const& l,
+auto operator==(std::ranges::input_range auto const& l,
   std::ranges::input_range auto const& r)
   noexcept(noexcept(std::equal(std::cbegin(l), std::cend(l), std::cbegin(r),
     std::cend(r))))
@@ -1030,7 +1030,7 @@ inline auto operator==(std::ranges::input_range auto const& l,
     std::cend(r));
 }
 
-inline auto operator<=>(std::ranges::input_range auto const& l,
+auto operator<=>(std::ranges::input_range auto const& l,
   std::ranges::input_range auto const& r)
   noexcept(noexcept(std::lexicographical_compare_three_way(
     std::cbegin(l), std::cend(l), std::cbegin(r), std::cend(r))))
