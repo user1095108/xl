@@ -134,7 +134,7 @@ private:
 
       // select the first remaining element k of the 2 ranges,
       // if the remaining element is i, relink e to m.p_ and fix e
-      auto const k(i == m ? j : ((e.p_ = m.p_)->l_ ^= detail::conv(m.n_), i));
+      auto const k(j ? j : ((e.p_ = m.p_)->l_ ^= detail::conv(m.n_), i));
 
       // link k and ni
       k.n_->l_ ^= detail::conv(k.p_, ni.n_); // link k to ni
