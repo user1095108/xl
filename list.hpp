@@ -112,7 +112,7 @@ private:
         (e.p_ = m.p_)->l_ ^= detail::conv(m.n_, e.n_), i));
 
       // link k and ni
-      k.n_->l_ ^= detail::conv(k.p_, ni.n_); // link k to n
+      k.n_->l_ ^= detail::conv(k.p_, ni.n_); // link k to ni
       ni.n_->l_ = detail::conv(ni.p_, k.n_); // link ni to k, ni.p_ is valid
     }
 
@@ -121,7 +121,7 @@ private:
     {
       auto i(b), j(m), ni((c(*j, *i) ? b.n_ = j.n_, ++j : ++i, b)); // ni = b
 
-      for (const_iterator k; (i != m) && (j != e);)
+      for (const_iterator k; (i != m) && j;)
       {
         c(*j, *i) ? k = j, ++j : (k = i, ++i);
 
@@ -137,7 +137,7 @@ private:
       auto const k(i == m ? j : ((e.p_ = m.p_)->l_ ^= detail::conv(m.n_), i));
 
       // link k and ni
-      k.n_->l_ ^= detail::conv(k.p_, ni.n_); // link k to n
+      k.n_->l_ ^= detail::conv(k.p_, ni.n_); // link k to ni
       ni.n_->l_ = detail::conv(ni.p_, k.n_); // link ni to k, ni.p_ is valid
     }
 
