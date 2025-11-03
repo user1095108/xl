@@ -119,8 +119,7 @@ private:
     static void merge2(const_iterator& b, const_iterator const m,
       decltype(b) e, auto c) noexcept(noexcept(c(*b, *b)))
     {
-      auto i(b), j(m), ni((c(*j, *i) ?
-        b.n_ = j.n_, ++j : ++i, b)); // ni = b, relink and fix parent of b, if necessary
+      auto i(b), j(m), ni((c(*j, *i) ? b.n_ = j.n_, ++j : ++i, b)); // ni = b
 
       for (const_iterator k; (i != m) && (j != e);)
       {
@@ -135,8 +134,7 @@ private:
 
       // select the first remaining element k of the 2 ranges,
       // if the remaining element is i, relink e to m.p_ and fix e
-      auto const k(i == m ? j :
-        ((e.p_ = m.p_)->l_ ^= detail::conv(m.n_, e.n_), i));
+      auto const k(i == m ? j : ((e.p_ = m.p_)->l_ ^= detail::conv(m.n_), i));
 
       // link k and ni
       k.n_->l_ ^= detail::conv(k.p_, ni.n_); // link k to n
