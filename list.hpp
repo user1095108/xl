@@ -116,6 +116,33 @@ private:
       ni.n_->l_ = detail::conv(ni.p_, k.n_); // link ni to k, ni.p_ is valid
     }
 
+    static void merge2(const_iterator& b, const_iterator const m,
+      decltype(b) e, auto c) noexcept(noexcept(c(*b, *b)))
+    {
+      auto i(b), j(m), ni((c(*j, *i) ?
+        b.n_ = j.n_, ++j : ++i, b)); // ni = b, relink and fix parent of b, if necessary
+
+      for (const_iterator k; (i != m) && (j != e);)
+      {
+        c(*j, *i) ? k = j, ++j : (k = i, ++i);
+
+        k.n_->l_ = detail::conv(k.p_ = ni.n_); // link k to ni
+        ni.n_->l_ = detail::conv(ni.p_, k.n_); // link ni to k, ni.p_ is valid
+
+        ni = k;
+        //assert(!c(*k, k.p_->v_));
+      }
+
+      // select the first remaining element k of the 2 ranges,
+      // if the remaining element is i, relink e to m.p_ and fix e
+      auto const k(i == m ? j :
+        ((e.p_ = m.p_)->l_ ^= detail::conv(m.n_, e.n_), i));
+
+      // link k and ni
+      k.n_->l_ ^= detail::conv(k.p_, ni.n_); // link k to n
+      ni.n_->l_ = detail::conv(ni.p_, k.n_); // link ni to k, ni.p_ is valid
+    }
+
     static void insertion_sort(auto& i, decltype(i) j, auto cmp)
       noexcept(noexcept(cmp(*i, *i)))
     {
@@ -215,7 +242,7 @@ private:
       c.n_->l_ ^= detail::conv(b.p_);
 
       if (cmp_(*c, (c.p_ = b.p_)->v_))
-        node::merge(a, c, d, cmp_);
+        node::merge2(a, c, d, cmp_);
 
       detail::assign(b, c)(d, a);
     }

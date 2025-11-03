@@ -18,7 +18,7 @@ private:
       c.n_->l_ ^= detail::conv(b.p_);
 
       if (cmp(*c, (c.p_ = b.p_)->v_))
-        node::merge(a, c, d, cmp);
+        node::merge2(a, c, d, cmp);
 
       detail::assign(b, c)(d, a);
     }
