@@ -76,16 +76,18 @@ private:
     //
     static auto detach(const_iterator& i, const_iterator& j) noexcept
     {
-      i.n_->l_ ^= detail::conv(i.p_);
+      //if (i.p_)
+      //  i.n_->l_ ^= detail::conv(i.p_),
+      //  i.p_->l_ ^= detail::conv(i.n_);
 
-      auto const n(j.n_);
-      i.p_ = j.n_ = {};
+      auto const jn(j.n_);
+      detail::assign(i.p_, j.n_)(nullptr, nullptr);
 
-      if (n) [[likely]]
-        n->l_ ^= detail::conv(j.p_),
-        j.p_->l_ ^= detail::conv(n);
+      if (jn) [[likely]]
+        jn->l_ ^= detail::conv(j.p_),
+        j.p_->l_ ^= detail::conv(jn);
 
-      return const_iterator{n, {}};
+      return const_iterator{jn, {}};
     }
 
     static void merge(const_iterator& b, const_iterator const m,
