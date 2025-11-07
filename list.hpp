@@ -226,12 +226,10 @@ private:
       noexcept(noexcept(std::declval<typename list<T>::
         template merge_sort<Cmp&&>>()({}, {}, {})))
     {
-      if (b == e) [[unlikely]] return;
-
       auto const ob(b), oe(e);
 
       auto s(typename list<T>::template merge_sort<Cmp&&>{
-        std::forward<Cmp>(cmp)});
+        std::forward<Cmp>(cmp), {}, {}});
       s({}, b, e);
 
       if (ob.p_) [[unlikely]]
@@ -916,7 +914,7 @@ public:
   void sort(Cmp&& cmp = Cmp())
     noexcept(noexcept(std::declval<merge_sort<Cmp&&>>()({}, {}, {})))
   {
-    auto s(merge_sort<Cmp&&>{std::forward<Cmp>(cmp)});
+    auto s(merge_sort<Cmp&&>{std::forward<Cmp>(cmp), {}, {}});
     s({}, cbegin(), cend());
     detail::assign(f_, l_)(s.f_, s.l_);
   }

@@ -14,10 +14,7 @@ int main()
   std::for_each(
     l.cbegin(),
     l.cend(),
-    [](auto&& p) noexcept
-    {
-      std::cout << p << ' ';
-    }
+    [](auto&& p) { std::cout << p << ' '; }
   );
   std::cout << std::endl;
 
@@ -26,10 +23,7 @@ int main()
   std::for_each(
     l.cbegin(),
     l.cend(),
-    [](auto&& p) noexcept
-    {
-      std::cout << p << ' ';
-    }
+    [](auto&& p) { std::cout << p << ' '; }
   );
   std::cout << std::endl;
 
@@ -48,10 +42,7 @@ int main()
   std::for_each(
     l.crbegin(),
     l.crend(),
-    [](auto&& p) noexcept
-    {
-      std::cout << p << ' ';
-    }
+    [](auto&& p) { std::cout << p << ' '; }
   );
   std::cout << std::endl;
 
@@ -65,10 +56,7 @@ int main()
   std::for_each(
     l.cbegin(),
     l.cend(),
-    [](auto&& p) noexcept
-    {
-      std::cout << p << ' ';
-    }
+    [](auto&& p) { std::cout << p << ' '; }
   );
   std::cout << std::endl;
 
