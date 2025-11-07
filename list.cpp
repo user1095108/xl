@@ -11,6 +11,28 @@ int main()
   l.push_back(0ull, 1ll);
   l.push_front(1l, 2u, 3ll);
 
+  std::for_each(
+    l.cbegin(),
+    l.cend(),
+    [](auto&& p) noexcept
+    {
+      std::cout << p << ' ';
+    }
+  );
+  std::cout << std::endl;
+
+  xl::sort(l, l.after_begin(), l.before_end());
+
+  std::for_each(
+    l.cbegin(),
+    l.cend(),
+    [](auto&& p) noexcept
+    {
+      std::cout << p << ' ';
+    }
+  );
+  std::cout << std::endl;
+
   xl::erase(l, 1, 1ull, 1ll);
 
   for (auto& a: l) std::cout << a << " "; std::cout << std::endl;
@@ -28,9 +50,10 @@ int main()
     l.crend(),
     [](auto&& p) noexcept
     {
-      std::cout << p << std::endl;
+      std::cout << p << ' ';
     }
   );
+  std::cout << std::endl;
 
   //
   l.pop_back();
@@ -44,9 +67,10 @@ int main()
     l.cend(),
     [](auto&& p) noexcept
     {
-      std::cout << p << std::endl;
+      std::cout << p << ' ';
     }
   );
+  std::cout << std::endl;
 
   decltype(l) a(l), b(std::move(l));
 
