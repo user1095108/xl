@@ -76,9 +76,9 @@ private:
     //
     static auto detach(const_iterator& i, const_iterator& j) noexcept
     {
-      //if (i.p_) [[unlikely]]
-      //  i.n_->l_ ^= detail::conv(i.p_),
-      //  i.p_->l_ ^= detail::conv(i.n_);
+      if (i.p_) [[unlikely]]
+        i.n_->l_ ^= detail::conv(i.p_),
+        i.p_->l_ ^= detail::conv(i.n_);
 
       auto const jn(j.n_);
 
