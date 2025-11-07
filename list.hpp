@@ -219,6 +219,33 @@ private:
 
       return r;
     }
+
+    template <class Cmp = std::less<T>>
+    static void sort(list<T>& l, typename list<T>::const_iterator const b,
+      typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
+      noexcept(noexcept(std::declval<typename list<T>::
+        template merge_sort<Cmp&&>>()({}, {}, {})))
+    {
+      if (b == e) [[unlikely]] return;
+
+      auto const ob(b), oe(e);
+
+      auto s(typename list<T>::template merge_sort<Cmp&&>{
+        std::forward<Cmp>(cmp)});
+      s({}, b, e);
+
+      if (ob.p_) [[unlikely]]
+        ob.p_->l_ ^= detail::conv(s.f_),
+        s.f_->l_ ^= detail::conv(ob.p_);
+      else [[likely]]
+        l.f_ = s.f_;
+
+      if (oe) [[unlikely]]
+        oe.n_->l_ ^= detail::conv(s.l_),
+        s.l_->l_ ^= detail::conv(oe.n_);
+      else [[likely]]
+        l.l_ = s.l_;
+    }
   };
 
   template <class Cmp>
@@ -233,7 +260,7 @@ private:
     };
 
     Cmp cmp_;
-    list& l_;
+    node *f_, *l_;
 
     void merge(const_iterator& a, const_iterator& b,
       const_iterator& c, const_iterator& d)
@@ -309,7 +336,7 @@ private:
         if (auto const p(prun->prev_); p) [[likely]]
           merge(p->a_, p->b_, prun->a_, prun->b_);
         else
-          detail::assign(l_.f_, l_.l_)(prun->a_.n_, prun->b_.p_);
+          detail::assign(f_, l_)(prun->a_.n_, prun->b_.p_);
       }
 
       return e; // clear the stack
@@ -889,14 +916,15 @@ public:
   void sort(Cmp&& cmp = Cmp())
     noexcept(noexcept(std::declval<merge_sort<Cmp&&>>()({}, {}, {})))
   {
-    merge_sort<Cmp&&>{std::forward<Cmp>(cmp), *this}({}, cbegin(), cend());
+    auto s(merge_sort<Cmp&&>{std::forward<Cmp>(cmp)});
+    s({}, cbegin(), cend());
+    detail::assign(f_, l_)(s.f_, s.l_);
   }
 
   template <typename U, class Cmp>
-  friend void sort(list<U>&, typename list<U>::const_iterator,
-    typename list<U>::const_iterator, Cmp&&)
-    noexcept(noexcept(std::declval<typename list<U>::
-      template merge_sort<Cmp&&>>()({}, {}, {})));
+  friend void sort(list<U>& l, typename list<U>::const_iterator const b,
+    typename list<U>::const_iterator const e, Cmp&& cmp)
+    noexcept(noexcept(list<U>::node::sort(l, b, e, std::forward<Cmp>(cmp))));
 
   #include "sortingalgorithms.hpp"
 
@@ -1035,38 +1063,38 @@ auto find(list<T> const& c, T const k)
 
 template <typename T, class Cmp = std::less<T>>
 void sort(list<T>& l, typename list<T>::const_iterator const b,
-  decltype(b) e, Cmp&& cmp = Cmp())
-  noexcept(noexcept(std::declval<typename list<T>::
-    template merge_sort<Cmp&&>>()({}, {}, {})))
+  typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
+  noexcept(noexcept(list<T>::node::sort(l, b, e, std::forward<Cmp>(cmp))))
 {
-  typename list<T>::template merge_sort<Cmp&&>{
-    std::forward<Cmp>(cmp), l}({}, b, e);
+  list<T>::node::sort(l, b, e, std::forward<Cmp>(cmp));
 }
 
 template <typename T>
-void swap(list<T>& l, decltype(l) r) noexcept { l.swap(r); }
+void swap(list<T>& l, decltype(l) r) noexcept
+{
+  l.swap(r);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 auto operator==(std::ranges::input_range auto const& l,
   std::ranges::input_range auto const& r)
-  noexcept(noexcept(std::equal(std::cbegin(l), std::cend(l), std::cbegin(r),
-    std::cend(r))))
+  noexcept(noexcept(std::equal(std::begin(l), std::end(l), std::begin(r),
+    std::end(r))))
   requires(requires{std::remove_cvref_t<decltype(l)>::xl_list_tag;} ||
     requires{std::remove_cvref_t<decltype(r)>::xl_list_tag;})
 {
-  return std::equal(std::cbegin(l), std::cend(l), std::cbegin(r),
-    std::cend(r));
+  return std::equal(std::begin(l), std::end(l), std::begin(r), std::end(r));
 }
 
 auto operator<=>(std::ranges::input_range auto const& l,
   std::ranges::input_range auto const& r)
-  noexcept(noexcept(std::lexicographical_compare_three_way(
-    std::cbegin(l), std::cend(l), std::cbegin(r), std::cend(r))))
+  noexcept(noexcept(std::lexicographical_compare_three_way(std::begin(l),
+    std::end(l), std::begin(r), std::end(r))))
   requires(requires{std::remove_cvref_t<decltype(l)>::xl_list_tag;} ||
     requires{std::remove_cvref_t<decltype(r)>::xl_list_tag;})
 {
-  return std::lexicographical_compare_three_way(std::cbegin(l), std::cend(l),
-    std::cbegin(r), std::cend(r));
+  return std::lexicographical_compare_three_way(std::begin(l), std::end(l),
+    std::begin(r), std::end(r));
 }
 
 //
