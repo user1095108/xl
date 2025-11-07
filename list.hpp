@@ -81,12 +81,12 @@ private:
       //  i.p_->l_ ^= detail::conv(i.n_);
 
       auto const jn(j.n_);
-      detail::assign(i.p_, j.n_)(nullptr, nullptr);
 
       if (jn) [[likely]]
         jn->l_ ^= detail::conv(j.p_),
         j.p_->l_ ^= detail::conv(jn);
 
+      detail::assign(i.p_, j.n_)(nullptr, nullptr);
       return const_iterator{jn, {}};
     }
 
