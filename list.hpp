@@ -688,9 +688,7 @@ public:
       return r;
     }
     else [[unlikely]]
-    {
       return {i.n_, i.p_};
-    }
   }
 
   auto insert(const_iterator const i, size_type const count,
