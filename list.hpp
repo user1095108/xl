@@ -232,17 +232,13 @@ private:
         std::forward<Cmp>(cmp), {}, {}});
       s({}, b, e);
 
-      if (ob.p_) [[unlikely]]
-        ob.p_->l_ ^= detail::conv(s.f_),
-        s.f_->l_ ^= detail::conv(ob.p_);
-      else [[likely]]
-        l.f_ = s.f_;
+      ob.p_ ? ob.p_->l_ ^= detail::conv(s.f_),
+        s.f_->l_ ^= detail::conv(ob.p_) :
+        bool(l.f_ = s.f_);
 
-      if (oe) [[unlikely]]
-        oe.n_->l_ ^= detail::conv(s.l_),
-        s.l_->l_ ^= detail::conv(oe.n_);
-      else [[likely]]
-        l.l_ = s.l_;
+      oe ? oe.n_->l_ ^= detail::conv(s.l_),
+        s.l_->l_ ^= detail::conv(oe.n_) :
+        bool(l.l_ = s.l_);
     }
   };
 
