@@ -470,6 +470,16 @@ public:
   auto cend() const noexcept { return end(); }
 
   // reverse iterators
+  reverse_iterator rafter_begin() noexcept
+  {
+    return reverse_iterator(iterator(l_, l_->link()));
+  }
+
+  reverse_iterator rbefore_end() noexcept
+  {
+    return reverse_iterator(iterator(f_->link(), f_));
+  }
+
   reverse_iterator rbegin() noexcept
   {
     return reverse_iterator(iterator({}, l_));
@@ -481,6 +491,16 @@ public:
   }
 
   // const reverse iterators
+  const_reverse_iterator rafter_begin() const noexcept
+  {
+    return const_reverse_iterator(iterator(l_, l_->link()));
+  }
+
+  const_reverse_iterator rbefore_end() const noexcept
+  {
+    return const_reverse_iterator(iterator(f_->link(), f_));
+  }
+
   const_reverse_iterator rbegin() const noexcept
   {
     return const_reverse_iterator(const_iterator({}, l_));
@@ -491,6 +511,8 @@ public:
     return const_reverse_iterator(const_iterator(f_, {}));
   }
 
+  auto crafter_begin() const noexcept { return rafter_begin(); }
+  auto crbefore_end() const noexcept { return rbefore_end(); }
   auto crbegin() const noexcept { return rbegin(); }
   auto crend() const noexcept { return rend(); }
 
