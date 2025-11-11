@@ -119,7 +119,7 @@ private:
       ni.n_->l_ = detail::conv(ni.p_, k.n_); // link ni to k, ni.p_ is valid
     }
 
-    static void merge2(const_iterator& a, const_iterator const b,
+    static void merge(const_iterator& a, const_iterator const b,
       const_iterator const c, decltype(a) d, auto cmp)
       noexcept(noexcept(cmp(*b, *b)))
     {
@@ -259,10 +259,10 @@ private:
 
     void merge(const_iterator& a, const_iterator& b,
       const_iterator& c, const_iterator& d)
-      noexcept(noexcept(node::merge2(a, b, c, d, cmp_)))
+      noexcept(noexcept(node::merge(a, b, c, d, cmp_)))
     { // merge runs [a, b) and [c, d)
       if (cmp_(*c, b.p_->v_))
-        node::merge2(a, b, c, d, cmp_);
+        node::merge(a, b, c, d, cmp_);
       else
         b.p_->l_ ^= detail::conv(c.n_),
         c.n_->l_ ^= detail::conv(b.p_);
