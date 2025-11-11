@@ -119,25 +119,26 @@ private:
       ni.n_->l_ = detail::conv(ni.p_, k.n_); // link ni to k, ni.p_ is valid
     }
 
-    static void merge2(const_iterator& b, const_iterator const m,
-      decltype(b) e, auto c) noexcept(noexcept(c(*b, *b)))
+    static void merge2(const_iterator& a, const_iterator const b,
+      const_iterator const c, decltype(a) d, auto cmp)
+      noexcept(noexcept(cmp(*b, *b)))
     {
-      auto i(b), j(m), ni((c(*j, *i) ? b.n_ = j.n_, ++j : ++i, b)); // ni = b
+      auto i(a), j(c), ni((cmp(*j, *i) ? a.n_ = j.n_, ++j : ++i, a)); // ni = a
 
-      for (const_iterator k; (i != m) && j;)
+      for (const_iterator k; i && j;)
       {
-        c(*j, *i) ? k = j, ++j : (k = i, ++i);
+        cmp(*j, *i) ? k = j, ++j : (k = i, ++i);
 
         k.n_->l_ = detail::conv(k.p_ = ni.n_); // link k to ni
         ni.n_->l_ = detail::conv(ni.p_, k.n_); // link ni to k, ni.p_ is valid
 
         ni = k;
-        //assert(!c(*k, k.p_->v_));
+        //assert(!cmp(*k, k.p_->v_));
       }
 
       // select the first remaining element k of the 2 ranges,
-      // if the remaining element is i, relink e to m.p_ and fix e
-      auto const k(j ? j : ((e.p_ = m.p_)->l_ ^= detail::conv(m.n_), i));
+      // if the remaining element is i fix d
+      auto const k(j ? j : (d.p_ = b.p_, i));
 
       // link k and ni
       k.n_->l_ ^= detail::conv(k.p_, ni.n_); // link k to ni
@@ -258,13 +259,13 @@ private:
 
     void merge(const_iterator& a, const_iterator& b,
       const_iterator& c, const_iterator& d)
-      noexcept(noexcept(node::merge(a, a, a, cmp_)))
+      noexcept(noexcept(node::merge2(a, b, c, d, cmp_)))
     { // merge runs [a, b) and [c, d)
-      b.p_->l_ ^= detail::conv(c.n_);
-      c.n_->l_ ^= detail::conv(b.p_);
-
-      if (cmp_(*c, (c.p_ = b.p_)->v_))
-        node::merge2(a, c, d, cmp_);
+      if (cmp_(*c, b.p_->v_))
+        node::merge2(a, b, c, d, cmp_);
+      else
+        b.p_->l_ ^= detail::conv(c.n_),
+        c.n_->l_ ^= detail::conv(b.p_);
 
       detail::assign(b, c)(d, a);
     }
