@@ -12,13 +12,13 @@ private:
 
     static void merge(const_iterator& a, const_iterator& b,
       const_iterator& c, const_iterator& d, auto&& cmp)
-      noexcept(noexcept(node::merge(a, a, a, cmp)))
+      noexcept(noexcept(node::merge2(a, b, c, d, cmp)))
     { // merge runs [a, b) and [c, d)
-      b.p_->l_ ^= detail::conv(c.n_);
-      c.n_->l_ ^= detail::conv(b.p_);
-
-      if (cmp(*c, (c.p_ = b.p_)->v_))
-        node::merge2(a, c, d, cmp);
+      if (cmp(*c, b.p_->v_))
+        node::merge2(a, b, c, d, cmp);
+      else
+        b.p_->l_ ^= detail::conv(c.n_),
+        c.n_->l_ ^= detail::conv(b.p_);
 
       detail::assign(b, c)(d, a);
     }
