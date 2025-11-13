@@ -34,8 +34,8 @@ private:
 public:
   using value_type = T;
 
-  using difference_type = std::intmax_t;
-  using size_type = std::uintmax_t;
+  using difference_type = std::ptrdiff_t;
+  using size_type = std::size_t;
   using reference = value_type&;
   using const_reference = value_type const&;
 
