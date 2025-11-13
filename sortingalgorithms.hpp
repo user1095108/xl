@@ -31,7 +31,7 @@ private:
       std::pair<const_iterator, const_iterator> const* endr{};
 
       std::pair<const_iterator, const_iterator> runs[
-        sizeof(std::size_t) * CHAR_BIT]{};
+        sizeof(size_type) * CHAR_BIT]{};
 
       do
       {
