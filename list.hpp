@@ -874,7 +874,7 @@ public:
       std::declval<const_iterator>(), std::declval<const_iterator&>(), cmp)))
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
-    if (&o == this)
+    if (this == &o)
       return;
     else if (empty())
       detail::assign(f_, l_)(o.f_, o.l_);
