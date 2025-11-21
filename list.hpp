@@ -1050,7 +1050,7 @@ auto find_if(auto&& c, auto pred)
 
 template <int = 0>
 auto find(auto&& c, auto const& ...k)
-  noexcept(noexcept(((*c.cbegin() == k), ...)))
+  noexcept(noexcept(((*c.cbegin() == k) || ...)))
   requires(!!sizeof...(k))
 {
   return find_if(
