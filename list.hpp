@@ -726,9 +726,7 @@ public:
     noexcept(noexcept(emplace(i, *j)))
   {
     if (j == k) [[unlikely]]
-    {
       return {i.n_, i.p_};
-    }
     else [[likely]]
     {
       auto const r(emplace(i, *j));
