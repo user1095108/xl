@@ -867,7 +867,7 @@ public:
 
   //
   template <class Cmp = std::less<value_type>>
-  void merge(auto&& o, Cmp cmp = Cmp())
+  void merge(auto&& o, Cmp&& cmp = Cmp())
     noexcept(noexcept(node::merge(std::declval<const_iterator&>(),
       std::declval<const_iterator>(), std::declval<const_iterator&>(), cmp)))
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
@@ -885,7 +885,7 @@ public:
       m.p_ = l_; // fix iterator
 
       if (cmp(*m, m.p_->v_))
-        node::merge(b, m, e, cmp);
+        node::merge(b, m, e, std::forward<Cmp>(cmp));
 
       detail::assign(f_, l_)(b.n_, e.p_);
     }
