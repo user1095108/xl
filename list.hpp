@@ -1055,7 +1055,7 @@ auto find(auto&& c, auto const& ...k)
 {
   return find_if(
       std::forward<decltype(c)>(c),
-      [&k...](auto const& a) noexcept(noexcept(((a == k), ...)))
+      [&k...](auto const& a) noexcept(noexcept(((a == k) || ...)))
       {
         return ((a == k) || ...);
       }
