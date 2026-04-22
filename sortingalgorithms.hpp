@@ -285,14 +285,19 @@ private:
 
 public:
   template <int I = 0, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp()) noexcept requires(0 == I)
+  void sort(Cmp&& cmp = Cmp())
+  noexcept(noexcept(merge_sort::sort(cbegin(), cend(), cmp)))
+  requires(0 == I)
   { // bottom-up merge sort
     if (!empty()) [[likely]]
       std::tie(f_, l_) = merge_sort::sort(cbegin(), cend(), cmp);
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp()) noexcept requires(1 == I)
+  void sort(Cmp&& cmp = Cmp())
+  noexcept(noexcept(merge_sort1<Cmp&&>{std::forward<Cmp>(cmp), {}, {}}
+    ({}, cbegin(), cend())))
+  requires(1 == I)
   {
     auto s(merge_sort1<Cmp&&>{std::forward<Cmp>(cmp), {}, {}});
     s({}, cbegin(), cend());
@@ -300,7 +305,10 @@ public:
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp()) noexcept requires(2 == I)
+  void sort(Cmp&& cmp = Cmp())
+  noexcept(noexcept(merge_sort2::sort(std::declval<const_iterator&>(),
+    std::declval<const_iterator&>(), {}, cmp)))
+  requires(2 == I)
   { // classic merge sort
     auto b(cbegin()), m(b), e(cend());
 
@@ -323,7 +331,10 @@ public:
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp()) noexcept requires(3 == I)
+  void sort(Cmp&& cmp = Cmp())
+  noexcept(noexcept(merge_sort3::sort(std::declval<const_iterator&>(),
+    std::declval<const_iterator&>(), cmp)))
+  requires(3 == I)
   {
     auto b(cbegin()), e(cend());
 
@@ -333,7 +344,10 @@ public:
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp()) noexcept requires(4 == I)
+  void sort(Cmp&& cmp = Cmp())
+  noexcept(noexcept(merge_sort4::sort(std::declval<const_iterator&>(),
+    std::declval<const_iterator&>(), cmp)))
+  requires(4 == I)
   {
     if (empty()) [[unlikely]] return;
 

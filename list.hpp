@@ -223,7 +223,8 @@ private:
 
     template <int I, class Cmp = std::less<T>>
     static void sort(list<T>& li, typename list<T>::const_iterator const b,
-      typename list<T>::const_iterator const e, Cmp&& cmp = Cmp()) noexcept
+      typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
+      noexcept(noexcept(cmp(li.cbegin(), li.cbegin())))
     {
       if constexpr(0 == I)
       {
