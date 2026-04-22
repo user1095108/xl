@@ -222,26 +222,82 @@ private:
     }
 
     template <int I, class Cmp = std::less<T>>
-    static void sort(list<T>& l, typename list<T>::const_iterator const b,
+    static void sort(list<T>& li, typename list<T>::const_iterator const b,
       typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
       noexcept(noexcept(std::declval<typename list<T>::
         template merge_sort<Cmp&&>>()({}, {}, {})))
     {
       if constexpr(0 == I)
       {
-        auto const ob(b), oe(e);
-
         auto s(typename list<T>::template merge_sort<Cmp&&>{
           std::forward<Cmp>(cmp), {}, {}});
         s({}, b, e);
 
-        ob.p_ ? ob.p_->l_ ^= detail::conv(s.f_),
-          s.f_->l_ ^= detail::conv(ob.p_) :
-          bool(l.f_ = s.f_);
+        auto const& [f, l](std::pair(s.f_, s.l_));
 
-        oe ? oe.n_->l_ ^= detail::conv(s.l_),
-          s.l_->l_ ^= detail::conv(oe.n_) :
-          bool(l.l_ = s.l_);
+        b.p_ ? b.p_->l_ ^= detail::conv(f),
+          f->l_ ^= detail::conv(b.p_) :
+          bool(li.f_ = f);
+
+        e ? e.n_->l_ ^= detail::conv(l),
+          l->l_ ^= detail::conv(e.n_) :
+          bool(li.l_ = l);
+      }
+      else if constexpr(1 == I)
+      {
+        if (li.empty()) [[unlikely]] return;
+
+        auto const& [f, l](merge_sort1::sort(cbegin(), cend(), cmp));
+
+        b.p_ ? b.p_->l_ ^= detail::conv(f),
+          f->l_ ^= detail::conv(b.p_) :
+          bool(li.f_ = f);
+
+        e ? e.n_->l_ ^= detail::conv(l),
+          l->l_ ^= detail::conv(e.n_) :
+          bool(li.l_ = l);
+      }
+      else if constexpr(2 == I)
+      {
+        auto bb(b), m(b), ee(e);
+
+        {
+          size_type sz1{}, sz2{};
+
+          for (auto n(e); m != n; ++sz1, ++m)
+            if (++sz2, m == --n) break;
+
+          if (!sz1) [[unlikely]] return;
+
+          merge_sort2::sort(bb, m, sz1, cmp);
+          merge_sort2::sort(m, ee, sz2, cmp);
+        }
+
+        if (cmp(*m, m.p_->v_))
+          node::merge(bb, m, ee, cmp);
+
+        if (!b.p_) li.f_ = bb.n_;
+        if (!e) li.l_ = ee.p_;
+      }
+      else if constexpr(3 == I)
+      {
+        auto bb(b), ee(e);
+
+        merge_sort3::sort(bb, ee, cmp);
+
+        if (!b.p_) li.f_ = bb.n_;
+        if (!e) li.l_ = ee.p_;
+      }
+      else if constexpr(4 == I)
+      {
+        if (li.empty()) [[unlikely]] return;
+
+        auto bb(b), ee(e);
+
+        merge_sort4::sort(bb, ee, cmp);
+
+        if (!b.p_) li.f_ = bb.n_;
+        if (!e) li.l_ = ee.p_;
       }
     }
   };
