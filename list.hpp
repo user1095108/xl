@@ -233,7 +233,7 @@ private:
           std::forward<Cmp>(cmp), {}, {}});
         s({}, b, e);
 
-        auto const& [f, l](std::pair(s.f_, s.l_));
+        auto const& [f, l](std::tie(s.f_, s.l_));
 
         b.p_ ? b.p_->l_ ^= detail::conv(f),
           f->l_ ^= detail::conv(b.p_) :
