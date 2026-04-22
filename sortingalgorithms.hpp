@@ -57,7 +57,7 @@ private:
 
         i = m;
       }
-      while (i);
+      while (e != i);
 
       auto& [a, b](runs[std::countr_zero(mask)]); // first valid stored run
 
