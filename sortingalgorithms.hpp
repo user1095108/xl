@@ -103,25 +103,24 @@ private:
     static void sort(const_iterator& i, decltype(i) j, auto&& cmp)
       noexcept(noexcept(node::merge(i, i, j, cmp)))
     {
-      if ((j.p_ != i.n_) && (i != j)) [[likely]]
+      if ((j.p_ == i.n_) && (i == j)) [[unlikely]] return;
+
+      auto m(i);
+
       {
-        auto m(i);
+        size_type sz(1);
 
-        {
-          size_type sz(1);
+        for (auto n(j); m.n_ != n.p_; ++sz, ++m)
+          if (++sz, m.n_ == (--n).p_) break;
 
-          for (auto n(j); m.n_ != n.p_; ++sz, ++m)
-            if (++sz, m.n_ == (--n).p_) break;
-
-          if (16 >= sz) { node::insertion_sort(i, j, cmp); return; }
-        }
-
-        sort(i, m, std::forward<decltype(cmp)>(cmp));
-        sort(m, j, std::forward<decltype(cmp)>(cmp));
-
-        if (cmp(*m, m.p_->v_))
-          node::merge(i, m, j, cmp);
+        if (16 >= sz) { node::insertion_sort(i, j, cmp); return; }
       }
+
+      sort(i, m, std::forward<decltype(cmp)>(cmp));
+      sort(m, j, std::forward<decltype(cmp)>(cmp));
+
+      if (cmp(*m, m.p_->v_))
+        node::merge(i, m, j, cmp);
     }
   };
 
