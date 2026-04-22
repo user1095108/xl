@@ -1,5 +1,5 @@
 private:
-  struct merge_sort1
+  struct merge_sort
   { // non-recursive bottom-up merge sort
     static const_iterator next(const_iterator i, size_type n,
       const_iterator const e) noexcept
@@ -68,6 +68,101 @@ private:
       }
 
       return std::pair(a.n_, b.p_);
+    }
+  };
+
+  template <class Cmp>
+  struct merge_sort1
+  { // recursive bottom-up merge sort
+    struct run
+    {
+      struct run *prev_;
+
+      const_iterator a_, b_;
+      unsigned short sz_{};
+    };
+
+    Cmp cmp_;
+    node *f_, *l_;
+
+    void merge(const_iterator& a, const_iterator& b,
+      const_iterator& c, const_iterator& d)
+      noexcept(noexcept(node::merge(a, b, c, d, cmp_)))
+    { // merge runs [a, b) and [c, d)
+      if (cmp_(*c, b.p_->v_))
+        node::merge(a, b, c, d, cmp_);
+      else
+        b.p_->l_ ^= detail::conv(c.n_),
+        c.n_->l_ ^= detail::conv(b.p_);
+
+      detail::assign(b, c)(d, a);
+    }
+
+    static const_iterator next(const_iterator i, size_type n,
+      const_iterator const e) noexcept
+    {
+      // assert(n && i);
+      do --n, ++i; while (n && (e != i));
+
+      return i;
+    }
+
+    const_iterator operator()(struct run* const prun, const_iterator i,
+      const_iterator const e)
+      noexcept(noexcept(node::merge(i, i, i, cmp_)))
+    { // recursive bottom-up merge sort
+      constexpr size_type bsize0(16);
+
+      for (;;)
+      {
+        if (prun && !prun->a_) return i; // pop invalid stored run
+        else if (e == i) [[unlikely]] break;
+
+        auto j(next(i, bsize0, e));
+
+        if (j.p_ != i.n_) [[likely]]
+          node::insertion_sort(i, j, cmp_);
+
+        auto const m(node::detach(i, j));
+
+        { // try to merge run with a valid stored run
+          decltype(run::sz_) sz{};
+          struct run* p{};
+
+          for (auto r(prun); r && (r->sz_ == sz);)
+          { // merge with a previous valid stored run
+            // assert(r->a_);
+            ++sz;
+
+            merge(r->a_, r->b_, i, j);
+            r->a_ = {}; // invalidate stored run, it's merged
+
+            detail::assign(p, r)(r, r->prev_);
+          }
+
+          if (p)
+          { // merge success, no need to push run
+            detail::assign(p->a_, p->b_, p->sz_, i)(i, j, sz, m); // store
+
+            continue;
+          }
+        }
+
+        // assert(std::is_sorted(i, j, cmp_));
+        struct run run(prun, i, j);
+
+        i = (*this)(&run, m, e); // push run
+      }
+
+      if (prun) [[likely]] // merge remaining runs
+      {
+        if (auto const p(prun->prev_); p) [[likely]]
+          merge(p->a_, p->b_, prun->a_, prun->b_);
+        else
+          detail::assign(f_, l_)(prun->a_.n_, prun->b_.p_);
+      }
+
+      return e; // clear the stack
     }
   };
 
@@ -189,21 +284,23 @@ private:
   };
 
 public:
-  template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp())
-    noexcept(noexcept(node::merge(std::declval<const_iterator&>(),
-    std::declval<const_iterator>(), std::declval<const_iterator&>(), cmp)))
-    requires(1 == I)
+  template <int I = 0, class Cmp = std::less<value_type>>
+  void sort(Cmp&& cmp = Cmp()) noexcept requires(0 == I)
   { // bottom-up merge sort
     if (!empty()) [[likely]]
-      std::tie(f_, l_) = merge_sort1::sort(cbegin(), cend(), cmp);
+      std::tie(f_, l_) = merge_sort::sort(cbegin(), cend(), cmp);
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp())
-    noexcept(noexcept(node::merge(std::declval<const_iterator&>(),
-    std::declval<const_iterator>(), std::declval<const_iterator&>(), cmp)))
-    requires(2 == I)
+  void sort(Cmp&& cmp = Cmp()) noexcept requires(1 == I)
+  {
+    auto s(merge_sort1<Cmp&&>{std::forward<Cmp>(cmp), {}, {}});
+    s({}, cbegin(), cend());
+    detail::assign(f_, l_)(s.f_, s.l_);
+  }
+
+  template <int I, class Cmp = std::less<value_type>>
+  void sort(Cmp&& cmp = Cmp()) noexcept requires(2 == I)
   { // classic merge sort
     auto b(cbegin()), m(b), e(cend());
 
@@ -226,10 +323,7 @@ public:
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp())
-    noexcept(noexcept(node::merge(std::declval<const_iterator&>(),
-      std::declval<const_iterator>(), std::declval<const_iterator&>(), cmp)))
-    requires(3 == I)
+  void sort(Cmp&& cmp = Cmp()) noexcept requires(3 == I)
   {
     auto b(cbegin()), e(cend());
 
@@ -239,10 +333,7 @@ public:
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp())
-    noexcept(noexcept(node::merge(std::declval<const_iterator&>(),
-      std::declval<const_iterator>(), std::declval<const_iterator&>(), cmp)))
-    requires(4 == I)
+  void sort(Cmp&& cmp = Cmp()) noexcept requires(4 == I)
   {
     if (empty()) [[unlikely]] return;
 
