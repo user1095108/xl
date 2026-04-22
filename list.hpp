@@ -247,7 +247,7 @@ private:
       {
         if (li.empty()) [[unlikely]] return;
 
-        auto const& [f, l](merge_sort1::sort(cbegin(), cend(), cmp));
+        auto const [f, l](merge_sort1::sort(cbegin(), cend(), cmp));
 
         b.p_ ? b.p_->l_ ^= detail::conv(f),
           f->l_ ^= detail::conv(b.p_) :
