@@ -43,11 +43,7 @@ private:
         auto const m(node::detach(i, j)); // detach run [i, j)
 
         // merge run [i, j) with valid stored runs
-        auto const k(std::countr_one(mask));
-
-        //auto const bit(size_type(1) << k);
-        //mask = bit | (mask & ~(bit - 1));
-        mask ^= (size_type(1) << (k + 1)) - 1;
+        auto const k(std::countr_one(mask++));
 
         auto r{runs};
 
