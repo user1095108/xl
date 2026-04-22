@@ -221,25 +221,28 @@ private:
       return r;
     }
 
-    template <class Cmp = std::less<T>>
+    template <int I, class Cmp = std::less<T>>
     static void sort(list<T>& l, typename list<T>::const_iterator const b,
       typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
       noexcept(noexcept(std::declval<typename list<T>::
         template merge_sort<Cmp&&>>()({}, {}, {})))
     {
-      auto const ob(b), oe(e);
+      if constexpr(0 == I)
+      {
+        auto const ob(b), oe(e);
 
-      auto s(typename list<T>::template merge_sort<Cmp&&>{
-        std::forward<Cmp>(cmp), {}, {}});
-      s({}, b, e);
+        auto s(typename list<T>::template merge_sort<Cmp&&>{
+          std::forward<Cmp>(cmp), {}, {}});
+        s({}, b, e);
 
-      ob.p_ ? ob.p_->l_ ^= detail::conv(s.f_),
-        s.f_->l_ ^= detail::conv(ob.p_) :
-        bool(l.f_ = s.f_);
+        ob.p_ ? ob.p_->l_ ^= detail::conv(s.f_),
+          s.f_->l_ ^= detail::conv(ob.p_) :
+          bool(l.f_ = s.f_);
 
-      oe ? oe.n_->l_ ^= detail::conv(s.l_),
-        s.l_->l_ ^= detail::conv(oe.n_) :
-        bool(l.l_ = s.l_);
+        oe ? oe.n_->l_ ^= detail::conv(s.l_),
+          s.l_->l_ ^= detail::conv(oe.n_) :
+          bool(l.l_ = s.l_);
+      }
     }
   };
 
@@ -1076,12 +1079,12 @@ auto find(list<T> const& c, T const k)
   return find<0>(c, k);
 }
 
-template <typename T, class Cmp = std::less<T>>
+template <int I = 0, typename T, class Cmp = std::less<T>>
 void sort(list<T>& l, typename list<T>::const_iterator const b,
   typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
   noexcept(noexcept(list<T>::node::sort(l, b, e, std::forward<Cmp>(cmp))))
 {
-  list<T>::node::sort(l, b, e, std::forward<Cmp>(cmp));
+  list<T>::node::template sort<I>(l, b, e, std::forward<Cmp>(cmp));
 }
 
 template <typename T>
