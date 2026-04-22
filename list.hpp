@@ -270,11 +270,11 @@ private:
       detail::assign(b, c)(d, a);
     }
 
-    static auto next(const_iterator i, size_type n,
+    static const_iterator next(const_iterator i, size_type n,
       const_iterator const e) noexcept
     {
       // assert(n && i);
-      do --n, ++i; while (n && (i != e));
+      do --n, ++i; while (n && (e != i));
 
       return i;
     }
