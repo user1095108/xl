@@ -45,18 +45,19 @@ private:
         // merge run [i, j) with valid stored runs
         auto const k(std::countr_one(mask));
 
-        for (int r{}; k != r; ++r)
+        //auto const bit(size_type(1) << k);
+        //mask = bit | (mask & ~(bit - 1));
+        mask ^= (size_type(1) << (k + 1)) - 1;
+
+        auto r{runs};
+
+        while (k != r - runs)
         {
-          auto& [a, b](runs[r]);
+          auto& [a, b](*r++);
           merge(a, b, i, j, cmp);
         }
 
-        runs[k] = {i, j};
-
-        auto const bit(size_type(1) << k);
-
-        mask &= size_type(~(bit - 1));
-        mask |= bit;
+        *r = {i, j};
 
         i = m;
       }
@@ -64,7 +65,7 @@ private:
 
       auto& [a, b](runs[std::countr_zero(mask)]); // first valid stored run
 
-      for (mask &= (mask - 1); mask; mask &= (mask - 1))
+      while (mask &= mask - 1)
       {
         auto& [c, d](runs[std::countr_zero(mask)]);
         merge(c, d, a, b, cmp);
