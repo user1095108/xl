@@ -1,11 +1,11 @@
 private:
   struct merge_sort1
   { // non-recursive bottom-up merge sort
-    static auto next(const_iterator i, size_type n,
-      decltype(i) const e) noexcept
+    static const_iterator next(const_iterator i, size_type n,
+      const_iterator const e) noexcept
     {
       // assert(n && i);
-      do --n, ++i; while (n && (i != e));
+      do --n, ++i; while (n && (e != i));
 
       return i;
     }
@@ -28,10 +28,10 @@ private:
     {
       constexpr size_type bsize0(16);
 
-      std::pair<const_iterator, const_iterator> const* endr{};
-
       std::pair<const_iterator, const_iterator> runs[
-        sizeof(size_type) * CHAR_BIT]{};
+        sizeof(size_type) * CHAR_BIT];
+
+      size_type mask{}; // occupancy mask
 
       do
       {
@@ -42,34 +42,33 @@ private:
 
         auto const m(node::detach(i, j)); // detach run [i, j)
 
-        // try to merge run [i, j) with a valid stored run
-        for (auto r(std::begin(runs));; ++r)
-          if (auto& [a, b](*r); a)
-          { // merge run [i, j) with a valid stored run
-            merge(a, b, i, j, cmp); // merged run is in [i, j)
-            a = {}; // invalidate stored run
-          }
-          else
-          {
-            detail::assign(a, b)(i, j); // store run
-            if (r > endr) endr = r; // update highest size rank
+        // merge run [i, j) with valid stored runs
+        auto const k(std::countr_one(mask));
 
-            break;
-          }
+        for (int r{}; k != r; ++r)
+        {
+          auto& [a, b](runs[r]);
+          merge(a, b, i, j, cmp);
+        }
+
+        runs[k] = {i, j};
+
+        auto const bit(size_type(1) << k);
+
+        mask &= size_type(~(bit - 1));
+        mask |= bit;
 
         i = m;
       }
       while (i);
 
-      // merge remaining runs
-      auto j(std::ranges::find_if(runs,
-        [](auto&& a) noexcept { return bool(std::get<0>(a)); }));
-      // assert(std::end(runs) != j);
+      auto& [a, b](runs[std::countr_zero(mask)]); // first valid stored run
 
-      auto& [a, b](*j); // first valid stored run
-
-      for (++j, ++endr; endr != j; ++j) // merge valid stored runs
-        if (auto& [c, d](*j); c) merge(c, d, a, b, cmp);
+      for (mask &= (mask - 1); mask; mask &= (mask - 1))
+      {
+        auto& [c, d](runs[std::countr_zero(mask)]);
+        merge(c, d, a, b, cmp);
+      }
 
       return std::pair(a.n_, b.p_);
     }
@@ -131,11 +130,11 @@ private:
 
   struct merge_sort4
   { // non-recursive bottom-up merge sort
-    static auto next(const_iterator i, size_type n,
-      decltype(i) const e) noexcept
+    static const_iterator next(const_iterator i, size_type n,
+      const_iterator const e) noexcept
     {
       // assert(n && i);
-      do --n, ++i; while (n && (i != e));
+      do --n, ++i; while (n && (e != i));
 
       return i;
     }
