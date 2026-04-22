@@ -47,7 +47,7 @@ private:
 
         auto r{runs};
 
-        while (k != r - runs)
+        for (auto const end(runs + k); end != r;)
         {
           auto& [a, b](*r++);
           merge(a, b, i, j, cmp);
