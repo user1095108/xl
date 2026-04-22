@@ -223,17 +223,13 @@ private:
 
     template <int I, class Cmp = std::less<T>>
     static void sort(list<T>& li, typename list<T>::const_iterator const b,
-      typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
-      noexcept(noexcept(std::declval<typename list<T>::
-        template merge_sort<Cmp&&>>()({}, {}, {})))
+      typename list<T>::const_iterator const e, Cmp&& cmp = Cmp()) noexcept
     {
       if constexpr(0 == I)
       {
-        auto s(typename list<T>::template merge_sort<Cmp&&>{
-          std::forward<Cmp>(cmp), {}, {}});
-        s({}, b, e);
+        if (li.empty()) [[unlikely]] return;
 
-        auto const& [f, l](std::tie(s.f_, s.l_));
+        auto const [f, l](merge_sort::sort(cbegin(), cend(), cmp));
 
         b.p_ ? b.p_->l_ ^= detail::conv(f),
           f->l_ ^= detail::conv(b.p_) :
@@ -245,9 +241,11 @@ private:
       }
       else if constexpr(1 == I)
       {
-        if (li.empty()) [[unlikely]] return;
+        auto s(typename list<T>::template merge_sort1<Cmp&&>{
+          std::forward<Cmp>(cmp), {}, {}});
+        s({}, b, e);
 
-        auto const [f, l](merge_sort1::sort(cbegin(), cend(), cmp));
+        auto const& [f, l](std::tie(s.f_, s.l_));
 
         b.p_ ? b.p_->l_ ^= detail::conv(f),
           f->l_ ^= detail::conv(b.p_) :
@@ -299,101 +297,6 @@ private:
         if (!b.p_) li.f_ = bb.n_;
         if (!e) li.l_ = ee.p_;
       }
-    }
-  };
-
-  template <class Cmp>
-  struct merge_sort
-  { // recursive bottom-up merge sort
-    struct run
-    {
-      struct run *prev_;
-
-      const_iterator a_, b_;
-      unsigned short sz_{};
-    };
-
-    Cmp cmp_;
-    node *f_, *l_;
-
-    void merge(const_iterator& a, const_iterator& b,
-      const_iterator& c, const_iterator& d)
-      noexcept(noexcept(node::merge(a, b, c, d, cmp_)))
-    { // merge runs [a, b) and [c, d)
-      if (cmp_(*c, b.p_->v_))
-        node::merge(a, b, c, d, cmp_);
-      else
-        b.p_->l_ ^= detail::conv(c.n_),
-        c.n_->l_ ^= detail::conv(b.p_);
-
-      detail::assign(b, c)(d, a);
-    }
-
-    static const_iterator next(const_iterator i, size_type n,
-      const_iterator const e) noexcept
-    {
-      // assert(n && i);
-      do --n, ++i; while (n && (e != i));
-
-      return i;
-    }
-
-    const_iterator operator()(struct run* const prun, const_iterator i,
-      const_iterator const e)
-      noexcept(noexcept(node::merge(i, i, i, cmp_)))
-    { // recursive bottom-up merge sort
-      constexpr size_type bsize0(16);
-
-      for (;;)
-      {
-        if (prun && !prun->a_) return i; // pop invalid stored run
-        else if (e == i) [[unlikely]] break;
-
-        auto j(next(i, bsize0, e));
-
-        if (j.p_ != i.n_) [[likely]]
-          node::insertion_sort(i, j, cmp_);
-
-        auto const m(node::detach(i, j));
-
-        { // try to merge run with a valid stored run
-          decltype(run::sz_) sz{};
-          struct run* p{};
-
-          for (auto r(prun); r && (r->sz_ == sz);)
-          { // merge with a previous valid stored run
-            // assert(r->a_);
-            ++sz;
-
-            merge(r->a_, r->b_, i, j);
-            r->a_ = {}; // invalidate stored run, it's merged
-
-            detail::assign(p, r)(r, r->prev_);
-          }
-
-          if (p)
-          { // merge success, no need to push run
-            detail::assign(p->a_, p->b_, p->sz_, i)(i, j, sz, m); // store
-
-            continue;
-          }
-        }
-
-        // assert(std::is_sorted(i, j, cmp_));
-        struct run run(prun, i, j);
-
-        i = (*this)(&run, m, e); // push run
-      }
-
-      if (prun) [[likely]] // merge remaining runs
-      {
-        if (auto const p(prun->prev_); p) [[likely]]
-          merge(p->a_, p->b_, prun->a_, prun->b_);
-        else
-          detail::assign(f_, l_)(prun->a_.n_, prun->b_.p_);
-      }
-
-      return e; // clear the stack
     }
   };
 
@@ -986,15 +889,6 @@ public:
   }
 
   //
-  template <class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp())
-    noexcept(noexcept(std::declval<merge_sort<Cmp&&>>()({}, {}, {})))
-  {
-    auto s(merge_sort<Cmp&&>{std::forward<Cmp>(cmp), {}, {}});
-    s({}, cbegin(), cend());
-    detail::assign(f_, l_)(s.f_, s.l_);
-  }
-
   template <typename U, class Cmp>
   friend void sort(list<U>& l, typename list<U>::const_iterator const b,
     typename list<U>::const_iterator const e, Cmp&& cmp)
