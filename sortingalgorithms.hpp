@@ -29,9 +29,9 @@ private:
       constexpr size_type bsize0(16);
 
       std::pair<const_iterator, const_iterator> runs[
-        sizeof(size_type) * CHAR_BIT];
+        sizeof(unsigned) * CHAR_BIT];
 
-      size_type mask{}; // occupancy mask
+      unsigned mask{}; // occupancy mask
 
       do
       {
