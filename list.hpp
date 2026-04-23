@@ -243,8 +243,8 @@ private:
       else if constexpr(1 == I)
       {
         auto s(typename list<T>::template merge_sort1<Cmp&&>{
-          std::forward<Cmp>(cmp), {}, {}});
-        s({}, b, e);
+          std::forward<Cmp>(cmp), e, {}, {}});
+        s({}, b);
 
         auto const& [f, l](std::tie(s.f_, s.l_));
 
