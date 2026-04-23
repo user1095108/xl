@@ -79,6 +79,8 @@ private:
     };
 
     Cmp cmp_;
+    const_iterator const e_;
+
     node *f_, *l_;
 
     void merge(const_iterator& a, const_iterator& b,
@@ -94,17 +96,15 @@ private:
       detail::assign(b, c)(d, a);
     }
 
-    static const_iterator next(const_iterator i, size_type n,
-      const_iterator const e) noexcept
+    const_iterator next(const_iterator i, size_type n) noexcept
     {
       // assert(n && i);
-      do --n, ++i; while (n && (e != i));
+      do --n, ++i; while (n && (e_ != i));
 
       return i;
     }
 
-    const_iterator operator()(struct run* const prun, const_iterator i,
-      const_iterator const e)
+    const_iterator operator()(struct run* const prun, const_iterator i)
       noexcept(noexcept(node::merge(i, i, i, cmp_)))
     { // recursive bottom-up merge sort
       constexpr size_type bsize0(16);
@@ -112,9 +112,9 @@ private:
       for (;;)
       {
         if (prun && !prun->a_) return i; // pop invalid stored run
-        else if (e == i) [[unlikely]] break;
+        else if (e_ == i) [[unlikely]] break;
 
-        auto j(next(i, bsize0, e));
+        auto j(next(i, bsize0));
 
         if (j.p_ != i.n_) [[likely]]
           node::insertion_sort(i, j, cmp_);
@@ -147,7 +147,7 @@ private:
         // assert(std::is_sorted(i, j, cmp_));
         struct run run(prun, i, j);
 
-        i = (*this)(&run, m, e); // push run
+        i = (*this)(&run, m); // push run
       }
 
       if (prun) [[likely]] // merge remaining runs
@@ -158,7 +158,7 @@ private:
           detail::assign(f_, l_)(prun->a_.n_, prun->b_.p_);
       }
 
-      return e; // clear the stack
+      return e_; // clear the stack
     }
   };
 
@@ -291,12 +291,12 @@ public:
 
   template <int I, class Cmp = std::less<value_type>>
   void sort(Cmp&& cmp = Cmp())
-  noexcept(noexcept(merge_sort1<Cmp&&>{std::forward<Cmp>(cmp), {}, {}}
-    ({}, cbegin(), cend())))
+  noexcept(noexcept(merge_sort1<Cmp&&>{std::forward<Cmp>(cmp), cend(), {}, {}}
+    ({}, cbegin())))
   requires(1 == I)
   {
-    auto s(merge_sort1<Cmp&&>{std::forward<Cmp>(cmp), {}, {}});
-    s({}, cbegin(), cend());
+    auto s(merge_sort1<Cmp&&>{std::forward<Cmp>(cmp), cend(), {}, {}});
+    s({}, cbegin());
     detail::assign(f_, l_)(s.f_, s.l_);
   }
 
