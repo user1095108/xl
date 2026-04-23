@@ -43,11 +43,9 @@ private:
         auto const m(node::detach(i, j)); // detach run [i, j)
 
         // merge run [i, j) with valid stored runs
-        auto const k(std::countr_one(mask++));
+        auto r(runs);
 
-        auto r{runs};
-
-        for (auto const end(runs + k); end != r;)
+        for (auto const end(runs + std::countr_one(mask++)); end != r;)
         {
           auto& [a, b](*r++);
           merge(a, b, i, j, cmp);
