@@ -51,14 +51,14 @@ private:
           merge(a, b, i, j, cmp);
         }
 
-        detail::assign(r->first, r->second, i)(i, j, m);
+        detail::assign(r->first, r->second, i)(i, j, m); // *r = {i, j}, i = m
       }
       while (e != i);
 
       auto& [a, b](runs[std::countr_zero(mask)]); // first valid stored run
 
       while (mask &= mask - 1)
-      {
+      { // merge remaining valid stored runs
         auto& [c, d](runs[std::countr_zero(mask)]);
         merge(c, d, a, b, cmp);
       }
