@@ -53,9 +53,7 @@ private:
           merge(a, b, i, j, cmp);
         }
 
-        *r = {i, j};
-
-        i = m;
+        detail::assign(r->first, r->second, i)(i, j, m);
       }
       while (e != i);
 
