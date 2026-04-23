@@ -110,7 +110,7 @@ private:
       constexpr size_type bsize0(16);
 
       for (;;)
-      {
+      { // we are locked in this loop until e_ is encountered
         if (prun && !prun->a_) return i; // pop invalid stored run
         else if (e_ == i) [[unlikely]] break;
 
