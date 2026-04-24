@@ -194,7 +194,7 @@ private:
     static void sort(const_iterator& i, decltype(i) j, auto&& cmp)
       noexcept(noexcept(node::merge(i, i, j, cmp)))
     {
-      if ((j.p_ == i.n_) && (i == j)) [[unlikely]] return;
+      if ((j.p_ == i.n_) && (i == j)) return;
 
       auto m(i);
 
