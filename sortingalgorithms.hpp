@@ -168,11 +168,13 @@ private:
 
   struct merge_sort2
   { // recursive top-down merge sort
+    enum: size_type { bsize0 = 16 };
+
     static void sort(const_iterator& i, decltype(i) j, size_type const sz,
       auto&& cmp)
       noexcept(noexcept(node::merge(i, i, j, cmp)))
     {
-      if (16 < sz) [[likely]]
+      if (bsize0 < sz) [[likely]]
       {
         auto m(i);
 
@@ -195,6 +197,8 @@ private:
 
   struct merge_sort3
   { // recursive top-down merge sort
+    enum: size_type { bsize0 = 16 };
+
     static void sort(const_iterator& i, decltype(i) j, auto&& cmp)
       noexcept(noexcept(node::merge(i, i, j, cmp)))
     {
@@ -208,7 +212,7 @@ private:
         for (auto n(j); m.n_ != n.p_; ++sz, ++m)
           if (++sz, m.n_ == (--n).p_) break;
 
-        if (16 >= sz) { node::insertion_sort(i, j, cmp); return; }
+        if (bsize0 >= sz) { node::insertion_sort(i, j, cmp); return; }
       }
 
       sort(i, m, std::forward<decltype(cmp)>(cmp));
@@ -221,6 +225,8 @@ private:
 
   struct merge_sort4
   { // non-recursive bottom-up merge sort
+    enum: size_type { bsize0 = 16 };
+
     static const_iterator next(const_iterator i, size_type n,
       const_iterator const e) noexcept
     {
@@ -233,8 +239,6 @@ private:
     static void sort(const_iterator& b, decltype(b) e, auto&& cmp)
       noexcept(noexcept(node::merge(b, b, e, cmp)))
     { // bottom-up merge sort
-      constexpr size_type bsize0(16);
-
       for (auto i(b);;)
       { // sort blocks of bsize0 elements or less
         auto m(next(i, bsize0, e));
@@ -251,7 +255,7 @@ private:
         i = m; // advance
       }
 
-      auto bsize(bsize0);
+      size_type bsize(bsize0);
 
       for (auto i(b);; bsize *= 2, i = b)
       {
