@@ -1,15 +1,16 @@
 private:
   struct merge_sort
   { // non-recursive bottom-up merge sort
-    enum: unsigned { bsize0 = 16 };
+    enum: size_type { bsize0 = 16 };
 
     static const_iterator next(const_iterator i,
       const_iterator const e) noexcept
     {
-      std::underlying_type_t<decltype(bsize0)> n(bsize0);
-
       // assert(n && i);
-      do --n, ++i; while (n && (e != i));
+      [&]<auto ...Is>(std::index_sequence<Is...>)
+      {
+        void(((e != i && (++i, void(Is), true)) && ...));
+      }(std::make_index_sequence<bsize0>{});
 
       return i;
     }
@@ -72,7 +73,7 @@ private:
   template <class Cmp>
   struct merge_sort1
   { // recursive bottom-up merge sort
-    enum: unsigned { bsize0 = 16 };
+    enum: size_type { bsize0 = 16 };
 
     struct run
     {
@@ -102,10 +103,11 @@ private:
 
     const_iterator next(const_iterator i) noexcept
     {
-      std::underlying_type_t<decltype(bsize0)> n(bsize0);
-
       // assert(n && i);
-      do --n, ++i; while (n && (e_ != i));
+      [&]<auto ...Is>(std::index_sequence<Is...>)
+      {
+        void(((e_ != i && (++i, void(Is), true)) && ...));
+      }(std::make_index_sequence<bsize0>{});
 
       return i;
     }
