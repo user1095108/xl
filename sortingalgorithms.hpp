@@ -2,6 +2,7 @@ private:
   struct merge_sort
   { // non-recursive bottom-up merge sort
     enum: unsigned { bsize0 = 16 };
+    static_assert(bsize0);
 
     static void merge(const_iterator& a, const_iterator& b,
       const_iterator& c, const_iterator& d, auto&& cmp)
@@ -28,10 +29,8 @@ private:
       {
         auto j(i);
 
-        {
-          std::underlying_type_t<decltype(bsize0)> n(bsize0);
-          do; while (--n && e != ++j);
-        }
+        for (std::underlying_type_t<decltype(bsize0)> n(bsize0);
+          --n && e != ++j;);
 
         if (j.p_ != i.n_) [[likely]]
           node::insertion_sort(i, j, cmp); // sort run [i, j)
@@ -67,6 +66,7 @@ private:
   struct merge_sort1
   { // recursive bottom-up merge sort
     enum: unsigned { bsize0 = 16 };
+    static_assert(bsize0);
 
     struct run
     {
@@ -104,10 +104,8 @@ private:
 
         auto j(i);
 
-        {
-          std::underlying_type_t<decltype(bsize0)> n(bsize0);
-          do; while (--n && e_ != ++j);
-        }
+        for (std::underlying_type_t<decltype(bsize0)> n(bsize0);
+          --n && e_ != ++j;);
 
         if (j.p_ != i.n_) [[likely]]
           node::insertion_sort(i, j, cmp_);
