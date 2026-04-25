@@ -30,7 +30,7 @@ private:
         auto j(i);
 
         for (std::underlying_type_t<decltype(bsize0)> n(bsize0);
-          --n && e != ++j;);
+          --n, ++j, n && e != j;);
 
         if (j.p_ != i.n_) [[likely]]
           node::insertion_sort(i, j, cmp); // sort run [i, j)
@@ -105,7 +105,7 @@ private:
         auto j(i);
 
         for (std::underlying_type_t<decltype(bsize0)> n(bsize0);
-          --n && e_ != ++j;);
+          --n, ++j, n && e_ != j;);
 
         if (j.p_ != i.n_) [[likely]]
           node::insertion_sort(i, j, cmp_);
