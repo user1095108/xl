@@ -30,7 +30,7 @@ private:
 
         {
           std::underlying_type_t<decltype(bsize0)> n(bsize0);
-          do --n, ++j; while (n && e != j);
+          do; while (--n && e != ++j);
         }
 
         if (j.p_ != i.n_) [[likely]]
@@ -106,7 +106,7 @@ private:
 
         {
           std::underlying_type_t<decltype(bsize0)> n(bsize0);
-          do --n, ++j; while (n && e_ != j);
+          do; while (--n && e_ != ++j);
         }
 
         if (j.p_ != i.n_) [[likely]]
