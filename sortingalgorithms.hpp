@@ -1,9 +1,13 @@
 private:
   struct merge_sort
   { // non-recursive bottom-up merge sort
-    static const_iterator next(const_iterator i, size_type n,
+    enum: unsigned { bsize0 = 16 };
+
+    static const_iterator next(const_iterator i,
       const_iterator const e) noexcept
     {
+      std::underlying_type_t<decltype(bsize0)> n(bsize0);
+
       // assert(n && i);
       do --n, ++i; while (n && (e != i));
 
@@ -26,8 +30,6 @@ private:
     static auto sort(const_iterator i, decltype(i) const e, auto&& cmp)
       noexcept(noexcept(node::merge(i, i, i, cmp)))
     {
-      constexpr size_type bsize0(16);
-
       std::pair<const_iterator, const_iterator> runs[
         sizeof(unsigned) * CHAR_BIT];
 
@@ -35,7 +37,7 @@ private:
 
       do
       {
-        auto j(next(i, bsize0, e)); // advance
+        auto j(next(i, e)); // advance
 
         if (j.p_ != i.n_) [[likely]]
           node::insertion_sort(i, j, cmp); // sort run [i, j)
@@ -70,6 +72,8 @@ private:
   template <class Cmp>
   struct merge_sort1
   { // recursive bottom-up merge sort
+    enum: unsigned { bsize0 = 16 };
+
     struct run
     {
       struct run *prev_;
@@ -96,8 +100,10 @@ private:
       detail::assign(b, c)(d, a);
     }
 
-    const_iterator next(const_iterator i, size_type n) noexcept
+    const_iterator next(const_iterator i) noexcept
     {
+      std::underlying_type_t<decltype(bsize0)> n(bsize0);
+
       // assert(n && i);
       do --n, ++i; while (n && (e_ != i));
 
@@ -107,14 +113,12 @@ private:
     const_iterator operator()(struct run* const prun, const_iterator i)
       noexcept(noexcept(node::merge(i, i, i, cmp_)))
     { // recursive bottom-up merge sort
-      constexpr size_type bsize0(16);
-
       for (;;)
       { // we are locked in this loop until e_ is encountered
         if (prun && !prun->a_) return i; // pop invalid stored run
         else if (e_ == i) [[unlikely]] break;
 
-        auto j(next(i, bsize0));
+        auto j(next(i));
 
         if (j.p_ != i.n_) [[likely]]
           node::insertion_sort(i, j, cmp_);
