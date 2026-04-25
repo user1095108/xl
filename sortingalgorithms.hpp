@@ -1,7 +1,7 @@
 private:
   struct merge_sort
   { // non-recursive bottom-up merge sort
-    enum: size_type { bsize0 = 16 };
+    enum: unsigned { bsize0 = 16 };
 
     static void merge(const_iterator& a, const_iterator& b,
       const_iterator& c, const_iterator& d, auto&& cmp)
@@ -28,10 +28,10 @@ private:
       {
         auto j(i);
 
-        [&]<auto ...Is>(std::index_sequence<Is...>) noexcept
-        { // advance
-          void((((void(Is), e) != ++j) && ...));
-        }(std::make_index_sequence<bsize0>{});
+        {
+          std::underlying_type_t<decltype(bsize0)> n(bsize0);
+          do --n, ++j; while (n && e != j);
+        }
 
         if (j.p_ != i.n_) [[likely]]
           node::insertion_sort(i, j, cmp); // sort run [i, j)
@@ -66,7 +66,7 @@ private:
   template <class Cmp>
   struct merge_sort1
   { // recursive bottom-up merge sort
-    enum: size_type { bsize0 = 16 };
+    enum: unsigned { bsize0 = 16 };
 
     struct run
     {
@@ -104,10 +104,10 @@ private:
 
         auto j(i);
 
-        [&]<auto ...Is>(std::index_sequence<Is...>) noexcept
-        { // advance
-          void((((void(Is), e_) != ++j) && ...));
-        }(std::make_index_sequence<bsize0>{});
+        {
+          std::underlying_type_t<decltype(bsize0)> n(bsize0);
+          do --n, ++j; while (n && e_ != j);
+        }
 
         if (j.p_ != i.n_) [[likely]]
           node::insertion_sort(i, j, cmp_);
