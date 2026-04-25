@@ -3,17 +3,6 @@ private:
   { // non-recursive bottom-up merge sort
     enum: size_type { bsize0 = 16 };
 
-    static const_iterator next(const_iterator i,
-      const_iterator const e) noexcept
-    { // assert(e != i);
-      [&]<auto ...Is>(std::index_sequence<Is...>) noexcept
-      {
-        void((((void(Is), e) != ++i) && ...));
-      }(std::make_index_sequence<bsize0>{});
-
-      return i;
-    }
-
     static void merge(const_iterator& a, const_iterator& b,
       const_iterator& c, const_iterator& d, auto&& cmp)
       noexcept(noexcept(node::merge(a, b, c, d, cmp)))
@@ -37,7 +26,12 @@ private:
 
       do
       {
-        auto j(next(i, e)); // advance
+        auto j(i);
+
+        [&]<auto ...Is>(std::index_sequence<Is...>) noexcept
+        { // advance
+          void((((void(Is), e) != ++j) && ...));
+        }(std::make_index_sequence<bsize0>{});
 
         if (j.p_ != i.n_) [[likely]]
           node::insertion_sort(i, j, cmp); // sort run [i, j)
@@ -100,16 +94,6 @@ private:
       detail::assign(b, c)(d, a);
     }
 
-    const_iterator next(const_iterator i) noexcept
-    { // assert(e_ != i);
-      [&]<auto ...Is>(std::index_sequence<Is...>) noexcept
-      {
-        void((((void(Is), e_) != ++i) && ...));
-      }(std::make_index_sequence<bsize0>{});
-
-      return i;
-    }
-
     const_iterator operator()(struct run* const prun, const_iterator i)
       noexcept(noexcept(node::merge(i, i, i, cmp_)))
     { // recursive bottom-up merge sort
@@ -118,7 +102,12 @@ private:
         if (prun && !prun->a_) return i; // pop invalid stored run
         else if (e_ == i) [[unlikely]] break;
 
-        auto j(next(i));
+        auto j(i);
+
+        [&]<auto ...Is>(std::index_sequence<Is...>) noexcept
+        { // advance
+          void((((void(Is), e_) != ++j) && ...));
+        }(std::make_index_sequence<bsize0>{});
 
         if (j.p_ != i.n_) [[likely]]
           node::insertion_sort(i, j, cmp_);
