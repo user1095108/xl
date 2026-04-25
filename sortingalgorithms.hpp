@@ -5,8 +5,7 @@ private:
 
     static const_iterator next(const_iterator i,
       const_iterator const e) noexcept
-    {
-      // assert(n && i);
+    { // assert(e != i);
       [&]<auto ...Is>(std::index_sequence<Is...>) noexcept
       {
         void((((void(Is), e) != ++i) && ...));
@@ -102,8 +101,7 @@ private:
     }
 
     const_iterator next(const_iterator i) noexcept
-    {
-      // assert(n && i);
+    { // assert(e_ != i);
       [&]<auto ...Is>(std::index_sequence<Is...>) noexcept
       {
         void((((void(Is), e_) != ++i) && ...));
