@@ -156,12 +156,13 @@ private:
   struct merge_sort2
   { // recursive top-down merge sort
     enum: size_type { bsize0 = 16 };
+    static_assert(bsize0);
 
     static void sort(const_iterator& i, decltype(i) j, size_type const sz,
       auto&& cmp)
       noexcept(noexcept(node::merge(i, i, j, cmp)))
     {
-      if (bsize0 < sz) [[likely]]
+      if (bsize0 < sz)
       {
         auto m(i);
 
@@ -185,6 +186,7 @@ private:
   struct merge_sort3
   { // recursive top-down merge sort
     enum: size_type { bsize0 = 16 };
+    static_assert(bsize0);
 
     static void sort(const_iterator& i, decltype(i) j, auto&& cmp)
       noexcept(noexcept(node::merge(i, i, j, cmp)))
@@ -213,6 +215,7 @@ private:
   struct merge_sort4
   { // non-recursive bottom-up merge sort
     enum: size_type { bsize0 = 16 };
+    static_assert(bsize0);
 
     static const_iterator next(const_iterator i, size_type n,
       const_iterator const e) noexcept
