@@ -9,7 +9,7 @@ private:
       // assert(n && i);
       [&]<auto ...Is>(std::index_sequence<Is...>)
       {
-        void(((e != i && (++i, void(Is), true)) && ...));
+        void((((++i, void(Is), true) && e != i) && ...));
       }(std::make_index_sequence<bsize0>{});
 
       return i;
@@ -106,7 +106,7 @@ private:
       // assert(n && i);
       [&]<auto ...Is>(std::index_sequence<Is...>)
       {
-        void(((e_ != i && (++i, void(Is), true)) && ...));
+        void((((++i, void(Is), true) && e_ != i) && ...));
       }(std::make_index_sequence<bsize0>{});
 
       return i;
