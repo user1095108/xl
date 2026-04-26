@@ -221,7 +221,7 @@ private:
       const_iterator const e) noexcept
     {
       // assert(n && i);
-      do --n, ++i; while (n && (e != i));
+      for(; --n, ++i, n && (e != i););
 
       return i;
     }
