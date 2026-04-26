@@ -30,7 +30,7 @@ private:
         auto j(i);
 
         for (std::underlying_type_t<decltype(bsize0)> n(bsize0);
-          --n, ++j, n && e != j;);
+          --n, ++j, n && e != j;); // advance j
 
         if (j.p_ != i.n_) [[likely]]
           node::insertion_sort(i, j, cmp); // sort run [i, j)
@@ -105,12 +105,12 @@ private:
         auto j(i);
 
         for (std::underlying_type_t<decltype(bsize0)> n(bsize0);
-          --n, ++j, n && e_ != j;);
+          --n, ++j, n && e_ != j;); // advance j
 
         if (j.p_ != i.n_) [[likely]]
-          node::insertion_sort(i, j, cmp_);
+          node::insertion_sort(i, j, cmp_); // sort run [i, j)
 
-        auto const m(node::detach(i, j));
+        auto const m(node::detach(i, j)); // detach run [i, j)
 
         { // try to merge run with a valid stored run
           decltype(run::sz_) sz{};
