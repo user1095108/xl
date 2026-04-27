@@ -973,6 +973,7 @@ auto erase_if(list<T>& c, auto&& pred)
 template <int = 0, typename T>
 auto erase(list<T>& c, auto const& ...k)
   noexcept(noexcept(c.remove(k...)))
+  requires(!!sizeof...(k))
 {
   return c.remove(k...);
 }
@@ -983,7 +984,7 @@ auto erase(list<T>& c, T const k) noexcept(noexcept(erase<0>(c, k)))
   return erase<0>(c, k);
 }
 
-auto find_if(auto&& c, auto pred)
+auto find_if(auto& c, auto pred)
   noexcept(noexcept(pred(*c.begin())))
   requires(requires{std::remove_cvref_t<decltype(c)>::xl_list_tag;})
 {
@@ -1003,9 +1004,10 @@ auto find_if(auto&& c, auto pred)
 }
 
 template <int = 0>
-auto find(auto&& c, auto const& ...k)
+auto find(auto& c, auto const& ...k)
   noexcept(noexcept(((*c.cbegin() == k) || ...)))
-  requires(!!sizeof...(k))
+  requires(!!sizeof...(k) &&
+    requires{std::remove_cvref_t<decltype(c)>::xl_list_tag;})
 {
   return find_if(
       std::forward<decltype(c)>(c),
@@ -1017,15 +1019,9 @@ auto find(auto&& c, auto const& ...k)
 }
 
 template <typename T>
-auto find(list<T>& c, T const k)
+auto find(auto& c, T const k)
   noexcept(noexcept(find<0>(c, k)))
-{
-  return find<0>(c, k);
-}
-
-template <typename T>
-auto find(list<T> const& c, T const k)
-  noexcept(noexcept(find<0>(c, k)))
+  requires(requires{std::remove_cvref_t<decltype(c)>::xl_list_tag;})
 {
   return find<0>(c, k);
 }
