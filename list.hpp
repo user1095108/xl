@@ -224,7 +224,7 @@ private:
     template <int I, class Cmp = std::less<T>>
     static void sort(list<T>& li, typename list<T>::const_iterator const b,
       typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
-      noexcept(noexcept(cmp(b, b)))
+      noexcept(noexcept(cmp(*b, *b)))
     {
       if constexpr(0 == I)
       {
@@ -890,10 +890,11 @@ public:
   }
 
   //
-  template <typename U, class Cmp>
+  template <int I, typename U, class Cmp>
   friend void sort(list<U>& l, typename list<U>::const_iterator const b,
     typename list<U>::const_iterator const e, Cmp&& cmp)
-    noexcept(noexcept(list<U>::node::sort(l, b, e, std::forward<Cmp>(cmp))));
+    noexcept(noexcept(list<U>::node::template sort<I>(
+      l, b, e, std::forward<Cmp>(cmp))));
 
   #include "sortingalgorithms.hpp"
 
@@ -1029,7 +1030,8 @@ auto find(auto& c,
 template <int I = 0, typename T, class Cmp = std::less<T>>
 void sort(list<T>& l, typename list<T>::const_iterator const b,
   typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
-  noexcept(noexcept(list<T>::node::sort(l, b, e, std::forward<Cmp>(cmp))))
+  noexcept(noexcept(list<T>::node::template sort<I>(
+    l, b, e, std::forward<Cmp>(cmp))))
 {
   list<T>::node::template sort<I>(l, b, e, std::forward<Cmp>(cmp));
 }
