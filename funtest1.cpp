@@ -602,6 +602,10 @@ int main()
     // 2.60  shrink via pop until empty
     { xl::list<int> z = {1,2,3}; while(!z.empty()) z.pop_back(); assert(z.empty()); }
 
+    // custom tests
+    { xl::list<int> z = {1,2,3}; assert(xl::find(z, {1})); }
+    { xl::list<int> z = {1,2,3}; assert(xl::find(z, 1, 2, 3)); }
+
     /* ----------------------------------------------------------
      * 3.  FINAL REPORT
      * ---------------------------------------------------------- */
