@@ -893,8 +893,7 @@ public:
   template <int I, typename U, class Cmp>
   friend void sort(list<U>& l, typename list<U>::const_iterator const b,
     typename list<U>::const_iterator const e, Cmp&& cmp)
-    noexcept(noexcept(list<U>::node::template sort<I>(
-      l, b, e, std::forward<Cmp>(cmp))));
+    noexcept(noexcept(cmp(*b, *b)));
 
   #include "sortingalgorithms.hpp"
 
@@ -1027,13 +1026,13 @@ auto find(auto& c,
   return find<0>(c, k);
 }
 
-template <int I = 0, typename T, class Cmp = std::less<T>>
-void sort(list<T>& l, typename list<T>::const_iterator const b,
-  typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
-  noexcept(noexcept(list<T>::node::template sort<I>(
-    l, b, e, std::forward<Cmp>(cmp))))
+
+template <int I = 0, typename U, class Cmp = std::less<U>>
+void sort(list<U>& l, typename list<U>::const_iterator const b,
+  typename list<U>::const_iterator const e, Cmp&& cmp = Cmp())
+noexcept(noexcept(cmp(*b, *b)))
 {
-  list<T>::node::template sort<I>(l, b, e, std::forward<Cmp>(cmp));
+  list<U>::node::template sort<I>(l, b, e, std::forward<Cmp>(cmp));
 }
 
 template <typename T>
