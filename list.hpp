@@ -1018,8 +1018,8 @@ auto find(auto& c, auto const& ...k)
     );
 }
 
-template <typename T>
-auto find(auto& c, T const k)
+auto find(auto& c,
+  typename std::remove_cvref_t<decltype(c)>::value_type const k)
   noexcept(noexcept(find<0>(c, k)))
   requires(requires{std::remove_cvref_t<decltype(c)>::xl_list_tag;})
 {
