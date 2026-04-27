@@ -605,6 +605,11 @@ int main()
     // custom tests
     { xl::list<int> z = {1,2,3}; assert(xl::find(z, {1})); }
     { xl::list<int> z = {1,2,3}; assert(xl::find(z, 1, 2, 3)); }
+    { xl::list<int> z = {3,2,1}; xl::sort(z, z.begin(), z.before_end()); assert(((int[]){2, 3, 1} == z)); }
+    { xl::list<int> z = {3,2,1}; xl::sort<1>(z, z.begin(), z.before_end()); assert(((int[]){2, 3, 1} == z)); }
+    { xl::list<int> z = {3,2,1}; xl::sort<2>(z, z.begin(), z.before_end()); assert(((int[]){2, 3, 1} == z)); }
+    { xl::list<int> z = {3,2,1}; xl::sort<3>(z, z.begin(), z.before_end()); assert(((int[]){2, 3, 1} == z)); }
+    { xl::list<int> z = {3,2,1}; xl::sort<4>(z, z.begin(), z.before_end()); assert(((int[]){2, 3, 1} == z)); }
 
     /* ----------------------------------------------------------
      * 3.  FINAL REPORT
