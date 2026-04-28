@@ -280,31 +280,57 @@ private:
 public:
   template <int I = 0, class Cmp = std::less<value_type>>
   void sort(Cmp&& cmp = Cmp())
-  noexcept(noexcept(merge_sort::sort(cbegin(), cend(), cmp)))
+  noexcept(noexcept(sort(cbegin(), cend(), std::forward<Cmp>(cmp))))
+  {
+    sort<I>(cbegin(), cend(), std::forward<Cmp>(cmp));
+  }
+
+  template <int I = 0, class Cmp = std::less<value_type>>
+  void sort(const_iterator const b, const_iterator const e, Cmp&& cmp = Cmp())
+  noexcept(noexcept(merge_sort::sort(b, e, cmp)))
   requires(0 == I)
   { // bottom-up merge sort
-    if (!empty()) [[likely]]
-      std::tie(f_, l_) = merge_sort::sort(cbegin(), cend(), cmp);
+    if (empty()) [[unlikely]] return;
+
+    auto const [f, l](merge_sort::sort(b, e, cmp));
+
+    b.p_ ? b.p_->l_ ^= detail::conv(f),
+      f->l_ ^= detail::conv(b.p_) :
+      bool(f_ = f);
+
+    e ? e.n_->l_ ^= detail::conv(l),
+      l->l_ ^= detail::conv(e.n_) :
+      bool(l_ = l);
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp())
-  noexcept(noexcept(merge_sort1<Cmp&&>{std::forward<Cmp>(cmp), cend(), {}, {}}
-    ({}, cbegin())))
+  void sort(const_iterator const b, const_iterator const e, Cmp&& cmp = Cmp())
+  noexcept(noexcept(merge_sort1<Cmp&&>{std::forward<Cmp>(cmp), e, {}, {}}
+    ({}, b)))
   requires(1 == I)
   {
-    auto s(merge_sort1<Cmp&&>{std::forward<Cmp>(cmp), cend(), {}, {}});
-    s({}, cbegin());
-    detail::assign(f_, l_)(s.f_, s.l_);
+    auto s(typename list<T>::template merge_sort1<Cmp&&>{
+      std::forward<Cmp>(cmp), e, {}, {}});
+    s({}, b);
+
+    auto const& [f, l](std::tie(s.f_, s.l_));
+
+    b.p_ ? b.p_->l_ ^= detail::conv(f),
+      f->l_ ^= detail::conv(b.p_) :
+      bool(f_ = f);
+
+    e ? e.n_->l_ ^= detail::conv(l),
+      l->l_ ^= detail::conv(e.n_) :
+      bool(l_ = l);
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp())
+  void sort(const_iterator b, const_iterator e, Cmp&& cmp = Cmp())
   noexcept(noexcept(merge_sort2::sort(std::declval<const_iterator&>(),
     std::declval<const_iterator&>(), {}, cmp)))
   requires(2 == I)
   { // classic merge sort
-    auto b(cbegin()), m(b), e(cend());
+    auto m(b);
 
     {
       size_type sz1{}, sz2{};
@@ -321,33 +347,32 @@ public:
     if (cmp(*m, m.p_->v_))
       node::merge(b, m, e, cmp);
 
-    detail::assign(f_, l_)(b.n_, e.p_);
+    if (!b.p_) f_ = b.n_;
+    if (!e) l_ = e.p_;
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp())
+  void sort(const_iterator b, const_iterator e, Cmp&& cmp = Cmp())
   noexcept(noexcept(merge_sort3::sort(std::declval<const_iterator&>(),
     std::declval<const_iterator&>(), cmp)))
   requires(3 == I)
   {
-    auto b(cbegin()), e(cend());
-
     merge_sort3::sort(b, e, cmp);
 
-    detail::assign(f_, l_)(b.n_, e.p_);
+    if (!b.p_) f_ = b.n_;
+    if (!e) l_ = e.p_;
   }
 
   template <int I, class Cmp = std::less<value_type>>
-  void sort(Cmp&& cmp = Cmp())
+  void sort(const_iterator b, const_iterator e, Cmp&& cmp = Cmp())
   noexcept(noexcept(merge_sort4::sort(std::declval<const_iterator&>(),
     std::declval<const_iterator&>(), cmp)))
   requires(4 == I)
   {
     if (empty()) [[unlikely]] return;
 
-    auto b(cbegin()), e(cend());
-
     merge_sort4::sort(b, e, cmp);
 
-    detail::assign(f_, l_)(b.n_, e.p_);
+    if (!b.p_) f_ = b.n_;
+    if (!e) l_ = e.p_;
   }

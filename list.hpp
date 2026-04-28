@@ -220,85 +220,6 @@ private:
 
       return r;
     }
-
-    template <int I, class Cmp = std::less<T>>
-    static void sort(list<T>& li, typename list<T>::const_iterator const b,
-      typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
-      noexcept(noexcept(cmp(*b, *b)))
-    {
-      if constexpr(0 == I)
-      {
-        if (li.empty()) [[unlikely]] return;
-
-        auto const [f, l](merge_sort::sort(b, e, cmp));
-
-        b.p_ ? b.p_->l_ ^= detail::conv(f),
-          f->l_ ^= detail::conv(b.p_) :
-          bool(li.f_ = f);
-
-        e ? e.n_->l_ ^= detail::conv(l),
-          l->l_ ^= detail::conv(e.n_) :
-          bool(li.l_ = l);
-      }
-      else if constexpr(1 == I)
-      {
-        auto s(typename list<T>::template merge_sort1<Cmp&&>{
-          std::forward<Cmp>(cmp), e, {}, {}});
-        s({}, b);
-
-        auto const& [f, l](std::tie(s.f_, s.l_));
-
-        b.p_ ? b.p_->l_ ^= detail::conv(f),
-          f->l_ ^= detail::conv(b.p_) :
-          bool(li.f_ = f);
-
-        e ? e.n_->l_ ^= detail::conv(l),
-          l->l_ ^= detail::conv(e.n_) :
-          bool(li.l_ = l);
-      }
-      else if constexpr(2 == I)
-      {
-        auto bb(b), m(b), ee(e);
-
-        {
-          size_type sz1{}, sz2{};
-
-          for (auto n(e); m != n; ++sz1, ++m)
-            if (++sz2, m == --n) break;
-
-          if (!sz1) [[unlikely]] return;
-
-          merge_sort2::sort(bb, m, sz1, cmp);
-          merge_sort2::sort(m, ee, sz2, cmp);
-        }
-
-        if (cmp(*m, m.p_->v_))
-          node::merge(bb, m, ee, cmp);
-
-        if (!b.p_) li.f_ = bb.n_;
-        if (!e) li.l_ = ee.p_;
-      }
-      else if constexpr(3 == I)
-      {
-        auto bb(b), ee(e);
-
-        merge_sort3::sort(bb, ee, cmp);
-
-        if (!b.p_) li.f_ = bb.n_;
-        if (!e) li.l_ = ee.p_;
-      }
-      else if constexpr(4 == I)
-      {
-        if (li.empty()) [[unlikely]] return;
-
-        auto bb(b), ee(e);
-
-        merge_sort4::sort(bb, ee, cmp);
-
-        if (!b.p_) li.f_ = bb.n_;
-        if (!e) li.l_ = ee.p_;
-      }
-    }
   };
 
 private:
@@ -890,11 +811,6 @@ public:
   }
 
   //
-  template <int I, typename U, class Cmp>
-  friend void sort(list<U>& l, typename list<U>::const_iterator const b,
-    typename list<U>::const_iterator const e, Cmp&& cmp)
-    noexcept(noexcept(cmp(*b, *b)));
-
   #include "sortingalgorithms.hpp"
 
   //
@@ -1027,12 +943,12 @@ auto find(auto& c,
 }
 
 
-template <int I = 0, typename U, class Cmp = std::less<U>>
-void sort(list<U>& l, typename list<U>::const_iterator const b,
-  typename list<U>::const_iterator const e, Cmp&& cmp = Cmp())
-noexcept(noexcept(cmp(*b, *b)))
+template <int I = 0, typename T, class Cmp = std::less<T>>
+void sort(list<T>& l, typename list<T>::const_iterator const b,
+  typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
+noexcept(noexcept(l.template sort<I>(b, e, std::forward<Cmp>(cmp))))
 {
-  list<U>::node::template sort<I>(l, b, e, std::forward<Cmp>(cmp));
+  l.template sort<I>(b, e, std::forward<Cmp>(cmp));
 }
 
 template <typename T>
