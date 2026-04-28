@@ -17,7 +17,7 @@ private:
       detail::assign(b, c)(d, a);
     }
 
-    static auto sort(const_iterator i, decltype(i) const e, auto&& cmp)
+    static auto sort(const_iterator i, decltype(i) const e, auto& cmp)
       noexcept(noexcept(node::merge(i, i, i, cmp)))
     {
       std::pair<const_iterator, const_iterator> runs[
@@ -159,7 +159,7 @@ private:
     static_assert(bsize0);
 
     static void sort(const_iterator& i, decltype(i) j, size_type const sz,
-      auto&& cmp)
+      auto& cmp)
       noexcept(noexcept(node::merge(i, i, j, cmp)))
     {
       if (bsize0 < sz)
@@ -188,7 +188,7 @@ private:
     enum: size_type { bsize0 = 16 };
     static_assert(bsize0);
 
-    static void sort(const_iterator& i, decltype(i) j, auto&& cmp)
+    static void sort(const_iterator& i, decltype(i) j, auto& cmp)
       noexcept(noexcept(node::merge(i, i, j, cmp)))
     {
       if ((j.p_ == i.n_) && (i == j)) return;
@@ -226,7 +226,7 @@ private:
       return i;
     }
 
-    static void sort(const_iterator& b, decltype(b) e, auto&& cmp)
+    static void sort(const_iterator& b, decltype(b) e, auto& cmp)
       noexcept(noexcept(node::merge(b, b, e, cmp)))
     { // bottom-up merge sort
       for (auto i(b);;)
