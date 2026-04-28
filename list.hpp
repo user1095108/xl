@@ -942,7 +942,6 @@ auto find(auto& c,
   return find<0>(c, k);
 }
 
-
 template <int I = 0, typename T, class Cmp = std::less<T>>
 void sort(list<T>& l, typename list<T>::const_iterator const b,
   typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
