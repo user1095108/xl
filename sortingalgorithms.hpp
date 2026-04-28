@@ -169,7 +169,7 @@ private:
         {
           auto const hsz(sz / 2);
 
-          { auto n(hsz); for(; ++m, --n;); }
+          for (auto n(hsz); ++m, --n;);
 
           sort(i, m, hsz, std::forward<decltype(cmp)>(cmp));
           sort(m, j, sz - hsz, std::forward<decltype(cmp)>(cmp));
