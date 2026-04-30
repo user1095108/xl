@@ -2492,7 +2492,7 @@ void test3()
   {
     xl::list<int> lst = {11, 22, 33};
     lst = lst;                                  // self-assign
-    assert((lst == xl::list<int>{11, 22, 33}));
+    assert((lst == (int[]){11, 22, 33}));
   }
 
 
