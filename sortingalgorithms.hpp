@@ -39,14 +39,13 @@ private:
 
         // merge run [i, j) with valid stored runs
         auto r(runs);
+        ++mask;
 
-        for (auto n(~mask & (mask + 1)); n >>= 1;)
+        for (auto n(~(mask - 1) & mask); n >>= 1;)
         {
           auto& [a, b](*r++);
           merge(a, b, i, j, cmp);
         }
-
-        ++mask;
 
         detail::assign(r->first, r->second, i)(i, j, m); // *r = {i, j}, i = m
       }
