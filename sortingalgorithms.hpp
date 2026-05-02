@@ -40,7 +40,7 @@ private:
         // merge run [i, j) with valid stored runs
         auto r(runs);
 
-        for (auto const end(runs + std::countr_one(mask++)); end != r;)
+        for (auto n(mask++); n & 1u; n >>= 1)
         {
           auto& [a, b](*r++);
           merge(a, b, i, j, cmp);
