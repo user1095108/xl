@@ -39,8 +39,9 @@ private:
 
         // merge run [i, j) with valid stored runs
         auto r(runs);
+        ++mask;
 
-        for (unsigned n(std::countr_one(mask++)); n; ++r, --n)
+        for (unsigned n(~mask & (mask - 1)); n; ++r, n >>= 1)
         {
           auto& [a, b](*r);
           merge(a, b, i, j, cmp);
