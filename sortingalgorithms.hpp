@@ -42,7 +42,7 @@ private:
         ++mask;
 
         for (auto n(~mask & (mask - 1)); n; n >>= 1)
-        {
+        { // ~(x + 1) & x - isolate trailing ones
           auto& [a, b](*r++);
           merge(a, b, i, j, cmp);
         }
