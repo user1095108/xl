@@ -53,7 +53,7 @@ private:
 
       auto& [a, b](runs[std::countr_zero(mask)]); // first valid stored run
 
-      while (mask &= mask - 1)
+      while (mask &= mask - 1) // x &= x - 1 - clear the least significant (rightmost) set bit
       { // merge remaining valid stored runs
         auto& [c, d](runs[std::countr_zero(mask)]);
         merge(c, d, a, b, cmp);
