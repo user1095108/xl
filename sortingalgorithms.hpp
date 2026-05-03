@@ -41,7 +41,7 @@ private:
         auto r(runs);
         ++mask;
 
-        for (unsigned n(~mask & (mask - 1)); n; n >>= 1)
+        for (auto n(~mask & (mask - 1)); n; n >>= 1)
         {
           auto& [a, b](*r++);
           merge(a, b, i, j, cmp);
