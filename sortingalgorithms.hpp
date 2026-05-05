@@ -50,15 +50,15 @@ private:
         detail::assign(r->first, r->second, i)(i, j, m); // *r = {i, j}, i = m
       }
 
-      auto& [a, b](runs[std::countr_zero(mask)]); // first valid stored run
+      auto& [c, d](runs[std::countr_zero(mask)]); // first valid stored run
 
       while (mask &= mask - 1) // x &= x - 1 - clear the least significant (rightmost) set bit
       { // merge remaining valid stored runs
-        auto& [c, d](runs[std::countr_zero(mask)]);
-        merge(c, d, a, b, cmp);
+        auto& [a, b](runs[std::countr_zero(mask)]);
+        merge(a, b, c, d, cmp);
       }
 
-      return std::pair(a.n_, b.p_);
+      return std::pair(c.n_, d.p_);
     }
   };
 
