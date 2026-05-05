@@ -5,7 +5,7 @@ private:
     static_assert(bool(bsize0));
 
     static void merge(const_iterator& a, const_iterator& b,
-      const_iterator& c, const_iterator& d, auto&& cmp)
+      const_iterator& c, const_iterator& d, auto& cmp)
       noexcept(noexcept(node::merge(a, b, c, d, cmp)))
     { // merge runs [a, b) and [c, d)
       if (cmp(*c, b.p_->v_))
