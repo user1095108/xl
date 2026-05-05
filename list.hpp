@@ -151,12 +151,13 @@ private:
       // if ((j.p_ == i.n_) || (i == j)) return;
 
       for (auto m(detail::next(i));;)
-        if (cmp(*m, m.p_->v_))
+      {
+        auto n(m); // insertion point
+
+        while (cmp(*m, n.p_->v_) && (i != --n));
+
+        if (m != n)
         {
-          auto n(m); // insertion point
-
-          while ((i != --n) && cmp(*m, n.p_->v_));
-
           auto mm(m);
           m = splice(n, mm); // splice m at insertion point
 
@@ -165,6 +166,7 @@ private:
         }
         else
           if (j.p_ == m.n_) [[unlikely]] break; else [[likely]] ++m;
+      }
     }
 
     static auto iter_swap(auto& a, decltype(a) b) noexcept
