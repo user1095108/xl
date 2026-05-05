@@ -152,20 +152,16 @@ private:
 
       for (auto m(detail::next(i));;)
       {
-        // find insertion point
-        decltype(m) ip{}; // insertion point
+        if (cmp(*m, m.p_->v_))
+        {
+          auto n(m); // insertion point
 
-        for (auto n(m); cmp(*m, n.p_->v_);)
-          if ((ip = --n) == i) break;
+          while ((i != --n) && cmp(*m, n.p_->v_));
 
-        // splice or skip
-        if (ip)
-        { // splice
           auto mm(m);
-          m = splice(ip, mm);
+          m = splice(n, mm); // splice m at insertion point
 
-          // fix i, j range
-          if (ip == i) i.n_ = mm.n_;
+          if (i == n) i.n_ = mm.n_;
           if (j.p_ == mm.n_) { j.p_ = m.p_; break; }
         }
         else
