@@ -151,7 +151,6 @@ private:
       // if ((j.p_ == i.n_) || (i == j)) return;
 
       for (auto m(detail::next(i));;)
-      {
         if (cmp(*m, m.p_->v_))
         {
           auto n(m); // insertion point
@@ -165,8 +164,7 @@ private:
           if (j.p_ == mm.n_) { j.p_ = m.p_; break; }
         }
         else
-          if (j.p_ == m.n_) break; else [[likely]] ++m; // skip
-      }
+          if (j.p_ == m.n_) [[unlikely]] break; else [[likely]] ++m;
     }
 
     static auto iter_swap(auto& a, decltype(a) b) noexcept
