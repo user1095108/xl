@@ -292,7 +292,7 @@ public:
   noexcept(noexcept(merge_sort::sort(b, e, cmp)))
   requires(0 == I)
   { // bottom-up merge sort
-    if (empty()) return;
+    if (empty()) [[unlikely]] return;
 
     auto const [f, l](merge_sort::sort(b, e, cmp));
 
