@@ -610,6 +610,7 @@ int main()
     { xl::list<int> z = {3,2,1}; xl::sort<2>(z, z.begin(), z.before_end()); assert(((int[]){2, 3, 1} == z)); }
     { xl::list<int> z = {3,2,1}; xl::sort<3>(z, z.begin(), z.before_end()); assert(((int[]){2, 3, 1} == z)); }
     { xl::list<int> z = {3,2,1}; xl::sort<4>(z, z.begin(), z.before_end()); assert(((int[]){2, 3, 1} == z)); }
+    { xl::list<int> z; assert(z.empty()); z.sort<0>(); z.sort<1>(); z.sort<2>(); z.sort<3>(); z.sort<4>(); }
 
     /* ----------------------------------------------------------
      * 3.  FINAL REPORT
