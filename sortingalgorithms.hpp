@@ -51,6 +51,7 @@ private:
       }
       while (e != i);
 
+      // assert(mask);
       auto& [c, d](runs[std::countr_zero(mask)]); // first valid stored run
 
       while (mask &= mask - 1) // x &= x - 1 - clear the least significant (rightmost) set bit
