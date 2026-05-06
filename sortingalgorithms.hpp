@@ -25,7 +25,7 @@ private:
 
       unsigned mask{}; // occupancy mask
 
-      while (e != i)
+      do
       {
         auto j(i);
 
@@ -49,6 +49,7 @@ private:
 
         detail::assign(r->first, r->second, i)(i, j, m); // *r = {i, j}, i = m
       }
+      while (e != i);
 
       auto& [c, d](runs[std::countr_zero(mask)]); // first valid stored run
 
@@ -290,6 +291,8 @@ public:
   noexcept(noexcept(merge_sort::sort(b, e, cmp)))
   requires(0 == I)
   { // bottom-up merge sort
+    if (empty()) return;
+
     auto const [f, l](merge_sort::sort(b, e, cmp));
 
     b.p_ ? b.p_->l_ ^= detail::conv(f),
