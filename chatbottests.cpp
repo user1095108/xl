@@ -2492,13 +2492,13 @@ void test3()
   {
     xl::list<int> lst = {11, 22, 33};
     lst = lst;                                  // self-assign
-    assert((lst == (int[]){11, 22, 33}));
+    assert((lst == std::array{11, 22, 33}));
   }
 
 
   // Test 1: Iterator arithmetic and bounds checking
   {
-    xl::list<int> lst = {1, 2, 3, 4, 5};
+    xl::list lst = {1, 2, 3, 4, 5};
 
     // Test increment/decrement at boundaries
     auto end_it = lst.end();
