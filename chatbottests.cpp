@@ -2621,8 +2621,7 @@ void test()
   // std::distance between const_iterators equals size
   {
     const xl::list lst = {1, 2, 3, 4, 5};
-    auto dist = std::distance(lst.cbegin(), lst.cend());
-    assert(dist == lst.size());
+    assert(std::distance(lst.cbegin(), lst.cend()) == lst.size());
   }
 
   // copy independence: modifying the copy does not affect the original
