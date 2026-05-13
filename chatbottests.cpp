@@ -2531,9 +2531,7 @@ void test()
     xl::list lst = {1, 2, 3, 4, 5};
     int arr[] = {10, 20, 30};
     lst = arr;
-    assert(lst.size() == 3);
-    assert(lst.front() == 10);
-    assert(lst.back()  == 30);
+    assert(lst == arr);
   }
 
   // insert(pos, count, value): multi-element fill insert
