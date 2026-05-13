@@ -479,14 +479,14 @@ public:
     return {q, i.p_}; // return iterator to created node
   }
 
-  auto emplace(const_iterator const i, value_type v)
+  decltype(auto) emplace(const_iterator const i, value_type v)
     noexcept(noexcept(emplace<0>(i, std::move(v))))
   {
     return emplace<0>(i, std::move(v));
   }
 
   template <int = 0>
-  iterator emplace_back(auto&& ...a)
+  reference emplace_back(auto&& ...a)
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   { // l q
@@ -495,17 +495,17 @@ public:
 
     l ? l->l_ ^= detail::conv(q) : bool(f_ = q);
 
-    return {l_ = q, l}; // return iterator to created node
+    return (l_ = q)->v_;
   }
 
-  auto emplace_back(value_type v)
+  decltype(auto) emplace_back(value_type v)
     noexcept(noexcept(emplace_back<0>(std::move(v))))
   {
     return emplace_back<0>(std::move(v));
   }
 
   template <int = 0>
-  iterator emplace_front(auto&& ...a)
+  reference emplace_front(auto&& ...a)
     noexcept(noexcept(new node{std::forward<decltype(a)>(a)...}))
     requires(std::is_constructible_v<value_type, decltype(a)...>)
   { // q f
@@ -514,10 +514,10 @@ public:
 
     f ? f->l_ ^= detail::conv(q) : bool(l_ = q);
 
-    return {f_ = q, {}}; // return iterator to created node
+    return (f_ = q)->v_; // return iterator to created node
   }
 
-  auto emplace_front(value_type v)
+  decltype(auto) emplace_front(value_type v)
     noexcept(noexcept(emplace_front<0>(std::move(v))))
   {
     return emplace_front<0>(std::move(v));
@@ -633,6 +633,7 @@ public:
   }
 
   //
+  template <int = 0>
   auto insert_range(const_iterator const pos,
     std::ranges::input_range auto&& rg)
     noexcept(noexcept(
@@ -641,18 +642,39 @@ public:
     return insert(pos, std::ranges::begin(rg), std::ranges::end(rg));
   }
 
+  template <int = 0>
   void append_range(std::ranges::input_range auto&& rg)
     noexcept(noexcept(std::ranges::copy(rg, std::back_inserter(*this))))
   {
     std::ranges::copy(rg, std::back_inserter(*this));
   }
 
+  template <int = 0>
   void prepend_range(std::ranges::input_range auto&& rg)
     noexcept(noexcept(std::ranges::copy(std::ranges::views::reverse(rg),
       std::front_inserter(*this))))
   {
     std::ranges::copy(std::ranges::views::reverse(rg),
       std::front_inserter(*this));
+  }
+
+  decltype(auto) insert_range(const_iterator const pos,
+    std::initializer_list<T> rg)
+    noexcept(noexcept(insert_range<0>(pos, rg)))
+  {
+    return insert_range<0>(pos, rg);
+  }
+
+  void append_range(std::initializer_list<T> rg)
+    noexcept(noexcept(append_range<0>(rg)))
+  {
+    append_range<0>(rg);
+  }
+
+  void prepend_range(std::initializer_list<T> rg)
+    noexcept(noexcept(prepend_range<0>(rg)))
+  {
+    prepend_range<0>(rg);
   }
 
   //
