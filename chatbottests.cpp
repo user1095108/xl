@@ -2528,9 +2528,9 @@ void test()
 
   // assign(iter, iter): replace contents using an iterator range
   {
-    xl::list<int> lst = {1, 2, 3, 4, 5};
+    xl::list lst = {1, 2, 3, 4, 5};
     int arr[] = {10, 20, 30};
-    lst.assign(std::begin(arr), std::end(arr));
+    lst = arr;
     assert(lst.size() == 3);
     assert(lst.front() == 10);
     assert(lst.back()  == 30);
@@ -2538,7 +2538,7 @@ void test()
 
   // insert(pos, count, value): multi-element fill insert
   {
-    xl::list<int> lst = {1, 2, 3};
+    xl::list lst = {1, 2, 3};
     lst.insert(std::next(lst.begin()), 3, 99);
     assert(lst.size() == 6);
     assert(lst.front() == 1);
@@ -2654,7 +2654,7 @@ void test()
 
   // splice from empty source into non-empty destination range overload
   {
-    xl::list<int> dst = {1, 2, 3};
+    xl::list dst = {1, 2, 3};
     xl::list<int> src;
     dst.splice(dst.begin(), src, src.begin(), src.end());
     assert(dst.size() == 3);
