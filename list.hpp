@@ -495,7 +495,7 @@ public:
 
     l ? l->l_ ^= detail::conv(q) : bool(f_ = q);
 
-    return (l_ = q)->v_;
+    return (l_ = q)->v_; // return reference to created node value
   }
 
   decltype(auto) emplace_back(value_type v)
@@ -514,7 +514,7 @@ public:
 
     f ? f->l_ ^= detail::conv(q) : bool(l_ = q);
 
-    return (f_ = q)->v_; // return iterator to created node
+    return (f_ = q)->v_; // return reference to created node value
   }
 
   decltype(auto) emplace_front(value_type v)
