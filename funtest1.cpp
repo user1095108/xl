@@ -191,7 +191,7 @@ int main()
         auto it = std::next(z.begin());
         z.splice(z.begin(), z, it);      // move '2' to front – still 3 elements
         assert(z.size()==3);
-        assert(((int[]){2,1,3} == z));
+        assert((std::array{2,1,3} == z));
     }
 
     // 2.4  self-splice whole list
@@ -207,7 +207,7 @@ int main()
         xl::list<int> B = {2,4,6};
         A.splice(A.end(), B);            // move all nodes
         assert(B.empty() && A.size()==6);
-        assert(((int[]){1,3,5,2,4,6} == A));
+        assert((std::array{1,3,5,2,4,6} == A));
     }
 
     // 2.6  merge with duplicates interleaved
@@ -217,7 +217,7 @@ int main()
         A.sort();  B.sort();
         A.merge(B);
         assert(B.empty());
-        assert(((int[]){1,2,3,3,3,3,7,8} == A));
+        assert((std::array{1,2,3,3,3,3,7,8} == A));
     }
 
     // 2.7  unique with no duplicates, and with all equal
@@ -309,7 +309,7 @@ int main()
     {
         xl::list<int> z = {1,2};
         z.insert(z.end(), 3);
-        assert(((int[]){1,2,3} == z));
+        assert((std::array{1,2,3} == z));
     }
 
     /* ----------------------------------------------------------
@@ -339,7 +339,7 @@ int main()
         auto it = std::next(z.begin());
         z.splice(z.begin(), z, it);      // move '2' to front – still 3 elements
         assert(z.size()==3);
-        assert(((int[]){2,1,3} == z));
+        assert((std::array{2,1,3} == z));
     }
 
     // 2.4  self-splice whole list
@@ -355,7 +355,7 @@ int main()
         xl::list<int> B = {2,4,6};
         A.splice(A.end(), B);            // move all nodes
         assert(B.empty() && A.size()==6);
-        assert(((int[]){1,3,5,2,4,6} == A));
+        assert((std::array{1,3,5,2,4,6} == A));
     }
 
     // 2.6  merge with duplicates interleaved
@@ -365,7 +365,7 @@ int main()
         A.sort();  B.sort();
         A.merge(B);
         assert(B.empty());
-        assert(((int[]){1,2,3,3,3,3,7,8} == A));
+        assert((std::array{1,2,3,3,3,3,7,8} == A));
     }
 
     // 2.7  unique with no duplicates, and with all equal
@@ -459,7 +459,7 @@ int main()
     {
         xl::list<int> z = {1,2};
         z.insert(z.end(), 3);
-        assert(((int[]){1,2,3} == z));
+        assert((std::array{1,2,3} == z));
     }
 
     /* ----------  40 extra focused tests start here  ---------- */
@@ -474,16 +474,16 @@ int main()
     { xl::list<int> z = {4,3,2,1}; z.sort(); assert(std::is_sorted(z.begin(),z.end())); }
 
     // 2.18  sort with duplicates
-    { xl::list<int> z = {3,1,3,2,1}; z.sort(); assert(((int[]){1,1,2,3,3}==z)); }
+    { xl::list<int> z = {3,1,3,2,1}; z.sort(); assert((std::array{1,1,2,3,3}==z)); }
 
     // 2.19  merge two empty lists
     { xl::list<int> a,b; a.merge(b); assert(a.empty()&&b.empty()); }
 
     // 2.20  merge into empty list
-    { xl::list<int> a,b={1,2}; a.merge(b); assert((((int[]){1,2}==a)&&b.empty())); }
+    { xl::list<int> a,b={1,2}; a.merge(b); assert(((std::array{1,2}==a)&&b.empty())); }
 
     // 2.21  merge from empty list
-    { xl::list<int> a={1,2},b; a.merge(b); assert((((int[]){1,2}==a)&&b.empty())); }
+    { xl::list<int> a={1,2},b; a.merge(b); assert(((std::array{1,2}==a)&&b.empty())); }
 
     // 2.22  unique on single element
     { xl::list<int> z = {7}; z.unique(); assert(z.size()==1&&z.front()==7); }
@@ -501,10 +501,10 @@ int main()
     { xl::list<int> z = {1,2,3}; z.remove(42); assert(z.size()==3); }
 
     // 2.27  swap with self (must work)
-    { xl::list<int> z = {1,2,3}; z.swap(z); assert(((int[]){1,2,3}==z)); }
+    { xl::list<int> z = {1,2,3}; z.swap(z); assert((std::array{1,2,3}==z)); }
 
     // 2.28  assign iterator range to empty list
-    { std::vector<int> v = {9,8,7}; xl::list<int> z; z.assign(v.begin(),v.end()); assert(((int[]){9,8,7}==z)); }
+    { std::vector<int> v = {9,8,7}; xl::list<int> z; z.assign(v.begin(),v.end()); assert((std::array{9,8,7}==z)); }
 
     // 2.29  assign count=0 keeps list empty
     { xl::list<int> z = {1,2}; z.assign(0,5); assert(z.empty()); }
@@ -522,10 +522,10 @@ int main()
     { xl::list<int> z = {1,2,3}; z.erase(z.begin(),z.end()); assert(z.empty()); }
 
     // 2.34  splice single to self (different position)
-    { xl::list<int> z = {1,2,3,4}; auto it=std::next(z.begin(),2); z.splice(z.begin(),z,it); assert(((int[]){3,1,2,4}==z)); }
+    { xl::list<int> z = {1,2,3,4}; auto it=std::next(z.begin(),2); z.splice(z.begin(),z,it); assert((std::array{3,1,2,4}==z)); }
 
     // 2.35  splice range inside same list
-    { xl::list<int> z = {1,2,3,4,5}; auto f=std::next(z.begin()), l=std::next(z.begin(),3); z.splice(z.end(),z,f,l); assert(((int[]){1,4,5,2,3}==z)); }
+    { xl::list<int> z = {1,2,3,4,5}; auto f=std::next(z.begin()), l=std::next(z.begin(),3); z.splice(z.end(),z,f,l); assert((std::array{1,4,5,2,3}==z)); }
 
     // 2.36  front/back on 2-element list
     { xl::list<int> z = {8,9}; assert(z.front()==8&&z.back()==9); }
@@ -546,10 +546,10 @@ int main()
     { const xl::list<int> z = {1,2}; assert(z.begin()==z.cbegin()); }
 
     // 2.42  resize shrink
-    { xl::list<int> z = {1,2,3,4}; z.resize(2); assert(((int[]){1,2}==z)); }
+    { xl::list<int> z = {1,2,3,4}; z.resize(2); assert((std::array{1,2}==z)); }
 
     // 2.43  resize grow with value
-    { xl::list<int> z = {1}; z.resize(3,42); assert(((int[]){1,42,42}==z)); }
+    { xl::list<int> z = {1}; z.resize(3,42); assert((std::array{1,42,42}==z)); }
 
     // 2.44  resize grow default
     { xl::list<int> z; z.resize(2); assert(z.size()==2&&z.front()==0&&z.back()==0); }
@@ -567,22 +567,22 @@ int main()
     { xl::list<int> a = {1,2}, b = {3,4}; auto f=b.begin(), l=b.begin(); a.splice(a.begin(),b,f,l); assert(a.size()==2&&b.size()==2); }
 
     // 2.49  merge with custom comparator descending
-    { xl::list<int> a = {5,3,1}, b = {6,4,2}; a.sort(std::greater<int>()); b.sort(std::greater<int>()); a.merge(b,std::greater<int>()); assert(((int[]){6,5,4,3,2,1}==a)); }
+    { xl::list<int> a = {5,3,1}, b = {6,4,2}; a.sort(std::greater<int>()); b.sort(std::greater<int>()); a.merge(b,std::greater<int>()); assert((std::array{6,5,4,3,2,1}==a)); }
 
     // 2.50  list of pointers maintains order
     { int x=1,y=2,z=3; xl::list<int*> lst; lst.push_back(&x); lst.push_back(&y); lst.push_back(&z); assert(*lst.front()==1&&*lst.back()==3); }
 
     // 2.51  splice entire list into middle
-    { xl::list<int> a = {1,2,3}, b = {4,5}; auto it=std::next(a.begin()); a.splice(it,b); assert(((int[]){1,4,5,2,3}==a&&b.empty())); }
+    { xl::list<int> a = {1,2,3}, b = {4,5}; auto it=std::next(a.begin()); a.splice(it,b); assert((std::array{1,4,5,2,3}==a&&b.empty())); }
 
     // 2.52  self-merge (must be no-op)
-    { xl::list<int> a = {1,2}; a.sort(); a.merge(a); assert(((int[]){1,2}==a)); }
+    { xl::list<int> a = {1,2}; a.sort(); a.merge(a); assert((std::array{1,2}==a)); }
 
     // 2.53  unique with custom binary predicate
-    { xl::list<int> z = {1,1,2,3,3}; z.unique([](int a,int b){return a==b;}); assert(((int[]){1,2,3}==z)); }
+    { xl::list<int> z = {1,1,2,3,3}; z.unique([](int a,int b){return a==b;}); assert((std::array{1,2,3}==z)); }
 
     // 2.54  remove_if with capture
-    { int threshold=2; xl::list<int> z = {1,2,3,4}; z.remove_if([&](int v){return v>threshold;}); assert(((int[]){1,2}==z)); }
+    { int threshold=2; xl::list<int> z = {1,2,3,4}; z.remove_if([&](int v){return v>threshold;}); assert((std::array{1,2}==z)); }
 
     // 2.55  reverse empty list
     { xl::list<int> z; z.reverse(); assert(z.empty()); }
@@ -603,13 +603,13 @@ int main()
     { xl::list<int> z = {1,2,3}; while(!z.empty()) z.pop_back(); assert(z.empty()); }
 
     // custom tests
-    { xl::list<int> z = {1,2,3}; assert(xl::find(z, {1})); }
-    { xl::list<int> z = {1,2,3}; assert(xl::find(z, 1, 2, 3)); }
-    { xl::list<int> z = {3,2,1}; xl::sort(z, z.begin(), z.before_end()); assert(((int[]){2, 3, 1} == z)); }
-    { xl::list<int> z = {3,2,1}; xl::sort<1>(z, z.begin(), z.before_end()); assert(((int[]){2, 3, 1} == z)); }
-    { xl::list<int> z = {3,2,1}; xl::sort<2>(z, z.begin(), z.before_end()); assert(((int[]){2, 3, 1} == z)); }
-    { xl::list<int> z = {3,2,1}; xl::sort<3>(z, z.begin(), z.before_end()); assert(((int[]){2, 3, 1} == z)); }
-    { xl::list<int> z = {3,2,1}; xl::sort<4>(z, z.begin(), z.before_end()); assert(((int[]){2, 3, 1} == z)); }
+    { xl::list z = {1,2,3}; assert(xl::find(z, {1})); }
+    { xl::list z = {1,2,3}; assert(xl::find(z, 1, 2, 3)); }
+    { xl::list z = {3,2,1}; xl::sort(z, z.begin(), z.before_end()); assert((std::array{2, 3, 1} == z)); }
+    { xl::list z = {3,2,1}; xl::sort<1>(z, z.begin(), z.before_end()); assert((std::array{2, 3, 1} == z)); }
+    { xl::list z = {3,2,1}; xl::sort<2>(z, z.begin(), z.before_end()); assert((std::array{2, 3, 1} == z)); }
+    { xl::list z = {3,2,1}; xl::sort<3>(z, z.begin(), z.before_end()); assert((std::array{2, 3, 1} == z)); }
+    { xl::list z = {3,2,1}; xl::sort<4>(z, z.begin(), z.before_end()); assert((std::array{2, 3, 1} == z)); }
     { xl::list<int> z; assert(z.empty()); z.sort<0>(); z.sort<1>(); z.sort<2>(); z.sort<3>(); z.sort<4>(); }
 
     /* ----------------------------------------------------------
