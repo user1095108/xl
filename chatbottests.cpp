@@ -553,8 +553,8 @@ void test()
 
   // splice: all three overloads (whole list, single element, range)
   {
-    xl::list<int> list1 = {1, 2, 3, 4, 5};
-    xl::list<int> list2 = {10, 20, 30};
+    xl::list list1 = {1, 2, 3, 4, 5};
+    xl::list list2 = {10, 20, 30};
 
     // splice whole list at beginning
     auto it1 = list1.begin();
@@ -2509,7 +2509,7 @@ void test()
 
   // std::accumulate, std::transform, std::count_if
   {
-    xl::list<int> lst = {1, 2, 3, 4, 5};
+    xl::list lst = {1, 2, 3, 4, 5};
 
     auto sum = std::accumulate(lst.begin(), lst.end(), 0);
     assert(sum == 15);
@@ -2526,7 +2526,7 @@ void test()
 
   // ── Additional tests ────────────────────────────────────────────────────────
 
-  // assign(iter, iter): replace contents using an iterator range
+  // replace contents using an iterator range
   {
     xl::list lst = {1, 2, 3, 4, 5};
     int arr[] = {10, 20, 30};
