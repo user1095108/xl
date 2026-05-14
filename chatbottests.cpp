@@ -2666,8 +2666,7 @@ void test()
     lst.sort();
 
     auto it = std::find_if(lst.begin(), lst.end(), [](int x) { return x > 50; });
-    assert(it);
-    assert(*it == 51);
+    assert(it && *it == 51);
     assert(std::is_sorted(lst.begin(), lst.end()));
   }
 
