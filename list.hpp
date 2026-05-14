@@ -444,45 +444,6 @@ public:
     assign(l.begin(), l.end());
   }
 
-  template <int = 0>
-  void assign_range(std::ranges::input_range auto&& rg)
-    noexcept(noexcept(
-      std::is_lvalue_reference_v<decltype(rg)> ?
-        assign(std::ranges::begin(rg), std::ranges::end(rg)) :
-        assign(std::make_move_iterator(std::ranges::begin(rg)),
-          std::make_move_iterator(std::ranges::end(rg)))
-    ))
-    requires(!std::is_same_v<std::remove_cvref_t<decltype(rg)>, list>)
-  {
-    std::is_lvalue_reference_v<decltype(rg)> ?
-      assign(std::ranges::begin(rg), std::ranges::end(rg)) :
-      assign(std::make_move_iterator(std::ranges::begin(rg)),
-        std::make_move_iterator(std::ranges::end(rg)));
-  }
-
-  template <int = 0>
-  void assign_range(std::ranges::input_range auto&& rg)
-    noexcept(noexcept(
-      std::is_lvalue_reference_v<decltype(rg)> ?
-        assign(std::ranges::begin(rg), std::ranges::end(rg)) :
-        assign(std::make_move_iterator(std::ranges::begin(rg)),
-          std::make_move_iterator(std::ranges::end(rg)))
-    ))
-    requires(std::is_same_v<std::remove_cvref_t<decltype(rg)>, list>)
-  {
-    if (this != &rg)
-      std::is_lvalue_reference_v<decltype(rg)> ?
-        assign(std::ranges::begin(rg), std::ranges::end(rg)) :
-        assign(std::make_move_iterator(std::ranges::begin(rg)),
-          std::make_move_iterator(std::ranges::end(rg)));
-  }
-
-  constexpr void assign_range(std::initializer_list<T> rg)
-    noexcept(noexcept(assign_range<0>(rg)))
-  {
-    assign_range<0>(rg);
-  }
-
   //
   void clear() noexcept(noexcept(node::destroy({})))
   {
@@ -659,7 +620,40 @@ public:
 
   //
   template <int = 0>
-  constexpr auto insert_range(const_iterator const pos,
+  void assign_range(std::ranges::input_range auto&& rg)
+    noexcept(noexcept(
+      std::is_lvalue_reference_v<decltype(rg)> ?
+        assign(std::ranges::begin(rg), std::ranges::end(rg)) :
+        assign(std::make_move_iterator(std::ranges::begin(rg)),
+          std::make_move_iterator(std::ranges::end(rg)))
+    ))
+    requires(!std::is_same_v<std::remove_cvref_t<decltype(rg)>, list>)
+  {
+    std::is_lvalue_reference_v<decltype(rg)> ?
+      assign(std::ranges::begin(rg), std::ranges::end(rg)) :
+      assign(std::make_move_iterator(std::ranges::begin(rg)),
+        std::make_move_iterator(std::ranges::end(rg)));
+  }
+
+  template <int = 0>
+  void assign_range(std::ranges::input_range auto&& rg)
+    noexcept(noexcept(
+      std::is_lvalue_reference_v<decltype(rg)> ?
+        assign(std::ranges::begin(rg), std::ranges::end(rg)) :
+        assign(std::make_move_iterator(std::ranges::begin(rg)),
+          std::make_move_iterator(std::ranges::end(rg)))
+    ))
+    requires(std::is_same_v<std::remove_cvref_t<decltype(rg)>, list>)
+  {
+    if (this != &rg)
+      std::is_lvalue_reference_v<decltype(rg)> ?
+        assign(std::ranges::begin(rg), std::ranges::end(rg)) :
+        assign(std::make_move_iterator(std::ranges::begin(rg)),
+          std::make_move_iterator(std::ranges::end(rg)));
+  }
+
+  template <int = 0>
+  auto insert_range(const_iterator const pos,
     std::ranges::input_range auto&& rg)
     noexcept(noexcept(
       std::is_lvalue_reference_v<decltype(rg)> ?
@@ -680,25 +674,7 @@ public:
   }
 
   template <int = 0>
-  constexpr void append_range(std::ranges::input_range auto&& rg)
-    noexcept(
-      std::is_lvalue_reference_v<decltype(rg)> ?
-        noexcept(std::copy(std::ranges::begin(rg),
-          std::ranges::end(rg), std::back_inserter(*this))) :
-        noexcept(std::move(std::ranges::begin(rg),
-          std::ranges::end(rg), std::back_inserter(*this)))
-    )
-  {
-    if constexpr(std::is_lvalue_reference_v<decltype(rg)>)
-      std::copy(std::ranges::begin(rg), std::ranges::end(rg),
-        std::back_inserter(*this));
-    else
-      std::move(std::ranges::begin(rg), std::ranges::end(rg),
-        std::back_inserter(*this));
-  }
-
-  template <int = 0>
-  constexpr void prepend_range(std::ranges::input_range auto&& rg)
+  void prepend_range(std::ranges::input_range auto&& rg)
     noexcept(
       std::is_lvalue_reference_v<decltype(rg)> ?
         noexcept(std::copy(std::ranges::rbegin(rg),
@@ -715,11 +691,34 @@ public:
         std::front_inserter(*this));
   }
 
-  decltype(auto) insert_range(const_iterator const pos,
-    std::initializer_list<T> rg)
-    noexcept(noexcept(insert_range<0>(pos, rg)))
+  template <int = 0>
+  void append_range(std::ranges::input_range auto&& rg)
+    noexcept(
+      std::is_lvalue_reference_v<decltype(rg)> ?
+        noexcept(std::copy(std::ranges::begin(rg),
+          std::ranges::end(rg), std::back_inserter(*this))) :
+        noexcept(std::move(std::ranges::begin(rg),
+          std::ranges::end(rg), std::back_inserter(*this)))
+    )
   {
-    return insert_range<0>(pos, rg);
+    if constexpr(std::is_lvalue_reference_v<decltype(rg)>)
+      std::copy(std::ranges::begin(rg), std::ranges::end(rg),
+        std::back_inserter(*this));
+    else
+      std::move(std::ranges::begin(rg), std::ranges::end(rg),
+        std::back_inserter(*this));
+  }
+
+  void assign_range(std::initializer_list<T> rg)
+    noexcept(noexcept(assign_range<0>(rg)))
+  {
+    assign_range<0>(rg);
+  }
+
+  void prepend_range(std::initializer_list<T> rg)
+    noexcept(noexcept(prepend_range<0>(rg)))
+  {
+    prepend_range<0>(rg);
   }
 
   void append_range(std::initializer_list<T> rg)
@@ -728,10 +727,11 @@ public:
     append_range<0>(rg);
   }
 
-  void prepend_range(std::initializer_list<T> rg)
-    noexcept(noexcept(prepend_range<0>(rg)))
+  decltype(auto) insert_range(const_iterator const pos,
+    std::initializer_list<T> rg)
+    noexcept(noexcept(insert_range<0>(pos, rg)))
   {
-    prepend_range<0>(rg);
+    return insert_range<0>(pos, rg);
   }
 
   //
