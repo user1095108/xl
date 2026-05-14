@@ -653,15 +653,14 @@ public:
   template <int = 0>
   constexpr auto insert_range(const_iterator const pos,
     std::ranges::input_range auto&& rg)
-    noexcept(
+    noexcept(noexcept(
       std::is_lvalue_reference_v<decltype(rg)> ?
-        noexcept(insert(pos, std::ranges::begin(rg),
-          std::ranges::end(rg))) :
-        noexcept(insert(pos,
+        insert(pos, std::ranges::begin(rg), std::ranges::end(rg)) :
+        insert(pos,
             std::make_move_iterator(std::ranges::begin(rg)),
             std::make_move_iterator(std::ranges::end(rg))
-          ))
-    )
+          )
+    ))
   {
     if constexpr(std::is_lvalue_reference_v<decltype(rg)>)
       return insert(pos, std::ranges::begin(rg), std::ranges::end(rg));
