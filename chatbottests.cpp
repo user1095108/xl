@@ -1683,10 +1683,10 @@ void test()
 
   // merge with partially overlapping ranges
   {
-    xl::list<int> lst1 = {1, 3, 5};
-    xl::list<int> lst2 = {2, 3, 4, 6};
+    xl::list lst1 = {1, 3, 5};
+    xl::list lst2 = {2, 3, 4, 6};
     lst1.merge(lst2);
-    assert((lst1 == xl::list<int>{1, 2, 3, 3, 4, 5, 6}));
+    assert((lst1 == std::array{1, 2, 3, 3, 4, 5, 6}));
     assert(lst2.empty());
   }
 
@@ -1711,9 +1711,9 @@ void test()
 
   // const iterator traversal
   {
-    const xl::list<int> lst = {1, 2, 3};
+    const xl::list lst = {1, 2, 3};
     int sum = 0;
-    for (auto it = lst.cbegin(); it != lst.cend(); ++it)
+    for (auto it = lst.cbegin(); it; ++it)
       sum += *it;
     assert(sum == 6);
   }
