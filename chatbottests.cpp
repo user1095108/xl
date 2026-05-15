@@ -1640,10 +1640,10 @@ void test()
 
   // double reverse is identity
   {
-    xl::list<int> lst = {1, 2, 3, 4, 5};
+    xl::list lst = {1, 2, 3, 4, 5};
     lst.reverse();
     lst.reverse();
-    assert((lst == xl::list<int>{1, 2, 3, 4, 5}));
+    assert((lst == std::array{1, 2, 3, 4, 5}));
   }
 
   // remove non-existing value is a no-op
@@ -2523,8 +2523,6 @@ void test()
                                     [](int x) { return x % 2 == 0; });
     assert(even_count == 5);   // all are even after multiplying by 2
   }
-
-  // ── Additional tests ────────────────────────────────────────────────────────
 
   // replace contents using an iterator range
   {
