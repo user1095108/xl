@@ -768,19 +768,18 @@ public:
     push_back<0>(std::move(v));
   }
 
-  template <int = 0>
   void push_front(auto&& ...a)
     noexcept(noexcept((emplace_front(std::forward<decltype(a)>(a)), ...)))
     requires(!!sizeof...(a))
   {
     auto i(cbegin());
-    (++(i = emplace(i, std::forward<decltype(a)>(a))), ...);
+    ((i.p_ = emplace(i, std::forward<decltype(a)>(a)).n_), ...);
   }
 
   void push_front(value_type v)
-    noexcept(noexcept(push_front<0>(std::move(v))))
+    noexcept(noexcept(emplace(cbegin(), std::move(v))))
   {
-    push_front<0>(std::move(v));
+    emplace(cbegin(), std::move(v));
   }
 
   size_type remove_if(auto pred)

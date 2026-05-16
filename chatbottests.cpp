@@ -753,9 +753,7 @@ void test()
     list1.clear();
     assert(list1.empty());
 
-    list1.push_front(10);
-    list1.push_front(20);
-    list1.push_front(30);
+    list1.push_front(30, 20, 10);
     assert(list1.size() == 3);
 
     list1.pop_back();
