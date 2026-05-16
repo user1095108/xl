@@ -727,7 +727,7 @@ public:
     append_range<0>(rg);
   }
 
-  decltype(auto) insert_range(const_iterator const pos,
+  auto insert_range(const_iterator const pos,
     std::initializer_list<T> rg)
     noexcept(noexcept(insert_range<0>(pos, rg)))
   {
