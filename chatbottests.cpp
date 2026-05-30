@@ -1147,9 +1147,9 @@ void test()
 
   // ── TC-67  heterogeneous comparison (int vs long) ────────────────────────────
   {
-    xl::list<int>  l1 = {1, 2, 3};
+    xl::list l1 = {1, 2, 3};
     xl::list<long> l2 = {1, 2, 3};
-    xl::list<int>  l3 = {1, 2, 4};
+    xl::list l3 = {1, 2, 4};
     assert(l1 == l2 && l1 != l3 && l1 < l3 && l3 > l1);
   }
 
@@ -1176,7 +1176,7 @@ void test()
 
   // ── TC-70  reverse iterators accumulate digits (54321) ───────────────────────
   {
-    xl::list<int> lst = {1, 2, 3, 4, 5};
+    xl::list lst = {1, 2, 3, 4, 5};
     int sum = 0;
     for (auto rit = lst.rbegin(); rit != lst.rend(); ++rit)
       sum = sum * 10 + *rit;
