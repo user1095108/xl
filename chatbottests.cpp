@@ -137,7 +137,7 @@ void test()
 
   // ── TC-06  multi_t constructor, push_front/back, pop_front/back, round-trips ──
   {
-    xl::list<int> l{xl::multi_t{}, 1, 2, 3, 4, 5};
+    xl::list<int> l{xl::multi, 1, 2, 3, 4, 5};
     assert(l.size() == 5);
 
     l.push_front(0); assert(l.size() == 6 && l.front() == 0);
@@ -175,7 +175,7 @@ void test()
 
   // ── TC-08  fill constructor (count, value) ────────────────────────────────────
   {
-    xl::list<int> l(5, 10);
+    xl::list l(5, 10);
     assert(l.size() == 5);
     for (const auto& e : l) assert(e == 10);
   }
@@ -243,7 +243,7 @@ void test()
 
   // ── TC-13  resize: shrink, same size, grow (default), grow with value ─────────
   {
-    xl::list<int> l = {1, 2, 3, 4, 5};
+    xl::list l = {1, 2, 3, 4, 5};
 
     l.resize(3); assert(l.size() == 3);
     l.resize(3); assert(l.size() == 3);
@@ -258,12 +258,12 @@ void test()
     assert(l2.at(1) == 2);
 
     // grow with explicit value
-    xl::list<int> l3 = {1, 2, 3};
+    xl::list l3 = {1, 2, 3};
     l3.resize(5, 100);
     assert(l3.size() == 5 && l3.back() == 100);
 
     // resize to 0
-    xl::list<int> l4 = {1, 2, 3, 4, 5};
+    xl::list l4 = {1, 2, 3, 4, 5};
     l4.resize(0);
     assert(l4.empty() && l4.size() == 0);
   }
@@ -274,7 +274,7 @@ void test()
   {
     // non-interleaved; resize after merge
     {
-      xl::list<int> a = {1, 2, 3, 4, 5}, b = {6, 7, 8, 9, 10};
+      xl::list a = {1, 2, 3, 4, 5}, b = {6, 7, 8, 9, 10};
       a.merge(std::move(b));
       assert(a.size() == 10 && a.front() == 1 && a.back() == 10);
       a.resize(5);
@@ -300,25 +300,25 @@ void test()
     }
     // interleaved equal-sized
     {
-      xl::list<int> a = {1, 3, 5}, b = {2, 4, 6};
+      xl::list a = {1, 3, 5}, b = {2, 4, 6};
       a.merge(b);
       assert((a == xl::list<int>{1, 2, 3, 4, 5, 6}) && b.empty());
     }
     // different sizes
     {
-      xl::list<int> a = {1, 3, 5}, b = {2, 4};
+      xl::list a = {1, 3, 5}, b = {2, 4};
       a.merge(b);
       assert((a == std::initializer_list<int>{1, 2, 3, 4, 5}) && b.empty());
     }
     // duplicates interleaved
     {
-      xl::list<int> a = {1, 2, 3}, b = {2, 3, 4};
+      xl::list a = {1, 2, 3}, b = {2, 3, 4};
       a.merge(b);
       assert((a == xl::list<int>{1, 2, 2, 3, 3, 4}) && b.empty());
     }
     // custom descending comparator
     {
-      xl::list<int> a = {5, 3, 1}, b = {6, 4, 2};
+      xl::list a = {5, 3, 1}, b = {6, 4, 2};
       a.merge(b, [](int x, int y){ return x > y; });
       assert((a == xl::list<int>{6, 5, 4, 3, 2, 1}) && b.empty());
     }
@@ -336,13 +336,13 @@ void test()
     }
     // merge with shared values (stable ordering)
     {
-      xl::list<int> a = {1, 2, 2, 3}, b = {2, 4, 5};
+      xl::list a = {1, 2, 2, 3}, b = {2, 4, 5};
       a.merge(b);
       assert(a.size() == 7 && a.front() == 1 && a.back() == 5);
     }
     // move-merge same-sized lists; check full element order
     {
-      xl::list<int> a = {1, 2}, b = {1, 2};
+      xl::list a = {1, 2}, b = {1, 2};
       a.merge(std::move(b));
       assert(a.size() == 4 && a.front() == 1 && a.back() == 2);
       assert(a.at(1) == 1 && a.at(2) == 2);
@@ -367,10 +367,10 @@ void test()
     xl::list<int> emptyList;
     assert(emptyList.size() == 0 && emptyList.empty());
 
-    xl::list<int> lst1 = {42};
+    xl::list lst1 = {42};
     assert(lst1.size() == 1 && lst1.front() == 42);
 
-    xl::list<int> lst2 = {1, 2, 3, 4, 5};
+    xl::list lst2 = {1, 2, 3, 4, 5};
     assert(lst2.size() == 5 && lst2.front() == 1 && lst2.back() == 5);
 
     lst2.push_back(6);
@@ -402,14 +402,14 @@ void test()
     }
     // single-element splice
     {
-      xl::list<int> a = {1, 2, 3, 4, 5}, b = {6, 7, 8, 9, 10};
+      xl::list a = {1, 2, 3, 4, 5}, b = {6, 7, 8, 9, 10};
       auto it = b.begin(); std::advance(it, 2); // points to 8
       a.splice(a.begin(), b, it);
       assert(a.size() == 6 && b.size() == 4 && a.front() == 8);
     }
     // range splice
     {
-      xl::list<int> a = {1, 2, 3, 4, 5}, b = {6, 7, 8, 9, 10};
+      xl::list a = {1, 2, 3, 4, 5}, b = {6, 7, 8, 9, 10};
       auto it1 = b.begin(), it2 = it1;
       std::advance(it2, 3);
       a.splice(a.begin(), b, it1, it2);
@@ -417,20 +417,20 @@ void test()
     }
     // splice empty range is a no-op
     {
-      xl::list<int> a = {1, 2, 3}, b = {4, 5, 6};
+      xl::list a = {1, 2, 3}, b = {4, 5, 6};
       a.splice(a.end(), b, b.end(), b.end());
       assert(a.size() == 3 && b.size() == 3);
     }
     // self-splice: move suffix to front
     {
-      xl::list<int> lst = {1, 2, 3, 4, 5};
+      xl::list lst = {1, 2, 3, 4, 5};
       auto it = lst.begin(); std::advance(it, 2);
       lst.splice(lst.begin(), lst, it, lst.end());
       assert((lst == xl::list<int>{3, 4, 5, 1, 2}));
     }
     // self-splice: identity cases
     {
-      xl::list<int> lst = {1, 2, 3, 4, 5};
+      xl::list lst = {1, 2, 3, 4, 5};
       lst.splice(lst.begin(), lst, lst.begin());
       assert((lst == xl::list<int>{1, 2, 3, 4, 5}));
       lst.splice(std::next(lst.begin()), lst, lst.begin());
@@ -440,7 +440,7 @@ void test()
     }
     // self-splice: move single element within list
     {
-      xl::list<int> lst = {1, 2, 4, 5, 3};
+      xl::list lst = {1, 2, 4, 5, 3};
       auto it = lst.begin(); std::advance(it, 2);
       lst.splice(it, lst, std::prev(lst.end()));
       assert((lst == xl::list<int>{1, 2, 3, 4, 5}));
@@ -449,7 +449,7 @@ void test()
     }
     // splice between two lists then merge
     {
-      xl::list<int> a = {3, 5, 7}, b = {2, 4, 6};
+      xl::list a = {3, 5, 7}, b = {2, 4, 6};
       a.merge(b);
       assert(b.empty() && (a == xl::list<int>{2, 3, 4, 5, 6, 7}));
     }
@@ -457,23 +457,23 @@ void test()
 
   // ── TC-17  append_range, prepend_range, insert_range (array source) ───────────
   {
-    xl::list<int> lst{1, 2, 3};
+    xl::list lst{1, 2, 3};
     int const vec[]{4, 5, 6};
 
     lst.append_range(vec);
-    assert((lst == xl::list<int>{1, 2, 3, 4, 5, 6}));
+    assert((lst == xl::list{1, 2, 3, 4, 5, 6}));
 
     lst.prepend_range(vec);
-    assert((lst == xl::list<int>{4, 5, 6, 1, 2, 3, 4, 5, 6}));
+    assert((lst == xl::list{4, 5, 6, 1, 2, 3, 4, 5, 6}));
 
     auto it = lst.begin(); std::advance(it, 3);
     lst.insert_range(it, vec);
-    assert((lst == xl::list<int>{4, 5, 6, 4, 5, 6, 1, 2, 3, 4, 5, 6}));
+    assert((lst == xl::list{4, 5, 6, 4, 5, 6, 1, 2, 3, 4, 5, 6}));
   }
 
   // ── TC-18  assign_range (array and list sources) ─────────────────────────────
   {
-    xl::list<int> lst = {1, 2, 3, 4, 5};
+    xl::list lst = {1, 2, 3, 4, 5};
     int const arr[]{6, 7, 8, 9, 10};
 
     lst.assign_range(arr);
@@ -487,24 +487,24 @@ void test()
 
   // ── TC-19  append/prepend/insert/assign_range with xl::list sources ───────────
   {
-    xl::list<int> myList     = {1, 2, 3};
-    xl::list<int> appendList = {4, 5, 6};
-    xl::list<int> prependList= {7, 8, 9};
-    xl::list<int> insertList = {10, 11, 12};
-    xl::list<int> assignList = {13, 14, 15};
+    xl::list myList     = {1, 2, 3};
+    xl::list appendList = {4, 5, 6};
+    xl::list prependList= {7, 8, 9};
+    xl::list insertList = {10, 11, 12};
+    xl::list assignList = {13, 14, 15};
 
     myList.append_range(appendList);
-    assert((myList == xl::list<int>{1, 2, 3, 4, 5, 6}));
+    assert((myList == xl::list{1, 2, 3, 4, 5, 6}));
 
     myList.prepend_range(prependList);
-    assert((myList == xl::list<int>{7, 8, 9, 1, 2, 3, 4, 5, 6}));
+    assert((myList == xl::list{7, 8, 9, 1, 2, 3, 4, 5, 6}));
 
     auto pos = std::find(myList.begin(), myList.end(), 1);
     myList.insert_range(pos, insertList);
-    assert((myList == xl::list<int>{7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6}));
+    assert((myList == xl::list{7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6}));
 
     myList.assign_range(assignList);
-    assert((myList == xl::list<int>{13, 14, 15}));
+    assert((myList == xl::list{13, 14, 15}));
   }
 
   // ── TC-20  emplace_back, emplace_front, pop_front/back, sort, copy ────────────
@@ -1542,19 +1542,19 @@ void test()
   // ── TC-100  sort variants I=1..4 all produce the same ordered result ──────────
   {
     auto make = []() -> xl::list<int> { return {5,3,1,4,2}; };
-    xl::list<int> ref = make(); ref.sort();
+    auto ref = make(); ref.sort();
 
-    xl::list<int> l1 = make(); l1.sort<1>();
-    xl::list<int> l2 = make(); l2.sort<2>();
-    xl::list<int> l3 = make(); l3.sort<3>();
-    xl::list<int> l4 = make(); l4.sort<4>();
+    auto l1 = make(); l1.sort<1>();
+    auto l2 = make(); l2.sort<2>();
+    auto l3 = make(); l3.sort<3>();
+    auto l4 = make(); l4.sort<4>();
 
     assert(l1 == ref && l2 == ref && l3 == ref && l4 == ref);
   }
 
   // ── TC-101  sort sub-range via iterator pair ──────────────────────────────────
   {
-    xl::list<int> lst = {5, 3, 1, 4, 2};
+    xl::list lst = {5, 3, 1, 4, 2};
     // sort only the middle three elements [3,1,4]
     auto b = std::next(lst.begin());
     auto e = std::next(b, 3);
@@ -1593,18 +1593,18 @@ void test()
 
   // ── TC-103  at() read and write access ───────────────────────────────────────
   {
-    xl::list<int> lst = {10, 20, 30, 40, 50};
+    xl::list lst = {10, 20, 30, 40, 50};
     assert(lst.at(0) == 10 && lst.at(2) == 30 && lst.at(4) == 50);
     lst.at(2) = 99;
     assert(lst.at(2) == 99);
 
-    const xl::list<int> clst = {1, 2, 3};
+    const xl::list clst = {1, 2, 3};
     assert(clst.at(0) == 1 && clst.at(2) == 3);
   }
 
   // ── TC-104  assign(iter, iter) from an array ──────────────────────────────────
   {
-    xl::list<int> lst = {1, 2, 3};
+    xl::list lst = {1, 2, 3};
     int arr[] = {7, 8, 9, 10};
     lst.assign(std::begin(arr), std::end(arr));
     assert(lst.size() == 4 && lst.front() == 7 && lst.back() == 10);
@@ -1612,7 +1612,7 @@ void test()
 
   // ── TC-105  merge two already-merged lists (chained merge) ───────────────────
   {
-    xl::list<int> a = {1, 4, 7}, b = {2, 5, 8}, c = {3, 6, 9};
+    xl::list a = {1, 4, 7}, b = {2, 5, 8}, c = {3, 6, 9};
     a.merge(b); a.merge(c);
     assert(a.size() == 9);
     assert(std::is_sorted(a.begin(), a.end()));
@@ -1622,14 +1622,14 @@ void test()
 
   // ── TC-106  erase range spanning entire list ──────────────────────────────────
   {
-    xl::list<int> lst = {1, 2, 3, 4, 5};
+    xl::list lst = {1, 2, 3, 4, 5};
     auto it = lst.erase(lst.begin(), lst.end());
     assert(lst.empty() && it == lst.end());
   }
 
   // ── TC-107  insert(pos, iter, iter) iterator-range overload ──────────────────
   {
-    xl::list<int> lst = {1, 5};
+    xl::list lst = {1, 5};
     int mid[] = {2, 3, 4};
     lst.insert(std::next(lst.begin()), std::begin(mid), std::end(mid));
     assert(lst.size() == 5 && std::is_sorted(lst.begin(), lst.end()));
@@ -1647,7 +1647,7 @@ void test()
 
   // ── TC-109  splice then sort: whole second list, verify ordering ──────────────
   {
-    xl::list<int> a = {3, 1, 4}, b = {1, 5, 9, 2, 6};
+    xl::list a = {3, 1, 4}, b = {1, 5, 9, 2, 6};
     a.splice(a.end(), b);
     assert(b.empty() && a.size() == 8);
     a.sort();
@@ -1677,14 +1677,14 @@ void test()
 
   // ── TC-112  remove all elements matching predicate; list becomes empty ─────────
   {
-    xl::list<int> lst = {2, 4, 6, 8, 10};
+    xl::list lst = {2, 4, 6, 8, 10};
     lst.remove_if([](int x){ return x % 2 == 0; });
     assert(lst.empty());
   }
 
   // ── TC-113  self-merge (both halves via splice then merge) ────────────────────
   {
-    xl::list<int> lst = {1, 3, 5, 2, 4, 6};
+    xl::list lst = {1, 3, 5, 2, 4, 6};
     // split at middle
     xl::list<int> back;
     auto mid = std::next(lst.begin(), 3);
@@ -1697,18 +1697,18 @@ void test()
   // ── TC-114  std::sort-compatible: std::list-style interface sanity check ──────
   {
     // xl::list models a std::list-like interface; verify std::list interop pattern
-    xl::list<int> xl_lst = {9, 7, 5, 3, 1, 2, 4, 6, 8};
+    xl::list xl_lst = {9, 7, 5, 3, 1, 2, 4, 6, 8};
     std::list<int> std_lst(xl_lst.begin(), xl_lst.end());
     xl_lst.sort(); std_lst.sort();
-    assert(std::equal(xl_lst.begin(), xl_lst.end(), std_lst.begin(), std_lst.end()));
+    assert(std_lst == xl_lst);
   }
 
   // ── TC-115  push_back / emplace_back performance: 1M elements ─────────────────
   {
     xl::list<int> lst;
-    const int N = 1'000'000;
-    for (int i = 0; i < N; ++i) lst.push_back(i);
-    assert(lst.size() == (size_t)N);
+    const std::size_t N = 1'000'000;
+    for (std::size_t i{}; i < N; ++i) lst.push_back(i);
+    assert(lst.size() == N);
     assert(lst.front() == 0 && lst.back() == N - 1);
     lst.clear(); assert(lst.empty());
   }
