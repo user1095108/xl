@@ -696,7 +696,7 @@ void test()
 
     l2.clear(); assert(l2.empty() && l2.size() == 0);
 
-    xl::list<int> l5{1, 2, 3};
+    xl::list l5{1, 2, 3};
     l2.swap(l5);
     assert(l2.size() == 3 && l2.front() == 1 && l2.back() == 3);
     assert(l5.empty() && l5.size() == 0);
@@ -704,27 +704,27 @@ void test()
     assert(l2 > l3 && l2 >= l3 && l3 < l2 && l3 <= l2);
     assert(l2 == l2 && l2 != l3);
 
-    xl::list<int> l9 = {13, 14, 15, 16, 17};
+    xl::list l9 = {13, 14, 15, 16, 17};
     l9.reverse();
     assert(l9.size() == 5 && l9.front() == 17 && l9.back() == 13);
 
-    xl::list<int> l10 = {18, 15, 20, 12, 19};
+    xl::list l10 = {18, 15, 20, 12, 19};
     l10.sort();
     assert(l10.size() == 5 && l10.front() == 12 && l10.back() == 20);
 
-    xl::list<int> l11 = {21, 23, 25}, l12 = {22, 24, 26};
+    xl::list l11 = {21, 23, 25}, l12 = {22, 24, 26};
     l11.merge(l12);
     assert(l11.size() == 6 && l11.front() == 21 && l11.back() == 26);
 
-    xl::list<int> l13 = {27, 28, 29}, l14 = {30, 31, 32};
+    xl::list l13 = {27, 28, 29}, l14 = {30, 31, 32};
     l14.splice(l14.begin(), l13);
     assert(l14.size() == 6 && l14.front() == 27 && l14.back() == 32);
 
-    xl::list<int> l15 = {33, 34, 34, 35, 35, 36};
+    xl::list l15 = {33, 34, 34, 35, 35, 36};
     l15.unique();
     assert(l15.size() == 4 && l15.front() == 33 && l15.back() == 36);
 
-    xl::list<int> l16 = {37, 38, 39, 40, 41};
+    xl::list l16 = {37, 38, 39, 40, 41};
     for (auto rit = l16.rbegin(); rit != l16.rend(); ++rit) assert(*rit > 0);
   }
 
@@ -747,7 +747,7 @@ void test()
 
   // ── TC-28  insert at end does not invalidate existing iterators ───────────────
   {
-    xl::list<int> l{1, 2, 3};
+    xl::list l{1, 2, 3};
     auto it = l.begin(); ++it;        // points to 2
     l.insert(l.end(), 4);
     assert(l.size() == 4 && *it == 2);
@@ -755,7 +755,7 @@ void test()
 
   // ── TC-29  sort ───────────────────────────────────────────────────────────────
   {
-    xl::list<int> l{18, 15, 20, 12, 19};
+    xl::list l{18, 15, 20, 12, 19};
     l.sort();
     assert(!l.empty() && l.size() == 5 && l.front() == 12 && l.back() == 20);
 
@@ -794,7 +794,7 @@ void test()
 
   // ── TC-33  rotate via splice (forward and back) ───────────────────────────────
   {
-    xl::list<int> lst = {1, 2, 3, 4, 5};
+    xl::list lst = {1, 2, 3, 4, 5};
     auto it = std::next(lst.begin(), 2);
     lst.splice(lst.end(), lst, lst.begin(), it);
     assert((lst == xl::list<int>{3, 4, 5, 1, 2}));
@@ -822,7 +822,7 @@ void test()
 
   // ── TC-35  independent lists: push then splice together ──────────────────────
   {
-    xl::list<int> lst1 = {1, 2, 3}, lst2 = {4, 5, 6};
+    xl::list lst1 = {1, 2, 3}, lst2 = {4, 5, 6};
     lst1.push_back(7);  assert(lst1.back()  == 7);
     lst2.push_front(0); assert(lst2.front() == 0);
 
@@ -976,19 +976,19 @@ void test()
 
   // ── TC-51  emplace_back / emplace_front / emplace at position (pair) ─────────
   {
-    xl::list<std::pair<int,int>> lst;
+    xl::list<std::pair<int, int>> lst;
     lst.emplace_back(1, 2); lst.emplace_front(3, 4);
     auto it = lst.begin(); ++it;
     it = lst.emplace(it, 5, 6);
     assert(lst.size() == 3);
-    assert(lst.front() == std::make_pair(3,4));
-    assert(lst.back()  == std::make_pair(1,2));
-    assert(*it         == std::make_pair(5,6));
+    assert(lst.front() == std::pair(3,4));
+    assert(lst.back()  == std::pair(1,2));
+    assert(*it         == std::pair(5,6));
   }
 
   // ── TC-52  assign with initialiser list ──────────────────────────────────────
   {
-    xl::list<int> lst = {1, 2, 3};
+    xl::list lst = {1, 2, 3};
     lst.assign({4, 5, 6, 7});
     assert(lst.size() == 4 && lst.front() == 4 && lst.back() == 7);
   }
@@ -1002,7 +1002,7 @@ void test()
 
   // ── TC-54  sort with custom (descending) comparator ──────────────────────────
   {
-    xl::list<int> lst = {3, 1, 4, 2, 5};
+    xl::list lst = {3, 1, 4, 2, 5};
     lst.sort(std::greater<int>());
     assert((lst == xl::list<int>{5, 4, 3, 2, 1}));
   }
@@ -1023,16 +1023,16 @@ void test()
 
   // ── TC-57  remove non-existing value is a no-op ───────────────────────────────
   {
-    xl::list<int> lst = {1, 2, 3};
+    xl::list lst = {1, 2, 3};
     lst.remove(42);
     assert(lst.size() == 3);
   }
 
   // ── TC-58  unique after sort removes non-consecutive duplicates ───────────────
   {
-    xl::list<int> lst = {1, 2, 1, 3, 3, 2, 4};
+    xl::list lst = {1, 2, 1, 3, 3, 2, 4};
     lst.sort(); lst.unique();
-    assert((lst == xl::list<int>{1, 2, 3, 4}));
+    assert((lst == std::array{1, 2, 3, 4}));
   }
 
   // ── TC-59  exception safety: push_back where constructor throws ───────────────
@@ -1062,12 +1062,12 @@ void test()
 
   // ── TC-61  large list: push_back, front/back, sum via iterator ────────────────
   {
-    xl::list<size_t> large;
-    const size_t N = 100000;
-    for (size_t i = 0; i < N; ++i) large.push_back(i);
+    xl::list<std::size_t> large;
+    const std::size_t N = 100000;
+    for (std::size_t i = 0; i < N; ++i) large.push_back(i);
     assert(large.size() == N && large.front() == 0 && large.back() == N - 1);
 
-    size_t sum = 0;
+    std::size_t sum = 0;
     for (auto it = large.begin(); it != large.end(); ++it) sum += *it;
     assert(sum == (N - 1) * N / 2);
   }
@@ -1112,7 +1112,7 @@ void test()
         return (a > threshold) < (b > threshold);
       }
     };
-    xl::list<int> lst = {10, 2, 8, 1, 6, 12};
+    xl::list lst = {10, 2, 8, 1, 6, 12};
     lst.sort(StatefulComparator{5});
     auto it = lst.begin();
     while (it != lst.end() && *it <= 5) ++it;
@@ -1215,7 +1215,7 @@ void test()
 
   // ── TC-73  iterator validity: erase does not invalidate other iterators ────────
   {
-    xl::list<int> lst = {1, 2, 3, 4, 5};
+    xl::list lst = {1, 2, 3, 4, 5};
     auto it  = lst.begin(); ++it;
     auto it2 = std::next(it);
 
@@ -1279,18 +1279,18 @@ void test()
 
   // ── TC-77  self-assignment guard ─────────────────────────────────────────────
   {
-    xl::list<int> lst = {1, 2, 3};
+    xl::list lst = {1, 2, 3};
     lst = lst;
     assert(lst.size() == 3 && lst.front() == 1 && lst.back() == 3);
 
-    xl::list<int> lst2 = {11, 22, 33};
+    xl::list lst2 = {11, 22, 33};
     lst2 = lst2;
     assert((lst2 == std::array{11, 22, 33}));
   }
 
   // ── TC-78  comparison operators: ==, !=, <, >, <=, >= ────────────────────────
   {
-    xl::list<int> a = {1,2,3}, b = {1,2,3}, c = {4,5,6}, d = {1,2};
+    xl::list a = {1,2,3}, b = {1,2,3}, c = {4,5,6}, d = {1,2};
     assert(a == b && a != c && a != d);
     assert(d < a && c > a && a <= b && a >= b && c >= a);
   }
@@ -1306,7 +1306,7 @@ void test()
 
   // ── TC-80  const list: size, front, back, empty, cbegin/cend ─────────────────
   {
-    const xl::list<int> cl = {10, 20, 30};
+    const xl::list cl = {10, 20, 30};
     assert(cl.size() == 3 && cl.front() == 10 && cl.back() == 30 && !cl.empty());
     auto cit = cl.cbegin(); assert(*cit == 10);
     int sum = 0;
@@ -1327,7 +1327,7 @@ void test()
 
   // ── TC-82  iterator validity after erase of middle element ───────────────────
   {
-    xl::list<int> lst = {1, 2, 3, 4, 5};
+    xl::list lst = {1, 2, 3, 4, 5};
     std::vector<decltype(lst.begin())> iters;
     for (auto it = lst.begin(); it != lst.end(); ++it) iters.push_back(it);
     lst.erase(std::next(lst.begin(), 2));
@@ -1337,14 +1337,14 @@ void test()
 
   // ── TC-83  merge with descending comparator ───────────────────────────────────
   {
-    xl::list<int> a = {5,3,1}, b = {6,4,2};
+    xl::list a = {5,3,1}, b = {6,4,2};
     a.merge(b, std::greater<int>());
     assert((a == xl::list<int>{6,5,4,3,2,1}) && b.empty());
   }
 
   // ── TC-84  unique with default and custom predicate ───────────────────────────
   {
-    xl::list<int> lst = {1, 2, 2, 3, 4, 4, 4, 5};
+    xl::list lst = {1, 2, 2, 3, 4, 4, 4, 5};
     auto orig_sz = lst.size();
     auto removed = lst.unique();
     assert(removed > 0 && lst.size() < orig_sz);
@@ -1422,7 +1422,7 @@ void test()
 
   // ── TC-90  std::advance forward and backward; make_reverse_iterator ───────────
   {
-    xl::list<int> lst = {1, 2, 3, 4, 5};
+    xl::list lst = {1, 2, 3, 4, 5};
     auto it = lst.begin();
     std::advance(it,  3); assert(*it == 4);
     std::advance(it, -2); assert(*it == 2);
@@ -1436,12 +1436,12 @@ void test()
     xl::list<std::unique_ptr<int>> pl;
     pl.push_back(std::make_unique<int>(42));
     pl.emplace_back(new int(100));
-    assert(**pl.begin() == 42);
+    assert(*pl.front() == 42);
 
-    xl::list<std::unique_ptr<int>> ml = std::move(pl);
+    xl::list ml = std::move(pl);
     assert(pl.empty() && ml.size() == 2);
 
-    xl::list<std::unique_ptr<int>> nl(std::move(ml));
+    xl::list nl(std::move(ml));
     assert(ml.empty() && nl.size() == 2);
   }
 
@@ -1463,7 +1463,7 @@ void test()
 
   // ── TC-93  spaceship / relational operator completeness ───────────────────────
   {
-    xl::list<int> a={1,2,3}, b={1,2,3}, c={1,2,4}, d={1,2};
+    xl::list a={1,2,3}, b={1,2,3}, c={1,2,4}, d={1,2};
     assert(a==b && a!=c && a!=d && d<a && c>a && d<=a && a>=b && c>=a);
   }
 
@@ -1483,10 +1483,10 @@ void test()
 
   // ── TC-96  move construction from prvalue; copy-assign then move-assign ────────
   {
-    xl::list<int> dst(xl::list<int>{1, 2, 3});
-    assert((dst == xl::list<int>{1, 2, 3}));
+    xl::list dst(xl::list{1, 2, 3});
+    assert((dst == xl::list{1, 2, 3}));
 
-    xl::list<int> a = {4,5}, b = {6,7,8};
+    xl::list a = {4,5}, b = {6,7,8};
     a = b;
     assert((a == xl::list<int>{6,7,8}) && (b == xl::list<int>{6,7,8}));
     b = xl::list<int>{9,10};
@@ -1495,15 +1495,15 @@ void test()
 
   // ── TC-97  iterator stability after copy and move ────────────────────────────
   {
-    xl::list<int> orig = {10, 20, 30, 40, 50};
+    xl::list orig = {10, 20, 30, 40, 50};
     auto it = std::next(orig.begin(), 2); assert(*it == 30);
 
-    xl::list<int> copy = orig;
+    xl::list copy = orig;
     *it = 99;
     assert((orig == xl::list<int>{10, 20, 99, 40, 50}));
     assert((copy == xl::list<int>{10, 20, 30, 40, 50}));
 
-    xl::list<int> moved = std::move(orig);
+    xl::list moved = std::move(orig);
     assert(orig.empty());                                    // NOLINT
     assert((moved == xl::list<int>{10, 20, 99, 40, 50}));
   }
@@ -1694,7 +1694,7 @@ void test()
   {
     // xl::list models a std::list-like interface; verify std::list interop pattern
     xl::list xl_lst = {9, 7, 5, 3, 1, 2, 4, 6, 8};
-    std::list<int> std_lst(xl_lst.begin(), xl_lst.end());
+    std::list std_lst(xl_lst.begin(), xl_lst.end());
     xl_lst.sort(); std_lst.sort();
     assert(std_lst == xl_lst);
   }
