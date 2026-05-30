@@ -194,7 +194,7 @@ void test()
 
   // ── TC-10  from_range + views::iota; range assignment ────────────────────────
   {
-    xl::list l(xl::from_range, std::views::iota(0, 100));
+    xl::list l(std::views::iota(0, 100));
     assert(l.size() == 100);
     l = std::views::iota(0, 10);
     assert(l.size() == 10);
@@ -1528,16 +1528,12 @@ void test()
 
   // ── TC-99  xl::find and xl::erase (variadic) ─────────────────────────────────
   {
-    xl::list<int> lst{3, 1, 2};
+    xl::list lst{3, 1, 2};
     *xl::find(lst, 3) = 1;
     assert(lst.front() == 1);
     xl::erase(lst, 3, 2, 1);
     assert(lst.empty());
   }
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // NEW TEST CASES
-  // ─────────────────────────────────────────────────────────────────────────────
 
   // ── TC-100  sort variants I=1..4 all produce the same ordered result ──────────
   {
@@ -1705,9 +1701,8 @@ void test()
 
   // ── TC-115  push_back / emplace_back performance: 1M elements ─────────────────
   {
-    xl::list<int> lst;
-    const std::size_t N = 1'000'000;
-    for (std::size_t i{}; i < N; ++i) lst.push_back(i);
+    constexpr int N = 1'000'000;
+    xl::list lst(std::views::iota(0, N));
     assert(lst.size() == N);
     assert(lst.front() == 0 && lst.back() == N - 1);
     lst.clear(); assert(lst.empty());
