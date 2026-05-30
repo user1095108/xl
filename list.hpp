@@ -237,7 +237,7 @@ public:
   }
 
   list(multi_t, auto&& ...a)
-    noexcept(noexcept(push_back(std::forward<decltype(a)>(a)...)))
+    noexcept(noexcept(push_back<0>(std::forward<decltype(a)>(a)...)))
     requires(!!sizeof...(a))
   {
     push_back<0>(std::forward<decltype(a)>(a)...);
