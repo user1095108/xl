@@ -265,7 +265,7 @@ void test()
     // resize to 0
     xl::list l4 = {1, 2, 3, 4, 5};
     l4.resize(0);
-    assert(l4.empty() && l4.size() == 0);
+    assert(l4.empty() && !l4.size());
   }
 
   // ── TC-14  merge: non-interleaved (1-5 + 6-10), interleaved (1-5 + 2-6),
