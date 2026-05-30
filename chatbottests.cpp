@@ -137,7 +137,7 @@ void test()
 
   // ── TC-06  multi_t constructor, push_front/back, pop_front/back, round-trips ──
   {
-    xl::list<int> l{xl::multi, 1, 2, 3, 4, 5};
+    xl::list l{xl::multi, 1, 2, 3, 4, 5};
     assert(l.size() == 5);
 
     l.push_front(0); assert(l.size() == 6 && l.front() == 0);

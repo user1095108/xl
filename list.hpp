@@ -1053,6 +1053,9 @@ auto operator<=>(std::ranges::input_range auto const& l,
 }
 
 //
+template <class T, class ...U>
+list(multi_t, T, U...) -> list<T>;
+
 template <class It>
 list(It, It) -> list<typename std::iterator_traits<It>::value_type>;
 
