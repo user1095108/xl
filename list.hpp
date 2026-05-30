@@ -240,7 +240,7 @@ public:
     noexcept(noexcept(push_back(std::forward<decltype(a)>(a)...)))
     requires(!!sizeof...(a))
   {
-    push_back(std::forward<decltype(a)>(a)...);
+    push_back<0>(std::forward<decltype(a)>(a)...);
   }
 
   list(std::input_iterator auto const i, decltype(i) j)
