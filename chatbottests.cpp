@@ -842,7 +842,7 @@ void test()
     auto orig_sz = def.size();
     auto removed = def.unique();
     assert(removed > 0 && def.size() < orig_sz);
-    assert((def == xl::list<int>{1, 2, 3, 4, 5}));
+    assert((def == std::array{1, 2, 3, 4, 5}));
 
     // custom predicate: collapse elements within distance 1
     xl::list cp = {1, 2, 4, 5, 7, 8};
