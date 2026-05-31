@@ -211,11 +211,11 @@ void test()
     auto it = std::next(orig.begin(), 2); assert(*it == 30);
     xl::list copy = orig;
     *it = 99;
-    assert((orig == xl::list<int>{10, 20, 99, 40, 50}));
-    assert((copy == xl::list<int>{10, 20, 30, 40, 50}));
+    assert((orig == xl::list{10, 20, 99, 40, 50}));
+    assert((copy == xl::list{10, 20, 30, 40, 50}));
     xl::list moved = std::move(orig);
     assert(orig.empty()); // NOLINT
-    assert((moved == xl::list<int>{10, 20, 99, 40, 50}));
+    assert((moved == xl::list{10, 20, 99, 40, 50}));
 
     // std::string: push_back, copy, move
     xl::list<std::string> sl;
@@ -296,7 +296,7 @@ void test()
     // assign_range from xl::list
     xl::list src = {13, 14, 15};
     lst.assign_range(src);
-    assert((lst == xl::list<int>{13, 14, 15}));
+    assert((lst == std::array{13, 14, 15}));
   }
 
   // ── TC-05  Emplace variants ───────────────────────────────────────────────
@@ -322,14 +322,14 @@ void test()
     assert((sl == xl::list<std::string>{"hello", "there", "world", "!"}));
 
     // emplace_back / emplace_front with pair (multi-arg constructor)
-    xl::list<std::pair<int,int>> pl;
+    xl::list<std::pair<int, int>> pl;
     pl.emplace_back(1, 2); pl.emplace_front(3, 4);
     auto pit = pl.begin(); ++pit;
     pit = pl.emplace(pit, 5, 6);
-    assert(pl.size() == 3);
+    assert(pl.size()  == 3);
     assert(pl.front() == std::pair(3,4));
     assert(pl.back()  == std::pair(1,2));
-    assert(*pit        == std::pair(5,6));
+    assert(*pit       == std::pair(5,6));
 
     // emplace with multi-argument constructor (Person)
     struct Person {
@@ -368,7 +368,7 @@ void test()
     assert(myList[2] == 10 && myList.size() == 8);
 
     // insert(pos, count, value) at begin, end, and middle
-    xl::list<int> lst = {1, 5};
+    xl::list lst = {1, 5};
     lst.insert(lst.begin(), 2, 0);
     assert(lst.size() == 4 && lst.front() == 0);
     lst.insert(lst.end(), 2, 9);
@@ -444,7 +444,7 @@ void test()
     assert(*it3 == 1 && *it2 == 3);
 
     // iterator validity around erase, insert, splice
-    xl::list<int> lst2 = {1, 2, 3, 4, 5};
+    xl::list lst2 = {1, 2, 3, 4, 5};
     auto ia = lst2.begin();
     auto ib = std::next(ia);
     auto ic = std::next(ib);
@@ -584,31 +584,31 @@ void test()
     {
       xl::list<int> a = {1, 2, 3}, b;
       a.merge(b);
-      assert((a == xl::list<int>{1, 2, 3}) && b.empty());
+      assert((a == std::array{1, 2, 3}) && b.empty());
     }
     // non-empty into empty
     {
       xl::list<int> a, b = {4, 5, 6};
       a.merge(b);
-      assert((a == xl::list<int>{4, 5, 6}) && b.empty());
+      assert((a == std::array{4, 5, 6}) && b.empty());
     }
     // interleaved equal-sized
     {
       xl::list a = {1, 3, 5}, b = {2, 4, 6};
       a.merge(b);
-      assert((a == xl::list<int>{1, 2, 3, 4, 5, 6}) && b.empty());
+      assert((a == std::array{1, 2, 3, 4, 5, 6}) && b.empty());
     }
     // different sizes
     {
       xl::list a = {1, 3, 5}, b = {2, 4};
       a.merge(b);
-      assert((a == std::initializer_list<int>{1, 2, 3, 4, 5}) && b.empty());
+      assert((a == std::initializer_list{1, 2, 3, 4, 5}) && b.empty());
     }
     // duplicates interleaved
     {
       xl::list a = {1, 2, 3}, b = {2, 3, 4};
       a.merge(b);
-      assert((a == xl::list<int>{1, 2, 2, 3, 3, 4}) && b.empty());
+      assert((a == std::vector{1, 2, 2, 3, 3, 4}) && b.empty());
     }
     // partially overlapping ranges
     {
@@ -633,19 +633,19 @@ void test()
     {
       xl::list a = {5,3,1}, b = {6,4,2};
       a.merge(b, std::greater<int>());
-      assert((a == xl::list<int>{6,5,4,3,2,1}) && b.empty());
+      assert((a == std::array{6,5,4,3,2,1}) && b.empty());
     }
     // custom descending lambda
     {
       xl::list a = {5, 3, 1}, b = {6, 4, 2};
       a.merge(b, [](int x, int y){ return x > y; });
-      assert((a == xl::list<int>{6, 5, 4, 3, 2, 1}) && b.empty());
+      assert((a == std::array{6, 5, 4, 3, 2, 1}) && b.empty());
     }
     // merge empty into sorted list with custom comparator (no-op)
     {
       xl::list<int> a = {5, 3, 1}, b;
       a.merge(b, [](int x, int y){ return x > y; });
-      assert((a == xl::list<int>{5, 3, 1}) && b.empty());
+      assert((a == std::array{5, 3, 1}) && b.empty());
     }
     // custom-comparable struct
     {
@@ -773,12 +773,12 @@ void test()
     xl::list lst{1, 2, 3};
     int const vec[]{4, 5, 6};
     lst.append_range(vec);
-    assert((lst == xl::list{1, 2, 3, 4, 5, 6}));
+    assert((lst == std::array{1, 2, 3, 4, 5, 6}));
     lst.prepend_range(vec);
-    assert((lst == xl::list{4, 5, 6, 1, 2, 3, 4, 5, 6}));
+    assert((lst == std::array{4, 5, 6, 1, 2, 3, 4, 5, 6}));
     auto it = lst.begin(); std::advance(it, 3);
     lst.insert_range(it, vec);
-    assert((lst == xl::list{4, 5, 6, 4, 5, 6, 1, 2, 3, 4, 5, 6}));
+    assert((lst == std::array{4, 5, 6, 4, 5, 6, 1, 2, 3, 4, 5, 6}));
 
     // same operations with xl::list sources
     xl::list ml{1, 2, 3}, al{4, 5, 6}, pl{7, 8, 9}, il{10, 11, 12};
@@ -1056,12 +1056,12 @@ void test()
     // basic reverse
     xl::list lst{1, 2, 3, 4, 5};
     lst.reverse();
-    assert((lst == xl::list<int>{5, 4, 3, 2, 1}));
+    assert((lst == std::array{5, 4, 3, 2, 1}));
 
     // std::ranges::reverse
     xl::list rng{1, 2, 3, 4, 5};
     std::ranges::reverse(rng);
-    assert((rng == xl::list{5, 4, 3, 2, 1}));
+    assert((rng == std::array{5, 4, 3, 2, 1}));
 
     // double reverse is identity
     xl::list dbl{1, 2, 3, 4, 5};
