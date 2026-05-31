@@ -1454,14 +1454,14 @@ void test()
     lst.clear(); lst.resize(5, 100);
     assert(lst.size() == 5 && lst.back() == 100);
     lst.assign(3, 200); assert(lst.size() == 3 && lst.front() == 200);
-    xl::list<int> lst2 = {1, 2, 3};
+    xl::list lst2 = {1, 2, 3};
     lst.splice(lst.begin(), lst2);
     assert(lst.size() == 6 && lst.front() == 1 && lst2.empty());
     lst.remove(1);
     lst.remove_if([](int i){ return i > 2; });
     lst.push_back(2); lst.unique();
     assert(lst.size() == 1 && lst.back() == 2);
-    xl::list<int> lst3 = {1, 3};
+    xl::list lst3 = {1, 3};
     lst.merge(lst3);
     lst.sort(); lst.reverse();
     assert(lst.front() == 3 && lst.back() == 1);
