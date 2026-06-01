@@ -1893,21 +1893,21 @@ void test()
     {
       xl::list vi = {4, 5};
       vi.insert(xl::multi, vi.begin(), 1, 2, 3);
-      assert((vi == xl::list<int>{1, 2, 3, 4, 5}));
+      assert((vi == xl::list{1, 2, 3, 4, 5}));
     }
 
     // variadic insert at end
     {
       xl::list vi2 = {1, 2};
       vi2.insert(xl::multi, vi2.end(), 3, 4, 5);
-      assert((vi2 == xl::list<int>{1, 2, 3, 4, 5}));
+      assert((vi2 == xl::list{1, 2, 3, 4, 5}));
     }
 
     // variadic insert single value (same as regular insert)
     {
       xl::list vi3 = {1, 3};
       vi3.insert(xl::multi, std::next(vi3.begin()), 2);
-      assert((vi3 == xl::list<int>{1, 2, 3}));
+      assert((vi3 == xl::list{1, 2, 3}));
     }
   }
 
