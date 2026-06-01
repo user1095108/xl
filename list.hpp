@@ -193,7 +193,7 @@ private:
       if (nxtb) nxtb->l_ ^= anbn;
 
       //
-      return std::array<decltype(nxta), 2>{nxta, nxtb};
+      return std::array{nxta, nxtb};
     }
 
     static auto splice(auto&& i, decltype(i) b) noexcept
