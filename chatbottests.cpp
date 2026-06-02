@@ -1749,6 +1749,33 @@ void test()
       ir.insert_range(ir.begin(), pre);
       assert((ir == xl::list{1, 2, 3, 4, 5, 6}));
     }
+
+    // self append_range
+    {
+      xl::list l{1, 2, 3};
+      l.append_range(l);
+      assert((l == std::array{1, 2, 3, 1, 2, 3}));
+    }
+
+    // self prepend_range
+    {
+      xl::list l{1, 2, 3};
+      l.prepend_range(l);
+      assert((l == std::array{1, 2, 3, 1, 2, 3}));
+    }
+
+    // self insert_range
+    {
+      xl::list l{1, 2};
+      l.insert_range(l.begin(), l);
+      assert((l == std::array{1, 2, 1, 2}));
+      l = {1, 2};
+      l.insert_range(l.end(), l);
+      assert((l == std::array{1, 2, 1, 2}));
+      l = {1, 2};
+      l.insert_range(++l.begin(), l);
+      assert((l == std::array{1, 1, 2, 2}));
+    }
   }
 
   // TC-10  Comparison Operators and Free-Function Algorithms
