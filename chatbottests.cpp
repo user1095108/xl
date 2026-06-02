@@ -160,7 +160,7 @@ void test()
 
     // self-swap
     {
-      xl::list<int> l = {1, 2, 3};
+      xl::list l = {1, 2, 3};
       l.swap(l);
       assert((l == xl::list<int>{1, 2, 3}));
     }
@@ -258,13 +258,13 @@ void test()
     assert(lst.size() == 1 && lst.front() == 42 && lst.back() == 42);
 
     // assign replaces list that is larger than new count
-    xl::list<int> big(10, 5);
+    xl::list big(10, 5);
     big.assign(3, 1);
     assert(big.size() == 3);
     for (auto v : big) assert(v == 1);
 
     // assign replaces list that is smaller than new count
-    xl::list<int> small(2, 5);
+    xl::list small(2, 5);
     small.assign(6, 7);
     assert(small.size() == 6);
     for (auto v : small) assert(v == 7);
