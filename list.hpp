@@ -598,7 +598,7 @@ public:
       auto const r(emplace(i, *j++));
       i.p_ = r.n_;
 
-      while (j != k) i.p_ = emplace(i, *j++).n_;
+      while (j != k) i.p_ = emplace(i, *j).n_, ++j;
 
       return r;
     }
@@ -620,7 +620,7 @@ public:
       auto const r(emplace(i, *j++));
       i.p_ = r.n_; // the parent node of i changes
 
-      while (--count) i.p_ = emplace(i, *j++).n_;
+      while (--count) i.p_ = emplace(i, *j).n_, ++j;
 
       return r;
     }
