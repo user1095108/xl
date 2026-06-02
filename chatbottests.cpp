@@ -12,7 +12,7 @@
 
 void test()
 {
-  // ── TC-01  Basic push/pop/insert/erase/clear (all overloads) ─────────────
+  // TC-01  Basic push/pop/insert/erase/clear (all overloads)
   {
     xl::list<int> l;
     assert(l.empty() && l.size() == 0);
@@ -127,7 +127,7 @@ void test()
     }
   }
 
-  // ── TC-02  Constructors ───────────────────────────────────────────────────
+  // TC-02  Constructors
   {
     // default
     xl::list<int> l1; assert(l1.empty());
@@ -192,11 +192,11 @@ void test()
     int const ca[10]{};
     assert(std::ranges::equal(ca, xl::list(ca)));
 
-    // fill constructor (count=1) — single-element fill
+    // fill constructor (count=1) single-element fill
     xl::list<int> fill1(1, 77);
     assert(fill1.size() == 1 && fill1.front() == 77 && fill1.back() == 77);
 
-    // fill constructor (count=0) — should produce empty list
+    // fill constructor (count=0) should produce empty list
     xl::list<int> fill0(0, 99);
     assert(fill0.empty());
 
@@ -219,7 +219,7 @@ void test()
     assert(std::ranges::equal(from_vec, src_vec));
   }
 
-  // ── TC-03  Copy / move construction and assignment; swap ─────────────────
+  // TC-03  Copy / move construction and assignment; swap
   {
     xl::list l1{1, 2, 3, 4, 5};
 
@@ -331,7 +331,7 @@ void test()
       assert(dst4.size() == 4 && dst4.front() == 7 && dst4.back() == 10);
     }
 
-    // swap two empty lists — should be a no-op with no crash
+    // swap two empty lists should be a no-op with no crash
     {
       xl::list<int> e1, e2;
       e1.swap(e2);
@@ -348,7 +348,7 @@ void test()
     }
   }
 
-  // ── TC-04  Assign variants ────────────────────────────────────────────────
+  // TC-04  Assign variants
   {
     xl::list<int> lst;
 
@@ -410,7 +410,7 @@ void test()
     for (auto v : small) assert(v == 7);
   }
 
-  // ── TC-05  Emplace variants ───────────────────────────────────────────────
+  // TC-05  Emplace variants
   {
     // emplace_back / emplace_front return reference
     xl::list<int> li;
@@ -456,7 +456,7 @@ void test()
     assert(plist.front().name == "Bob" && plist.back().name == "Alice");
     assert(p2->name == "Charlie" && p2->age == 40);
 
-    // emplace_back on empty list — front and back are the same element
+    // emplace_back on empty list front and back are the same element
     {
       xl::list<std::string> es;
       auto& ref = es.emplace_back("only");
@@ -464,7 +464,7 @@ void test()
       assert(es.size() == 1 && es.front() == "only" && es.back() == "only");
     }
 
-    // emplace_front on empty list — same node is front and back
+    // emplace_front on empty list same node is front and back
     {
       xl::list<int> ef;
       ef.emplace_front(77);
@@ -480,7 +480,7 @@ void test()
     }
   }
 
-  // ── TC-06  insert overloads ───────────────────────────────────────────────
+  // TC-06  insert overloads
   {
     // single at begin / end / middle
     xl::list myList = {1, 2, 3, 4, 5};
@@ -531,7 +531,7 @@ void test()
     lst4.insert(std::next(lst4.begin()), std::begin(mid4), std::end(mid4));
     assert(lst4.size() == 5 && std::is_sorted(lst4.begin(), lst4.end()));
 
-    // insert single element into empty list — result is a one-element list
+    // insert single element into empty list result is a one-element list
     {
       xl::list<int> empty_l;
       auto ins = empty_l.insert(empty_l.end(), 42);
@@ -563,7 +563,7 @@ void test()
     }
   }
 
-  // ── TC-07  erase overloads ────────────────────────────────────────────────
+  // TC-07  erase overloads
   {
     // erase two elements in sequence
     xl::list l{1, 2, 3, 4, 5};
@@ -621,7 +621,7 @@ void test()
     }
   }
 
-  // ── TC-08  Iterator correctness ───────────────────────────────────────────
+  // TC-08  Iterator correctness
   {
     // insert at end does not invalidate existing iterators
     xl::list l{1, 2, 3};
@@ -755,7 +755,7 @@ void test()
     }
   }
 
-  // ── TC-09  after_begin / before_end / rafter_begin / rbefore_end ─────────
+  // TC-09  after_begin / before_end / rafter_begin / rbefore_end
   {
     xl::list lst = {1, 2, 3, 4, 5};
 
@@ -782,7 +782,7 @@ void test()
     }
   }
 
-  // ── TC-10  resize ─────────────────────────────────────────────────────────
+  // TC-10  resize
   {
     xl::list l = {1, 2, 3, 4, 5};
     l.resize(3); assert(l.size() == 3);
@@ -815,7 +815,7 @@ void test()
       for (auto v : re) assert(v == 7);
     }
 
-    // resize(1) on a list of 3 — only front survives
+    // resize(1) on a list of 3 only front survives
     {
       xl::list<int> r1 = {10, 20, 30};
       r1.resize(1);
@@ -836,7 +836,7 @@ void test()
     }
   }
 
-  // ── TC-11  merge ─────────────────────────────────────────────────────────
+  // TC-11  merge
   {
     // non-interleaved; resize after merge
     {
@@ -961,17 +961,25 @@ void test()
     {
       // Both lists contain 3; after merge the copy from a should appear first
       struct Labeled { int val; char src; bool operator<(const Labeled& o) const { return val < o.val; } };
-      xl::list<Labeled> a2 = {{1,'a'},{3,'a'},{5,'a'}};
-      xl::list<Labeled> b2 = {{2,'b'},{3,'b'},{4,'b'}};
+      xl::list<Labeled> a2 = {{1,'a'},{3,'a'},{5,'a'}}, b2 = {{2,'b'},{3,'b'},{4,'b'}};
       a2.merge(b2);
       assert(b2.empty());
-      // find first '3' — must come from 'a'
+      // find first '3' must come from 'a'
       auto it = std::find_if(a2.begin(), a2.end(), [](const Labeled& l){ return l.val == 3; });
       assert(it != a2.end() && it->src == 'a');
     }
+    // heavy interleaved duplicates: both lists contain multiple copies of 3
+    {
+      xl::list A = {1, 3, 3, 7};
+      xl::list B = {2, 3, 3, 8};
+      A.sort(); B.sort();
+      A.merge(B);
+      assert(B.empty());
+      assert((A == std::array{1, 2, 3, 3, 3, 3, 7, 8}));
+    }
   }
 
-  // ── TC-12  splice ─────────────────────────────────────────────────────────
+  // TC-12  splice
   {
     // whole-list splice at beginning
     {
@@ -1098,7 +1106,7 @@ void test()
     }
   }
 
-  // ── TC-13  Range operations: append_range, prepend_range, insert_range ────
+  // TC-13  Range operations: append_range, prepend_range, insert_range
   {
     // append_range / prepend_range / insert_range with C array
     xl::list lst{1, 2, 3};
@@ -1168,7 +1176,7 @@ void test()
     }
   }
 
-  // ── TC-14  unique ─────────────────────────────────────────────────────────
+  // TC-14  unique
   {
     // empty list
     xl::list<int> ml; assert(ml.unique() == 0);
@@ -1230,12 +1238,12 @@ void test()
     {
       xl::list<int> mixed = {1, 1, 2, 3, 3, 3, 4, 4, 5};
       auto n = mixed.unique();
-      assert(n == 4); // 2 from {1,1}, 2 from {3,3,3}, 1 from {4,4} — wait, 1+2+1 = 4
+      assert(n == 4); // 2 from {1,1}, 2 from {3,3,3}, 1 from {4,4} wait, 1+2+1 = 4
       assert((mixed == xl::list<int>{1, 2, 3, 4, 5}));
     }
   }
 
-  // ── TC-15  remove / remove_if ─────────────────────────────────────────────
+  // TC-15  remove / remove_if
   {
     // remove non-existing value is a no-op
     xl::list lst = {1, 2, 3};
@@ -1295,7 +1303,7 @@ void test()
     }
   }
 
-  // ── TC-16  sort ───────────────────────────────────────────────────────────
+  // TC-16  sort
   {
     // sort empty list is a no-op
     xl::list<int> empty; empty.sort();
@@ -1497,9 +1505,19 @@ void test()
       assert(std::is_sorted(rand_lst.begin(), rand_lst.end()));
       assert(rand_lst.size() == 200);
     }
+
+    // xl::sort partial range (begin to before_end): last element excluded from sort
+    { xl::list z = {3, 2, 1}; xl::sort(z, z.begin(), z.before_end());   assert((std::array{2, 3, 1} == z)); }
+    { xl::list z = {3, 2, 1}; xl::sort<1>(z, z.begin(), z.before_end()); assert((std::array{2, 3, 1} == z)); }
+    { xl::list z = {3, 2, 1}; xl::sort<2>(z, z.begin(), z.before_end()); assert((std::array{2, 3, 1} == z)); }
+    { xl::list z = {3, 2, 1}; xl::sort<3>(z, z.begin(), z.before_end()); assert((std::array{2, 3, 1} == z)); }
+    { xl::list z = {3, 2, 1}; xl::sort<4>(z, z.begin(), z.before_end()); assert((std::array{2, 3, 1} == z)); }
+
+    // sort<0..4> on empty list: all variants must be no-ops
+    { xl::list<int> z; z.sort<0>(); z.sort<1>(); z.sort<2>(); z.sort<3>(); z.sort<4>(); assert(z.empty()); }
   }
 
-  // ── TC-17  reverse ────────────────────────────────────────────────────────
+  // TC-17  reverse
   {
     // basic reverse
     xl::list lst{1, 2, 3, 4, 5};
@@ -1541,7 +1559,7 @@ void test()
     }
   }
 
-  // ── TC-18  Comparison operators ───────────────────────────────────────────
+  // TC-18  Comparison operators
   {
     xl::list a={1,2,3}, b={1,2,3}, c={1,2,4}, d={1,2};
     assert(a==b && a!=c && a!=d && d<a && c>a && d<=a && a>=b && c>=a);
@@ -1576,7 +1594,7 @@ void test()
     }
   }
 
-  // ── TC-19  xl::erase / xl::erase_if / xl::find / xl::find_if free functions
+  // TC-19  xl::erase / xl::erase_if / xl::find / xl::find_if free functions
   {
     // erase-remove idiom
     xl::list lst = {1, 2, 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -1643,9 +1661,15 @@ void test()
       xl::erase(ef2, 42);
       assert(ef2.empty());
     }
+
+    // xl::find with initializer list argument (single value wrapped in braces)
+    { xl::list z = {1, 2, 3}; assert(xl::find(z, {1})); }
+
+    // xl::find with variadic multi-value arguments (all present)
+    { xl::list z = {1, 2, 3}; assert(xl::find(z, 1, 2, 3)); }
   }
 
-  // ── TC-20  Container concept, type aliases, static_assert ─────────────────
+  // TC-20  Container concept, type aliases, static_assert
   {
     static_assert(std::is_same_v<xl::list<int>::value_type,      int>);
     static_assert(std::is_same_v<xl::list<int>::reference,       int&>);
@@ -1656,7 +1680,7 @@ void test()
     static_assert(std::bidirectional_iterator<xl::list<int>::const_reverse_iterator>);
   }
 
-  // ── TC-21  at(), operator[], front, back, max_size ───────────────────────
+  // TC-21  at(), operator[], front, back, max_size
   {
     xl::list lst = {10, 20, 30, 40, 50};
     assert(lst.at(0) == 10 && lst.at(2) == 30 && lst.at(4) == 50);
@@ -1683,7 +1707,7 @@ void test()
     }
   }
 
-  // ── TC-22  Exception safety ────────────────────────────────────────────────
+  // TC-22  Exception safety
   {
     // push_back where constructor throws
     {
@@ -1739,7 +1763,7 @@ void test()
     }
   }
 
-  // ── TC-23  Resource management (destructor balance) ───────────────────────
+  // TC-23  Resource management (destructor balance)
   {
     static int counter = 0;
     struct Counted {
@@ -1798,7 +1822,7 @@ void test()
     assert(counter == 0); // outer scope destructor cleans last 2
   }
 
-  // ── TC-24  Single-element list edge cases ─────────────────────────────────
+  // TC-24  Single-element list edge cases
   {
     xl::list<int> lst;
     lst.push_back(42);
@@ -1840,7 +1864,7 @@ void test()
     }
   }
 
-  // ── TC-25  iter_swap ──────────────────────────────────────────────────────
+  // TC-25  iter_swap
   {
     // adjacent elements
     xl::list lst = {1, 2, 3, 4, 5};
@@ -1880,7 +1904,7 @@ void test()
     }
   }
 
-  // ── TC-26  insert(multi_t, ...) variadic overload ─────────────────────────
+  // TC-26  insert(multi_t, ...) variadic overload
   {
     xl::list lst = {1, 5};
     // insert multiple values before position
@@ -1911,7 +1935,7 @@ void test()
     }
   }
 
-  // ── TC-27  Algorithms interop: accumulate, transform, count_if, copy, fill
+  // TC-27  Algorithms interop: accumulate, transform, count_if, copy, fill
   {
     xl::list lst = {1, 2, 3, 4, 5};
 
@@ -1982,7 +2006,7 @@ void test()
     }
   }
 
-  // ── TC-28  Nested list ────────────────────────────────────────────────────
+  // TC-28  Nested list
   {
     xl::list<xl::list<int>> nested;
     nested.push_back({1, 2, 3});
@@ -2014,7 +2038,7 @@ void test()
     }
   }
 
-  // ── TC-29  Large-list stress ───────────────────────────────────────────────
+  // TC-29  Large-list stress
   {
     // 1M push_back / clear
     {
@@ -2119,9 +2143,19 @@ void test()
       xl::list<int> l4(data.begin(), data.end());    l4.sort<4>();
       assert(l1 == ref_l && l2 == ref_l && l3 == ref_l && l4 == ref_l);
     }
+
+    // assign(1M, value): verifies allocator and size tracking at scale
+    {
+      xl::list<int> z;
+      z.assign(1'000'000, 42);
+      assert(z.size() == 1'000'000);
+      assert(std::all_of(z.begin(), z.end(), [](int v){ return v == 42; }));
+      z.assign(0, 0);
+      assert(z.empty());
+    }
   }
 
-  // ── TC-30  Emplace-only (non-default-constructible) type ──────────────────
+  // TC-30  Emplace-only (non-default-constructible) type
   {
     struct NoDef {
       int x;
@@ -2140,7 +2174,7 @@ void test()
     for (const auto& v : lst) assert(v.x == expected++);
   }
 
-  // ── TC-31  push/pop reducing list to exactly one element ─────────────────
+  // TC-31  push/pop reducing list to exactly one element
   {
     xl::list lst = {1, 2, 3};
     lst.pop_back();
@@ -2167,7 +2201,7 @@ void test()
     }
   }
 
-  // ── TC-32  Miscellaneous compositions ─────────────────────────────────────
+  // TC-32  Miscellaneous compositions
   {
     // comprehensive single-block exercise of most member functions
     xl::list<int> lst;
@@ -2225,7 +2259,7 @@ void test()
     }
   }
 
-  // ── TC-33  Two-element list: all single-node operations ─────────────────
+  // TC-33  Two-element list: all single-node operations
   // Exercises the boundary where prev/next node = each other.
   {
     // insert into two-element list at every position
@@ -2276,7 +2310,7 @@ void test()
     }
   }
 
-  // ── TC-34  Iterator invalidation after clear / re-populate ─────────────
+  // TC-34  Iterator invalidation after clear / re-populate
   {
     xl::list lst = {1, 2, 3};
     lst.clear();
@@ -2288,7 +2322,7 @@ void test()
     for (auto v : lst) assert(v == chk++);
   }
 
-  // ── TC-35  std::ranges concepts / range-based interop ──────────────────
+  // TC-35  std::ranges concepts / range-based interop
   {
     // xl::list models std::ranges::bidirectional_range
     static_assert(std::ranges::bidirectional_range<xl::list<int>>);
@@ -2320,6 +2354,85 @@ void test()
     xl::list rev_rl = {5, 4, 3, 2, 1};
     std::ranges::reverse(rev_rl);
     assert(std::ranges::equal(rev_rl, std::views::iota(1, 6)));
+  }
+
+  // TC-36  Exception safety: copy-throwing type leaves list unchanged
+  {
+    static int throw_cnt;
+    throw_cnt = 0;
+    struct ThrowOnCopy {
+      int val{};
+      ThrowOnCopy() = default;
+      explicit ThrowOnCopy(int v) : val(v) {}
+      ThrowOnCopy(const ThrowOnCopy&) {
+        if (++throw_cnt == 2) throw std::bad_alloc();
+      }
+    };
+    xl::list<ThrowOnCopy> z;
+    z.emplace_back(1);
+    z.emplace_back(2);
+    bool caught = false;
+    try {
+      z.push_back(ThrowOnCopy(3));
+    } catch (const std::bad_alloc&) {
+      caught = true;
+    }
+    assert(z.size() == 2);
+    assert(caught);
+  }
+
+  // TC-37  remove_if all elements, unique all-equal, Person stable sort
+  {
+    // remove_if predicate matches every element: list becomes empty
+    {
+      xl::list<int> z = {1, 1, 1};
+      z.remove_if([](int){ return true; });
+      assert(z.empty());
+    }
+
+    // unique on a list where all elements are equal: collapses to one element
+    {
+      xl::list<int> z = {5, 5, 5};
+      z.unique();
+      assert(z.size() == 1 && z.front() == 5);
+    }
+
+    // unique on a list with no adjacent duplicates: list is unchanged
+    {
+      xl::list z = {1, 2, 3};
+      z.unique();
+      assert(z.size() == 3);
+    }
+
+    // sort stable: Person objects with equal id retain relative name order
+    {
+      struct Person {
+        int id;
+        std::string name;
+        bool operator<(const Person& o) const { return id < o.id || (id == o.id && name < o.name); }
+      };
+      xl::list<Person> p = {{2, "B"}, {1, "A"}, {2, "C"}};
+      p.sort();
+      assert(p.front().name == "A" && p.back().name == "C");
+    }
+
+    // merge with custom Person comparator by id
+    {
+      struct Person {
+        int id;
+        std::string name;
+      };
+      xl::list<Person> alpha = {{1, "A"}, {4, "D"}};
+      xl::list<Person> beta  = {{2, "B"}, {3, "C"}};
+      auto cmp = [](const Person& a, const Person& b){ return a.id < b.id; };
+      alpha.sort(cmp);
+      beta.sort(cmp);
+      alpha.merge(beta, cmp);
+      assert(beta.empty());
+      assert(alpha.size() == 4);
+      int idx = 1;
+      for (const auto& p : alpha) assert(p.id == idx++);
+    }
   }
 }
 
