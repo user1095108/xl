@@ -39,7 +39,7 @@ void test()
 
     // fill: (count) and (count, value)
     xl::list<int> l2(5);     assert(l2.size() == 5);
-    xl::list<int> l3(5, 42); assert(l3.size() == 5 && l3.front() == 42);
+    xl::list l3(5, 42); assert(l3.size() == 5 && l3.front() == 42);
     for (const auto& e : l3) assert(e == 42);
 
     // fill edge cases
@@ -54,7 +54,7 @@ void test()
 
     // iterator-range
     int arr[] = {1, 2, 3, 4, 5};
-    xl::list<int> l5(std::begin(arr), std::end(arr));
+    xl::list l5(std::begin(arr), std::end(arr));
     assert(l5.size() == 5 && l5.front() == 1 && l5.back() == 5);
 
     // from_range tag + C array
@@ -89,17 +89,17 @@ void test()
 
     // empty range
     std::vector<int> ev;
-    xl::list<int> el(ev.begin(), ev.end());
+    xl::list el(ev.begin(), ev.end());
     assert(el.empty());
 
     // single-pointer range
     int single = 42;
-    xl::list<int> sl(&single, &single + 1);
+    xl::list sl(&single, &single + 1);
     assert(sl.size() == 1 && sl.front() == 42);
 
     // istream_iterator range
     std::istringstream iss("1 2 3 4");
-    xl::list<int> il(std::istream_iterator<int>(iss), std::istream_iterator<int>{});
+    xl::list il(std::istream_iterator<int>(iss), std::istream_iterator<int>{});
     assert(il.size() == 4 && il.back() == 4);
 
     // range-constructed equals C array
@@ -108,18 +108,18 @@ void test()
 
     // from std::vector iterator range
     std::vector<int> src_vec = {10, 20, 30, 40, 50};
-    xl::list<int> from_vec(src_vec.begin(), src_vec.end());
+    xl::list from_vec(src_vec.begin(), src_vec.end());
     assert(std::ranges::equal(from_vec, src_vec));
 
     // copy of empty list is empty
     xl::list<int> empty_src;
-    xl::list<int> empty_copy(empty_src);
+    xl::list empty_copy(empty_src);
     assert(empty_copy.empty());
 
     // move from empty list
     {
       xl::list<int> src;
-      xl::list<int> dst(std::move(src));
+      xl::list dst(std::move(src));
       assert(src.empty());
       assert(dst.empty());
     }
@@ -704,7 +704,7 @@ void test()
   {
     // sequential forward walk
     {
-      xl::list<int> l = {0, 1, 2, 3, 4};
+      xl::list l = {0, 1, 2, 3, 4};
       int expected = 0;
       for (auto v : l) assert(v == expected++);
     }
