@@ -220,6 +220,30 @@ void test()
   }
 
   // TC-03  Copy / move construction and assignment; swap
+
+    // self-swap
+    {
+      xl::list<int> l = {1,2,3};
+      l.swap(l);
+      assert((l == xl::list<int>{1,2,3}));
+    }
+
+    // move from empty
+    {
+      xl::list<int> src;
+      xl::list<int> dst(std::move(src));
+      assert(src.empty());
+      assert(dst.empty());
+    }
+
+    // copy assignment from empty
+    {
+      xl::list<int> src;
+      xl::list<int> dst = {1,2,3};
+      dst = src;
+      assert(dst.empty());
+    }
+
   {
     xl::list l1{1, 2, 3, 4, 5};
 
@@ -481,6 +505,22 @@ void test()
   }
 
   // TC-06  insert overloads
+
+    // insert count/value into empty list
+    {
+      xl::list<int> l;
+      l.insert(l.begin(), 5, 42);
+      assert(l.size() == 5);
+    }
+
+    // insert iterator range at end
+    {
+      xl::list<int> l = {1,2};
+      int arr[] = {3,4,5};
+      l.insert(l.end(), std::begin(arr), std::end(arr));
+      assert((l == xl::list<int>{1,2,3,4,5}));
+    }
+
   {
     // single at begin / end / middle
     xl::list myList = {1, 2, 3, 4, 5};
@@ -564,6 +604,22 @@ void test()
   }
 
   // TC-07  erase overloads
+
+    // erase middle of three-element list
+    {
+      xl::list<int> l = {1,2,3};
+      auto ret = l.erase(std::next(l.begin()));
+      assert(*ret == 3);
+      assert((l == xl::list<int>{1,3}));
+    }
+
+    // erase range leaving endpoints
+    {
+      xl::list<int> l = {1,2,3,4,5};
+      l.erase(std::next(l.begin()), std::prev(l.end()));
+      assert((l == xl::list<int>{1,5}));
+    }
+
   {
     // erase two elements in sequence
     xl::list l{1, 2, 3, 4, 5};
@@ -718,7 +774,7 @@ void test()
 
     // iterator dereference via arrow operator on list of pairs
     {
-      xl::list<std::pair<int,std::string>> pl2 = {{1,"a"},{2,"b"},{3,"c"}};
+      xl::list<std::pair<int, std::string>> pl2 = {{1,"a"},{2,"b"},{3,"c"}};
       auto pit2 = pl2.begin();
       assert(pit2->first == 1 && pit2->second == "a");
       ++pit2;
@@ -727,7 +783,7 @@ void test()
 
     // post-increment and post-decrement return old value
     {
-      xl::list<int> pid = {10, 20, 30};
+      xl::list pid = {10, 20, 30};
       auto it_a = pid.begin();
       auto it_b = it_a++;           // it_b == begin (10), it_a now points to 20
       assert(*it_b == 10 && *it_a == 20);
@@ -737,7 +793,7 @@ void test()
 
     // const_iterator constructed from iterator (implicit conversion)
     {
-      xl::list<int> conv_lst = {1, 2, 3};
+      xl::list conv_lst = {1, 2, 3};
       xl::list<int>::iterator mut_it = conv_lst.begin();
       xl::list<int>::const_iterator const_it = mut_it;
       assert(*const_it == *mut_it);
@@ -747,7 +803,7 @@ void test()
 
     // iterator bool conversion: valid iterator is truthy, end is falsy
     {
-      xl::list<int> ib = {1, 2};
+      xl::list ib = {1, 2};
       auto it_ib = ib.begin();
       assert(static_cast<bool>(it_ib));   // valid node
       it_ib = ib.end();
@@ -776,7 +832,7 @@ void test()
 
     // after_begin on two-element list is back()
     {
-      xl::list<int> two = {10, 20};
+      xl::list two = {10, 20};
       assert(*two.after_begin() == 20);
       assert(*two.before_end()  == 20);
     }
@@ -817,14 +873,14 @@ void test()
 
     // resize(1) on a list of 3 only front survives
     {
-      xl::list<int> r1 = {10, 20, 30};
+      xl::list r1 = {10, 20, 30};
       r1.resize(1);
       assert(r1.size() == 1 && r1.front() == 10 && r1.back() == 10);
     }
 
     // consecutive shrink–grow cycle preserves final size
     {
-      xl::list<int> rsg(10, 5);
+      xl::list rsg(10, 5);
       rsg.resize(3);
       rsg.resize(8, 9);
       assert(rsg.size() == 8);
@@ -940,11 +996,11 @@ void test()
 
     // merge of two single-element lists (both orderings)
     {
-      xl::list<int> a1 = {1}, b1 = {2};
+      xl::list a1 = {1}, b1 = {2};
       a1.merge(b1);
       assert((a1 == xl::list<int>{1, 2}) && b1.empty());
 
-      xl::list<int> a2 = {2}, b2 = {1};
+      xl::list a2 = {2}, b2 = {1};
       a2.merge(b2);
       assert((a2 == xl::list<int>{1, 2}) && b2.empty());
     }
@@ -1078,7 +1134,7 @@ void test()
     // splice entire list into empty destination
     {
       xl::list<int> dst;
-      xl::list<int> src = {1, 2, 3, 4, 5};
+      xl::list src = {1, 2, 3, 4, 5};
       dst.splice(dst.end(), src);
       assert(src.empty());
       assert((dst == xl::list<int>{1, 2, 3, 4, 5}));
@@ -1086,7 +1142,7 @@ void test()
 
     // splice single element from two-element list, verify source integrity
     {
-      xl::list<int> s2 = {10, 20};
+      xl::list s2 = {10, 20};
       xl::list<int> d2;
       d2.splice(d2.end(), s2, s2.begin()); // move 10 out
       assert(s2.size() == 1 && s2.front() == 20 && s2.back() == 20);
@@ -1095,8 +1151,8 @@ void test()
 
     // splice range then iterate both lists for consistency
     {
-      xl::list<int> src3 = {1, 2, 3, 4, 5};
-      xl::list<int> dst3 = {10, 20};
+      xl::list src3 = {1, 2, 3, 4, 5};
+      xl::list dst3 = {10, 20};
       auto s_mid = std::next(src3.begin(), 1); // 2
       auto s_end = std::next(s_mid, 3);        // past 4
       dst3.splice(dst3.end(), src3, s_mid, s_end); // move {2,3,4}
@@ -1156,7 +1212,7 @@ void test()
       xl::list<int> ae;
       int src_arr[] = {1, 2, 3};
       ae.append_range(src_arr);
-      assert((ae == xl::list<int>{1, 2, 3}));
+      assert((ae == xl::list{1, 2, 3}));
     }
 
     // prepend_range to empty list
@@ -1164,15 +1220,15 @@ void test()
       xl::list<int> pe;
       int src_arr[] = {7, 8, 9};
       pe.prepend_range(src_arr);
-      assert((pe == xl::list<int>{7, 8, 9}));
+      assert((pe == xl::list{7, 8, 9}));
     }
 
     // insert_range at begin
     {
-      xl::list<int> ir = {4, 5, 6};
+      xl::list ir = {4, 5, 6};
       int pre[] = {1, 2, 3};
       ir.insert_range(ir.begin(), pre);
-      assert((ir == xl::list<int>{1, 2, 3, 4, 5, 6}));
+      assert((ir == xl::list{1, 2, 3, 4, 5, 6}));
     }
   }
 
@@ -1222,21 +1278,21 @@ void test()
 
     // unique on list of all identical elements → single survivor
     {
-      xl::list<int> all_same(10, 5);
+      xl::list all_same(10, 5);
       all_same.unique();
       assert(all_same.size() == 1 && all_same.front() == 5);
     }
 
     // unique does not reorder elements (first of each run survives)
     {
-      xl::list<int> ordered = {3, 3, 1, 1, 2, 2};
+      xl::list ordered = {3, 3, 1, 1, 2, 2};
       ordered.unique();
       assert((ordered == xl::list<int>{3, 1, 2}));
     }
 
     // unique returns correct count on longer mixed sequence
     {
-      xl::list<int> mixed = {1, 1, 2, 3, 3, 3, 4, 4, 5};
+      xl::list mixed = {1, 1, 2, 3, 3, 3, 4, 4, 5};
       auto n = mixed.unique();
       assert(n == 4); // 2 from {1,1}, 2 from {3,3,3}, 1 from {4,4} wait, 1+2+1 = 4
       assert((mixed == xl::list<int>{1, 2, 3, 4, 5}));
@@ -1276,21 +1332,21 @@ void test()
 
     // remove from single-element list when value matches → empty
     {
-      xl::list<int> one = {42};
+      xl::list one = {42};
       auto cnt = one.remove(42);
       assert(cnt == 1 && one.empty());
     }
 
     // remove from single-element list when value doesn't match → unchanged
     {
-      xl::list<int> one2 = {42};
+      xl::list one2 = {42};
       auto cnt = one2.remove(99);
       assert(cnt == 0 && one2.size() == 1 && one2.front() == 42);
     }
 
     // remove_if leaving only one element
     {
-      xl::list<int> rif = {1, 2, 3, 4, 5};
+      xl::list rif = {1, 2, 3, 4, 5};
       rif.remove_if([](int x){ return x != 3; });
       assert(rif.size() == 1 && rif.front() == 3 && rif.back() == 3);
     }
@@ -1299,7 +1355,7 @@ void test()
     {
       xl::list<int> rfl = {9, 1, 2, 3, 9};
       rfl.remove(9);
-      assert((rfl == xl::list<int>{1, 2, 3}));
+      assert((rfl == xl::list{1, 2, 3}));
     }
   }
 
@@ -1543,17 +1599,17 @@ void test()
 
     // reverse two-element list
     {
-      xl::list<int> two = {1, 2};
+      xl::list two = {1, 2};
       two.reverse();
       assert(two.front() == 2 && two.back() == 1);
     }
 
     // reverse then iterate: verify all original elements present in opposite order
     {
-      xl::list<int> orig = {10, 20, 30, 40, 50};
-      std::vector<int> before(orig.begin(), orig.end());
+      xl::list orig = {10, 20, 30, 40, 50};
+      std::vector before(orig.begin(), orig.end());
       orig.reverse();
-      std::vector<int> after(orig.begin(), orig.end());
+      std::vector after(orig.begin(), orig.end());
       for (std::size_t i = 0; i < before.size(); ++i)
         assert(before[i] == after[before.size() - 1 - i]);
     }
@@ -1642,7 +1698,7 @@ void test()
 
     // xl::find returns iterator that can be used to modify
     {
-      xl::list<int> mf = {1, 2, 3};
+      xl::list mf = {1, 2, 3};
       auto fit = xl::find(mf, 2);
       assert(fit);
       *fit = 99;
