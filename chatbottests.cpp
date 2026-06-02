@@ -859,9 +859,9 @@ void test()
     {
       xl::list ib = {1, 2};
       auto it_ib = ib.begin();
-      assert(static_cast<bool>(it_ib));   // valid node
+      assert(it_ib);   // valid node
       it_ib = ib.end();
-      assert(!static_cast<bool>(it_ib));  // end sentinel
+      assert(!it_ib);  // end sentinel
     }
 
     // clear then re-populate and verify fresh iterators work correctly
