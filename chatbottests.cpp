@@ -107,7 +107,7 @@ void test()
     assert(std::ranges::equal(ca, xl::list(ca)));
 
     // from std::vector iterator range
-    std::vector<int> src_vec = {10, 20, 30, 40, 50};
+    std::vector src_vec = {10, 20, 30, 40, 50};
     xl::list from_vec(src_vec.begin(), src_vec.end());
     assert(std::ranges::equal(from_vec, src_vec));
 
@@ -193,7 +193,7 @@ void test()
     // copy assignment from empty
     {
       xl::list<int> src;
-      xl::list<int> dst = {1, 2, 3};
+      xl::list dst = {1, 2, 3};
       dst = src;
       assert(dst.empty());
     }
