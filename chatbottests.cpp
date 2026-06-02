@@ -117,7 +117,7 @@ void test()
 
     // erase last element via iterator, then push_back, verify sequence
     {
-      xl::list<int> el = {1, 2, 3};
+      xl::list el = {1, 2, 3};
       el.erase(std::prev(el.end()));
       assert(el.size() == 2 && el.back() == 2);
       el.push_back(99);
@@ -338,8 +338,8 @@ void test()
 
     // copy-assign to non-empty destination (destination is fully replaced)
     {
-      xl::list<int> dst3 = {100, 200, 300, 400};
-      xl::list<int> src3 = {1, 2};
+      xl::list dst3 = {100, 200, 300, 400};
+      xl::list src3 = {1, 2};
       dst3 = src3;
       assert(dst3.size() == 2 && dst3.front() == 1 && dst3.back() == 2);
       // src is unmodified
@@ -348,8 +348,8 @@ void test()
 
     // move-assign to non-empty destination
     {
-      xl::list<int> dst4 = {100, 200, 300};
-      xl::list<int> src4 = {7, 8, 9, 10};
+      xl::list dst4 = {100, 200, 300};
+      xl::list src4 = {7, 8, 9, 10};
       dst4 = std::move(src4);
       assert(src4.empty());
       assert(dst4.size() == 4 && dst4.front() == 7 && dst4.back() == 10);
@@ -364,7 +364,7 @@ void test()
 
     // swap empty with non-empty
     {
-      xl::list<int> ne = {1, 2, 3};
+      xl::list ne = {1, 2, 3};
       xl::list<int> em;
       ne.swap(em);
       assert(ne.empty());
@@ -500,7 +500,7 @@ void test()
       xl::list<int> sel = {5};
       sel.emplace(sel.begin(), 3);   // now {3, 5}
       sel.emplace(sel.end(),   7);   // now {3, 5, 7}
-      assert((sel == xl::list<int>{3, 5, 7}));
+      assert((sel == xl::list{3, 5, 7}));
     }
   }
 
@@ -515,10 +515,10 @@ void test()
 
     // insert iterator range at end
     {
-      xl::list<int> l = {1,2};
+      xl::list l = {1,2};
       int arr[] = {3,4,5};
       l.insert(l.end(), std::begin(arr), std::end(arr));
-      assert((l == xl::list<int>{1,2,3,4,5}));
+      assert((l == xl::list{1,2,3,4,5}));
     }
 
   {
