@@ -580,6 +580,36 @@ public:
       return {i.n_, i.p_};
   }
 
+  auto insert(const_iterator const i, size_type const count,
+    value_type const v)
+    noexcept(noexcept(insert<0>(i, count, v)))
+  {
+    return insert<0>(i, count, v);
+  }
+
+  iterator insert(const_iterator i,
+    std::input_iterator auto j, decltype(j) k)
+    noexcept(noexcept(emplace(i, *j)))
+  {
+    if (j == k) [[unlikely]]
+      return {i.n_, i.p_};
+    else [[likely]]
+    {
+      auto const r(emplace(i, *j++));
+      i.p_ = r.n_;
+
+      while (j != k) i.p_ = emplace(i, *j++).n_;
+
+      return r;
+    }
+  }
+
+  auto insert(const_iterator const i, std::initializer_list<value_type> l)
+    noexcept(noexcept(insert(i, l.begin(), l.end())))
+  {
+    return insert(i, l.begin(), l.end());
+  }
+
   iterator insert_n(const_iterator i, size_type count,
     std::input_iterator auto j)
     noexcept(noexcept(emplace(i, *j)))
@@ -596,44 +626,6 @@ public:
     }
     else [[unlikely]]
       return {i.n_, i.p_};
-  }
-
-  auto insert(const_iterator const i, size_type const count,
-    value_type const v)
-    noexcept(noexcept(insert<0>(i, count, v)))
-  {
-    return insert<0>(i, count, v);
-  }
-
-  iterator insert(const_iterator i,
-    std::input_iterator auto j, decltype(j) k)
-    noexcept(noexcept(emplace(i, *j)))
-  {
-    if (j == k) [[unlikely]]
-      return {i.n_, i.p_};
-    else [[likely]]
-    {
-      auto const r(emplace(i, *j));
-      i.p_ = r.n_;
-
-      std::for_each(
-        ++j,
-        k,
-        [&](auto&& v)
-          noexcept(noexcept(emplace(i, std::forward<decltype(v)>(v))))
-        { // the parent node of i changes
-          i.p_ = emplace(i, std::forward<decltype(v)>(v)).n_;
-        }
-      );
-
-      return r;
-    }
-  }
-
-  auto insert(const_iterator const i, std::initializer_list<value_type> l)
-    noexcept(noexcept(insert(i, l.begin(), l.end())))
-  {
-    return insert(i, l.begin(), l.end());
   }
 
   //
