@@ -950,7 +950,7 @@ void test()
       xl::list<int> empty; empty.reverse(); assert(empty.empty());
 
       // reverse single-element list
-      xl::list<int> one = {42}; one.reverse();
+      xl::list one = {42}; one.reverse();
       assert(one.size() == 1 && one.front() == 42);
 
       // reverse two-element list
