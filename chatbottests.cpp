@@ -1767,13 +1767,13 @@ void test()
     // self insert_range
     {
       xl::list l{1, 2};
-      l.insert_range(l.begin(), l);
+      l.insert_range(l.cbegin(), l);
       assert((l == std::array{1, 2, 1, 2}));
       l = {1, 2};
-      l.insert_range(l.end(), l);
+      l.insert_range(l.cend(), l);
       assert((l == std::array{1, 2, 1, 2}));
       l = {1, 2};
-      l.insert_range(++l.begin(), l);
+      l.insert_range(l.cafter_begin(), l);
       assert((l == std::array{1, 1, 2, 2}));
     }
   }
