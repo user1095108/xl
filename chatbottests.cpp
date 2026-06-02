@@ -1,22 +1,17 @@
-#include <algorithm>
 #include <array>
 #include <cassert>
 #include <cctype>
 #include <functional>
 #include <initializer_list>
 #include <iostream>
-#include <iterator>
 #include <limits>
 #include <list>
 #include <memory>
 #include <numeric>
 #include <random>
-#include <ranges>
 #include <sstream>
 #include <string>
 #include <string_view>
-#include <type_traits>
-#include <utility>
 #include <vector>
 
 #include "list.hpp"
