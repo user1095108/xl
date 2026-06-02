@@ -2393,13 +2393,13 @@ void test()
       std::vector<int> data;
       data.reserve(500);
       for (int i = 0; i < 500; ++i)
-        data.push_back(static_cast<int>(rng2() % 10000));
+        data.push_back(int(rng2() % 10000));
 
-      xl::list<int> ref_l(data.begin(), data.end()); ref_l.sort<0>();
-      xl::list<int> l1(data.begin(), data.end());    l1.sort<1>();
-      xl::list<int> l2(data.begin(), data.end());    l2.sort<2>();
-      xl::list<int> l3(data.begin(), data.end());    l3.sort<3>();
-      xl::list<int> l4(data.begin(), data.end());    l4.sort<4>();
+      xl::list ref_l(data.begin(), data.end()); ref_l.sort<0>();
+      xl::list l1(data.begin(), data.end());    l1.sort<1>();
+      xl::list l2(data.begin(), data.end());    l2.sort<2>();
+      xl::list l3(data.begin(), data.end());    l3.sort<3>();
+      xl::list l4(data.begin(), data.end());    l4.sort<4>();
       assert(l1 == ref_l && l2 == ref_l && l3 == ref_l && l4 == ref_l);
     }
 
