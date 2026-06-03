@@ -747,6 +747,8 @@ public:
           list(rg),
           insert(pos, std::ranges::begin(rg), std::ranges::end(rg))) :
         noexcept(
+          list(std::make_move_iterator(std::ranges::begin(rg)),
+            std::make_move_iterator(std::ranges::end(rg))),
           insert(pos,
               std::make_move_iterator(std::ranges::begin(rg)),
               std::make_move_iterator(std::ranges::end(rg))
