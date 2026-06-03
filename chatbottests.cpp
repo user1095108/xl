@@ -1812,6 +1812,70 @@ void test()
       l_self.insert_range(l_self.cafter_begin(), l_self);
       assert((l_self == std::array{1, 1, 2, 2}));
     }
+
+    // single-element list, insert at cbegin()
+    {
+      // {7} + self at cbegin() → {7, 7}
+      xl::list l = {7};
+      l.insert_range(l.cbegin(), l);
+      assert((l == xl::list{7, 7}));
+      assert(l.size() == 2);
+    }
+
+    // single-element list, insert at cend()
+    {
+      // {7} + self at cend() → {7, 7}
+      xl::list l = {7};
+      l.insert_range(l.cend(), l);
+      assert((l == xl::list{7, 7}));
+      assert(l.front() == l.back());
+    }
+
+    // single-element list, insert at cafter_begin()
+    {
+      // cafter_begin() == cend() when size==1
+      xl::list l = {7};
+      assert(l.cafter_begin() == l.cend());
+      l.insert_range(l.cafter_begin(), l);
+      assert((l == xl::list{7, 7}));
+    }
+
+    // single-element list, insert at cbefore_end()
+    {
+      // cbefore_end() == cbegin() when size==1; same result as IR-01
+      xl::list l = {7};
+      assert(l.cbefore_end() == l.cbegin());
+      l.insert_range(l.cbefore_end(), l);
+      assert((l == xl::list{7, 7}));
+    }
+
+    // two consecutive self-inserts at cend()
+    {
+      // {1,2} → self append → {1,2,1,2} → self append → {1,2,1,2,1,2,1,2}
+      xl::list<int> l = {1, 2};
+      l.insert_range(l.cend(), l);
+      l.insert_range(l.cend(), std::move(l));
+      assert(l.size() == 8);
+      assert(l.front() == 1 && l.back() == 2);
+      assert((l == std::array{1,2,1,2,1,2,1,2}));
+    }
+
+    // std::pair elements, self-insert at cend()
+    {
+      xl::list<std::pair<int,int>> l = {{1,10}, {2,20}};
+      l.insert_range(l.cend(), l);
+      assert(l.size() == 4);
+      assert(l.front() == std::pair(1,10));
+      assert(l.back()  == std::pair(2,20));
+    }
+
+    // std::string elements, self-insert at cafter_begin()
+    {
+      xl::list<std::string> l = {"a", "b", "c"};
+      l.insert_range(l.cafter_begin(), l);
+      assert((l == xl::list<std::string>{"a", "a", "b", "c", "b", "c"}));
+      assert(l.size() == 6);
+    }
   }
 
   // ─── TC-14  Comparison Operators and Free-Function Algorithms ────────────────
