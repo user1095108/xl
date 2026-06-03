@@ -604,7 +604,7 @@ void test()
       xl::list<int> ins_noop = {1, 2, 3};
       std::vector<int> empty_src2;
       ins_noop.insert(ins_noop.begin(), empty_src2.begin(), empty_src2.end());
-      assert((ins_noop == xl::list<int>{1, 2, 3}));
+      assert((ins_noop == xl::list{1, 2, 3}));
     }
 
     // variadic insert via multi_t: at middle, begin, and end
@@ -631,7 +631,7 @@ void test()
     {
       xl::list<int> em = {1, 2, 3};
       auto ret = em.erase(std::next(em.begin()));
-      assert(*ret == 3 && (em == xl::list<int>{1, 3}));
+      assert(*ret == 3 && (em == xl::list{1, 3}));
     }
 
     // erase first element; new front is correct
@@ -679,7 +679,7 @@ void test()
       auto b2 = std::next(re.begin());
       auto e2 = std::next(b2, 2);
       auto r2 = re.erase(b2, e2);
-      assert(*r2 == 4 && re.size() == 3 && (re == xl::list<int>{1, 4, 5}));
+      assert(*r2 == 4 && re.size() == 3 && (re == xl::list{1, 4, 5}));
     }
 
     // erase range that spans multiple elements, verify endpoints and return
@@ -695,7 +695,7 @@ void test()
     {
       xl::list er2 = {1, 2, 3, 4, 5};
       er2.erase(std::next(er2.begin()), std::prev(er2.end()));
-      assert((er2 == xl::list<int>{1, 5}));
+      assert((er2 == xl::list{1, 5}));
     }
 
     // erase range spanning entire list; result is empty, return is end
@@ -732,7 +732,7 @@ void test()
     std::vector<int> rev;
     for (auto it = clst2.crbegin(); it != clst2.crend(); ++it)
       rev.push_back(*it);
-    assert((rev == std::vector<int>{5, 4, 3, 2, 1}));
+    assert((rev == std::vector{5, 4, 3, 2, 1}));
 
     // reverse iterators accumulate digits
     xl::list rdig = {1, 2, 3, 4, 5};

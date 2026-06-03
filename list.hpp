@@ -766,10 +766,12 @@ public:
     else
       if (this == std::addressof(rg))
       {
-        list tl(std::move(rg));
+        list tl;
+        tl.assign(std::make_move_iterator(std::ranges::begin(rg)),
+          std::make_move_iterator(std::ranges::end(rg)));
         return insert(pos,
-            std::make_move_iterator(std::ranges::begin(rg)),
-            std::make_move_iterator(std::ranges::end(rg))
+            std::make_move_iterator(std::ranges::begin(tl)),
+            std::make_move_iterator(std::ranges::end(tl))
           );
       }
       else
