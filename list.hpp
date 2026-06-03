@@ -671,7 +671,6 @@ public:
         noexcept(std::move(std::ranges::rbegin(rg),
           std::ranges::rend(rg), std::front_inserter(*this)))
     )
-    requires(!std::is_same_v<std::remove_cvref_t<decltype(rg)>, list>)
   {
     if constexpr(std::is_lvalue_reference_v<decltype(rg)>)
       std::copy(std::ranges::rbegin(rg), std::ranges::rend(rg),
@@ -679,33 +678,6 @@ public:
     else
       std::move(std::ranges::rbegin(rg), std::ranges::rend(rg),
         std::front_inserter(*this));
-  }
-
-  template <int = 0>
-  void prepend_range(std::ranges::input_range auto&& rg)
-    noexcept(
-      std::is_lvalue_reference_v<decltype(rg)> ?
-        noexcept(std::copy(std::ranges::rbegin(rg),
-          std::ranges::rend(rg), std::front_inserter(*this))) :
-        noexcept(std::move(std::ranges::rbegin(rg),
-          std::ranges::rend(rg), std::front_inserter(*this)))
-    )
-    requires(std::is_same_v<std::remove_cvref_t<decltype(rg)>, list>)
-  {
-    if constexpr(std::is_lvalue_reference_v<decltype(rg)>)
-      if (this == std::addressof(rg))
-        std::copy_n(std::ranges::rbegin(rg), std::ranges::size(rg),
-          std::front_inserter(*this));
-      else
-        std::copy(std::ranges::rbegin(rg), std::ranges::rend(rg),
-          std::front_inserter(*this));
-    else
-      if (this == std::addressof(rg))
-        std::copy_n(std::make_move_iterator(std::ranges::rbegin(rg)),
-          std::ranges::size(rg), std::front_inserter(*this));
-      else
-        std::move(std::ranges::rbegin(rg), std::ranges::rend(rg),
-          std::front_inserter(*this));
   }
 
   template <int = 0>
