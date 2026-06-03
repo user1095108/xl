@@ -764,10 +764,19 @@ public:
       else
         return insert(pos, std::ranges::begin(rg), std::ranges::end(rg));
     else
-      return insert(pos,
-          std::make_move_iterator(std::ranges::begin(rg)),
-          std::make_move_iterator(std::ranges::end(rg))
-        );
+      if (this == std::addressof(rg))
+      {
+        list tl(std::move(rg));
+        return insert(pos,
+            std::make_move_iterator(std::ranges::begin(rg)),
+            std::make_move_iterator(std::ranges::end(rg))
+          );
+      }
+      else
+        return insert(pos,
+            std::make_move_iterator(std::ranges::begin(rg)),
+            std::make_move_iterator(std::ranges::end(rg))
+          );
   }
 
   void assign_range(std::initializer_list<T> rg)
