@@ -610,24 +610,6 @@ public:
     return insert(i, l.begin(), l.end());
   }
 
-  iterator insert_n(const_iterator i, size_type count,
-    std::input_iterator auto j)
-    noexcept(noexcept(emplace(i, *j)))
-    requires(std::is_constructible_v<value_type, decltype(*j)>)
-  {
-    if (count) [[likely]]
-    {
-      auto const r(emplace(i, *j++));
-      i.p_ = r.n_; // the parent node of i changes
-
-      while (--count) i.p_ = emplace(i, *j).n_, ++j;
-
-      return r;
-    }
-    else [[unlikely]]
-      return {i.n_, i.p_};
-  }
-
   //
   template <int = 0>
   void assign_range(std::ranges::input_range auto&& rg)
@@ -762,11 +744,9 @@ public:
     noexcept(
       std::is_lvalue_reference_v<decltype(rg)> ?
         noexcept(
-          insert_n(pos, std::ranges::size(rg), std::ranges::begin(rg)),
+          list(rg),
           insert(pos, std::ranges::begin(rg), std::ranges::end(rg))) :
         noexcept(
-          insert_n(pos, std::ranges::size(rg),
-            std::make_move_iterator(std::ranges::begin(rg))),
           insert(pos,
               std::make_move_iterator(std::ranges::begin(rg)),
               std::make_move_iterator(std::ranges::end(rg))
@@ -777,18 +757,17 @@ public:
   {
     if constexpr(std::is_lvalue_reference_v<decltype(rg)>)
       if (this == std::addressof(rg))
-        return insert_n(pos, std::ranges::size(rg), std::ranges::begin(rg));
+      {
+        list const tl(rg);
+        return insert(pos, std::ranges::begin(tl), std::ranges::end(tl));
+      }
       else
         return insert(pos, std::ranges::begin(rg), std::ranges::end(rg));
     else
-      if (this == std::addressof(rg))
-        return insert_n(pos, std::ranges::size(rg),
-          std::make_move_iterator(std::ranges::begin(rg)));
-      else
-        return insert(pos,
-            std::make_move_iterator(std::ranges::begin(rg)),
-            std::make_move_iterator(std::ranges::end(rg))
-          );
+      return insert(pos,
+          std::make_move_iterator(std::ranges::begin(rg)),
+          std::make_move_iterator(std::ranges::end(rg))
+        );
   }
 
   void assign_range(std::initializer_list<T> rg)
