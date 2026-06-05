@@ -614,12 +614,12 @@ public:
   //
   template <int = 0>
   void assign_range(std::ranges::input_range auto&& rg)
-    noexcept(noexcept(
+    noexcept(
       std::is_lvalue_reference_v<decltype(rg)> ?
-        assign(std::ranges::begin(rg), std::ranges::end(rg)) :
-        assign(std::make_move_iterator(std::ranges::begin(rg)),
-          std::make_move_iterator(std::ranges::end(rg)))
-    ))
+        noexcept(assign(std::ranges::begin(rg), std::ranges::end(rg))) :
+        noexcept(assign(std::make_move_iterator(std::ranges::begin(rg)),
+          std::make_move_iterator(std::ranges::end(rg))))
+    )
     requires(!std::is_same_v<std::remove_cvref_t<decltype(rg)>, list>)
   {
     std::is_lvalue_reference_v<decltype(rg)> ?
@@ -630,12 +630,12 @@ public:
 
   template <int = 0>
   void assign_range(std::ranges::input_range auto&& rg)
-    noexcept(noexcept(
+    noexcept(
       std::is_lvalue_reference_v<decltype(rg)> ?
-        assign(std::ranges::begin(rg), std::ranges::end(rg)) :
-        assign(std::make_move_iterator(std::ranges::begin(rg)),
-          std::make_move_iterator(std::ranges::end(rg)))
-    ))
+        noexcept(assign(std::ranges::begin(rg), std::ranges::end(rg))) :
+        noexcept(assign(std::make_move_iterator(std::ranges::begin(rg)),
+          std::make_move_iterator(std::ranges::end(rg))))
+    )
     requires(std::is_same_v<std::remove_cvref_t<decltype(rg)>, list>)
   {
     if (this != std::addressof(rg))
@@ -843,7 +843,8 @@ public:
   }
 
   void push_front(auto&& ...a)
-    noexcept(noexcept((emplace(i, std::forward<decltype(a)>(a)).n_), ...))
+    noexcept(noexcept(
+      ((emplace(cbegin(), std::forward<decltype(a)>(a)).n_), ...)))
     requires(!!sizeof...(a))
   {
     auto i(cbegin());
@@ -901,7 +902,7 @@ public:
   template <class Cmp = std::less<value_type>>
   void merge(auto&& o, Cmp&& cmp = Cmp())
     noexcept(noexcept(node::merge(std::declval<const_iterator&>(),
-      std::declval<const_iterator>(), std::declval<const_iterator&>(), cmp)))¸
+      std::declval<const_iterator>(), std::declval<const_iterator&>(), cmp)))
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
     if (this == std::addressof(o)) return;
