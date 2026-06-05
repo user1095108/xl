@@ -92,8 +92,7 @@ private:
 
     static void merge(const_iterator& b, const_iterator const m,
       decltype(b) e, auto cmp)
-      noexcept(noexcept(cmp(*b, *b)) &&
-        std::is_nothrow_copy_constructible_v<decltype(cmp)>)
+      noexcept(noexcept(cmp(*b, *b)))
     {
       auto i(b), j(m), ni((cmp(*j, *i) ?
         i.p_ ? i.p_->l_ ^= detail::conv(i.n_, j.n_) : 0,
@@ -123,8 +122,7 @@ private:
 
     static void merge(const_iterator& a, const_iterator const b,
       const_iterator const c, decltype(a) d, auto cmp)
-      noexcept(noexcept(cmp(*b, *b)) &&
-        std::is_nothrow_copy_constructible_v<decltype(cmp)>)
+      noexcept(noexcept(cmp(*b, *b)))
     {
       auto i(a), j(c), ni((cmp(*j, *i) ? a.n_ = j.n_, ++j : ++i, a)); // ni = a
 
@@ -149,8 +147,7 @@ private:
     }
 
     static void insertion_sort(auto& i, decltype(i) j, auto cmp)
-      noexcept(noexcept(cmp(*i, *i)) && noexcept(splice(i, i)) &&
-        std::is_nothrow_copy_constructible_v<decltype(cmp)>)
+      noexcept(noexcept(cmp(*i, *i)) && noexcept(splice(i, i)))
     {
       // if ((j.p_ == i.n_) || (i == j)) return;
 
@@ -846,7 +843,7 @@ public:
   }
 
   void push_front(auto&& ...a)
-    noexcept(noexcept((emplace_front(std::forward<decltype(a)>(a)), ...)))
+    noexcept(noexcept((emplace(i, std::forward<decltype(a)>(a)).n_), ...))
     requires(!!sizeof...(a))
   {
     auto i(cbegin());
@@ -860,8 +857,7 @@ public:
   }
 
   size_type remove_if(auto cmp)
-    noexcept(noexcept(erase(cbegin()), cmp(*cbegin())) &&
-      std::is_nothrow_copy_constructible_v<decltype(cmp)>)
+    noexcept(noexcept(erase(cbegin()), cmp(*cbegin())))
     requires(requires{cmp(*cbegin());})
   {
     size_type r{};
@@ -905,8 +901,7 @@ public:
   template <class Cmp = std::less<value_type>>
   void merge(auto&& o, Cmp&& cmp = Cmp())
     noexcept(noexcept(node::merge(std::declval<const_iterator&>(),
-      std::declval<const_iterator>(), std::declval<const_iterator&>(), cmp)) &&
-      std::is_nothrow_default_constructible_v<decltype(cmp)>)
+      std::declval<const_iterator>(), std::declval<const_iterator&>(), cmp)))¸
     requires(std::same_as<list, std::remove_reference_t<decltype(o)>>)
   {
     if (this == std::addressof(o)) return;
@@ -1017,8 +1012,7 @@ public:
   //
   template <class Cmp = std::equal_to<value_type>>
   size_type unique(Cmp cmp = Cmp())
-    noexcept(noexcept(erase(cbegin()), cmp(*cbegin(), *cbegin())) &&
-      std::is_nothrow_default_constructible_v<decltype(cmp)>)
+    noexcept(noexcept(erase(cbegin()), cmp(*cbegin(), *cbegin())))
     requires(requires{cmp(*cbegin(), *cbegin());})
   {
     size_type r{};
@@ -1054,8 +1048,7 @@ auto erase(list<T>& c, T const k) noexcept(noexcept(erase<0>(c, k)))
 }
 
 auto find_if(auto& c, auto cmp)
-  noexcept(noexcept(cmp(*c.begin())) &&
-    std::is_nothrow_copy_constructible_v<decltype(cmp)>)
+  noexcept(noexcept(cmp(*c.begin())))
   requires(requires{std::remove_cvref_t<decltype(c)>::xl_list_tag;})
 {
   if (!c.empty()) [[likely]]
@@ -1099,8 +1092,7 @@ auto find(auto& c,
 template <int I = 0, typename T, class Cmp = std::less<T>>
 void sort(list<T>& l, typename list<T>::const_iterator const b,
   typename list<T>::const_iterator const e, Cmp&& cmp = Cmp())
-noexcept(noexcept(l.template sort<I>(b, e, std::forward<Cmp>(cmp))) &&
-  std::is_nothrow_default_constructible_v<decltype(cmp)>)
+noexcept(noexcept(l.template sort<I>(b, e, std::forward<Cmp>(cmp))))
 {
   l.template sort<I>(b, e, std::forward<Cmp>(cmp));
 }
