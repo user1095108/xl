@@ -409,8 +409,8 @@ public:
     return *detail::next(begin(), i);
   }
 
-  auto& at(size_type const i) noexcept { return (*this)[i]; }
-  auto& at(size_type const i) const noexcept { return (*this)[i]; }
+  [[nodiscard]] auto& at(size_type const i) noexcept { return (*this)[i]; }
+  [[nodiscard]] auto& at(size_type const i) const noexcept{return (*this)[i];}
 
   auto& back() noexcept { return l_->v_; }
   auto const& back() const noexcept { return l_->v_; }
