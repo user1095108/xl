@@ -19,10 +19,8 @@ private:
     static auto sort(const_iterator i, decltype(i) const e, auto& cmp)
       noexcept(noexcept(node::merge(i, i, i, cmp)))
     {
-      std::pair<const_iterator, const_iterator> runs[
-        sizeof(unsigned) * CHAR_BIT];
-
       unsigned mask{}; // occupancy mask
+      std::pair<const_iterator, const_iterator> runs[sizeof(mask) * CHAR_BIT];
 
       do
       {
@@ -37,9 +35,8 @@ private:
 
         // merge run [i, j) with valid stored runs
         auto r(runs);
-        ++mask;
 
-        for (auto n(~mask & (mask - 1)); n; n >>= 1)
+        for (auto n((++mask, ~mask & (mask - 1))); n; n >>= 1)
         { // ~(x + 1) & x - isolate trailing ones
           auto& [a, b](*r++);
           merge(a, b, i, j, cmp);
